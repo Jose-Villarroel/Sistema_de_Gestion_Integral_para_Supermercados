@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="infrastructure.ui.autenticacion.LoginController"
+           styleClass="root-pane"
+           stylesheets="@login.css">
+
+    <!-- Background split -->
+    <HBox>
+        <Pane styleClass="bg-left" HBox.hgrow="ALWAYS"/>
+        <Pane styleClass="bg-right" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- Center card -->
+    <VBox alignment="CENTER" styleClass="card" maxWidth="420" maxHeight="560">
+
+        <!-- Logo / Icon area -->
+        <VBox alignment="CENTER" styleClass="logo-area">
+            <Label text="🛒" styleClass="logo-icon"/>
+            <Label text="SUPERMARKET" styleClass="brand-name"/>
+            <Label text="Sistema de Gestión" styleClass="brand-sub"/>
+        </VBox>
+
+        <Pane styleClass="divider"/>
+
+        <!-- Form -->
+        <VBox styleClass="form-area" spacing="16">
+
+            <VBox spacing="6">
+                <Label text="Usuario" styleClass="field-label"/>
+                <TextField fx:id="txtUsuario"
+                           promptText="Ingresa tu usuario"
+                           styleClass="text-field"/>
+            </VBox>
+
+            <VBox spacing="6">
+                <Label text="Contraseña" styleClass="field-label"/>
+                <PasswordField fx:id="txtPassword"
+                               promptText="••••••••"
+                               styleClass="text-field"/>
+            </VBox>
+
+            <Label fx:id="lblError" styleClass="error-label" text="" wrapText="true"/>
+
+            <Button text="INGRESAR AL SISTEMA"
+                    onAction="#login"
+                    styleClass="login-btn"
+                    maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Footer -->
+        <Label text="2026 SuperMarket Pro"
+               styleClass="footer-label"/>
+
+    </VBox>
+</StackPane>
