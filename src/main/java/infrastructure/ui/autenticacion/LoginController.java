@@ -4,8 +4,9 @@ import application.autenticacion.AutenticarEmpleadoUseCase;
 import domain.model.Empleado;
 import infrastructure.persistence.DatabaseConnection;
 import infrastructure.persistence.H2EmpleadoRepository;
+import infrastructure.ui.MainApp;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -13,6 +14,7 @@ public class LoginController {
 
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtPassword;
+    @FXML private Label lblError;
 
     private final AutenticarEmpleadoUseCase autenticarUseCase;
 
@@ -24,29 +26,48 @@ public class LoginController {
 
     @FXML
     public void login() {
+        lblError.setText("");
+
         try {
             Empleado empleado = autenticarUseCase.ejecutar(
                     txtUsuario.getText(),
                     txtPassword.getText()
             );
-            mostrarMensaje("Bienvenido, " + empleado.getUsuario() +
-                    " | Rol: " + empleado.getRol());
-            // aquí luego navegas al menú según el rol
+            redirigirSegunRol(empleado);
 
         } catch (Exception e) {
-            mostrarError(e.getMessage());
+            lblError.setText(e.getMessage());
         }
     }
 
-    private void mostrarMensaje(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(msg);
-        alert.show();
-    }
-
-    private void mostrarError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText(msg);
-        alert.show();
+    private void redirigirSegunRol(Empleado empleado) {
+        switch (empleado.getRol()) {
+            case "ADMIN" ->
+                    MainApp.navegarA(
+                            "/infrastructure/ui/admin/admin.fxml",
+                            "MasterMarket - Administrador | " + empleado.getNombre(),
+                            900, 650
+                    );
+            case "CAJERO" ->
+                    MainApp.navegarA(
+                            "/infrastructure/ui/cajero/pos.fxml",
+                            "MasterMarket - Punto de Venta | " + empleado.getNombre(),
+                            1100, 700
+                    );
+            case "SUPERVISOR" ->
+                    MainApp.navegarA(
+                            "/infrastructure/ui/supervisor/inventario.fxml",
+                            "MasterMarket - Inventario | " + empleado.getNombre(),
+                            900, 650
+                    );
+            case "GERENTE" ->
+                    MainApp.navegarA(
+                            "/infrastructure/ui/gerente/dashboard.fxml",
+                            "MasterMarket - Dashboard | " + empleado.getNombre(),
+                            1100, 700
+                    );
+            default ->
+                    lblError.setText("Rol no reconocido: " + empleado.getRol());
+        }
     }
 }

@@ -1,5 +1,6 @@
 package infrastructure.persistence;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 
@@ -9,37 +10,28 @@ public class DatabaseInitializer {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // Tabla empleados
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS empleados (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    usuario VARCHAR(50) UNIQUE,
-                    password VARCHAR(100),
-                    rol VARCHAR(20)
-                );
-            """);
-
-            // Tabla productos
-            stmt.execute("""
-                CREATE TABLE IF NOT EXISTS productos (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    nombre VARCHAR(100),
-                    precio DOUBLE,
-                    stock INT
-                );
-            """);
-
-            // Usuario admin por defecto
-            stmt.execute("""
-                INSERT INTO empleados (usuario, password, rol)
-                SELECT 'admin', 'admin', 'ADMIN'
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM empleados WHERE usuario = 'admin'
-                );
-            """);
+            ejecutarScript(conn, "/db/schema.sql");
+            ejecutarScript(conn, "/db/data.sql");
 
         } catch (Exception e) {
+            System.err.println("Error al inicializar la base de datos: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private static void ejecutarScript(Connection conn, String rutaScript) throws Exception {
+        InputStream is = DatabaseInitializer.class.getResourceAsStream(rutaScript);
+
+        if (is == null) {
+            throw new RuntimeException("No se encontró el script: " + rutaScript);
+        }
+
+        String sql = new String(is.readAllBytes());
+
+        for (String sentencia : sql.split(";")) {
+            if (!sentencia.trim().isEmpty()) {
+                conn.createStatement().execute(sentencia.trim());
+            }
         }
     }
 }

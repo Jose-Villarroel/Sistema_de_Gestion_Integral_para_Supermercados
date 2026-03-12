@@ -30,10 +30,12 @@ public class H2EmpleadoRepository implements EmpleadoRepository {
             if (rs.next()) {
                 Empleado empleado = new Empleado(
                         rs.getInt("id"),
+                        rs.getString("codigo"),
+                        rs.getString("nombre"),
                         rs.getString("usuario"),
                         rs.getString("password"),
                         rs.getString("rol"),
-                        true
+                        rs.getBoolean("activo")
                 );
                 return Optional.of(empleado);
             }
