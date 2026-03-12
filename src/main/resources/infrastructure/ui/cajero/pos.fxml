@@ -5,40 +5,32 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="infrastructure.ui.admin.AdminController"
+            fx:controller="infrastructure.ui.cajero.PosController"
             style="-fx-background-color: #f5f5f5;">
 
+    <!-- Barra superior -->
     <top>
         <HBox style="-fx-background-color: #2c3e50; -fx-padding: 12 20;"
               alignment="CENTER_LEFT" spacing="16">
             <Label text="🛒 MasterMarket"
                    style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
             <Pane HBox.hgrow="ALWAYS"/>
-            <Label text="Panel de Administrador"
+            <Label text="Punto de Venta"
                    style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
-
             <Button text="Cerrar Sesión"
                     onAction="#cerrarSesion"
                     style="-fx-background-color: #e74c3c; -fx-text-fill: white;
-                           -fx-cursor: hand; -fx-background-radius: 4;"/>
+                           -fx-cursor: hand; -fx-border-radius: 4; -fx-background-radius: 4;"/>
         </HBox>
     </top>
 
+    <!-- Contenido central -->
     <center>
-        <VBox alignment="CENTER" spacing="20"
-              style="-fx-padding: 40;">
-            <Label text="Panel de Administrador"
-                   style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-            <Label text="Selecciona un módulo"
+        <VBox style="-fx-padding: 40;" alignment="CENTER" spacing="16">
+            <Label text="Punto de Venta"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Label text="Módulo en construcción — Iteración próxima"
                    style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-
-            <HBox spacing="16" alignment="CENTER">
-                <Button text="👥 Administrar Empleados"
-                        onAction="#abrirEmpleados"
-                        style="-fx-background-color: #2980b9; -fx-text-fill: white;
-                               -fx-cursor: hand; -fx-background-radius: 6;
-                               -fx-font-size: 14; -fx-padding: 16 24;"/>
-            </HBox>
         </VBox>
     </center>
 
