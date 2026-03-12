@@ -2,7 +2,6 @@ package application.autenticacion;
 
 import domain.model.Empleado;
 import domain.repository.EmpleadoRepository;
-import java.util.Optional;
 
 public class AutenticarEmpleadoUseCase {
 

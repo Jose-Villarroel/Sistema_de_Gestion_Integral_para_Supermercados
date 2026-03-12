@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.collections.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="infrastructure.ui..empleado.EmpleadoController"
+            style="-fx-background-color: #f5f5f5;">
+
+    <!-- Barra superior -->
+    <top>
+        <HBox style="-fx-background-color: #2c3e50; -fx-padding: 12 20;"
+              alignment="CENTER_LEFT" spacing="16">
+            <Label text="🛒 MasterMarket"
+                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label text="Administrar Empleados"
+                   style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
+            <Button text="← Volver"
+                    onAction="#volver"
+                    style="-fx-background-color: #7f8c8d; -fx-text-fill: white;
+                           -fx-cursor: hand; -fx-background-radius: 4;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <HBox spacing="16" style="-fx-padding: 20;">
+
+            <!-- Tabla izquierda -->
+            <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                <!-- Barra de búsqueda -->
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscar"
+                               promptText="Buscar por nombre, código o rol..."
+                               onKeyReleased="#buscar"
+                               style="-fx-pref-width: 280;"/>
+                    <Button text="🔍 Buscar" onAction="#buscar"
+                            style="-fx-background-color: #2980b9; -fx-text-fill: white;
+                                   -fx-cursor: hand; -fx-background-radius: 4;"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Empleado" onAction="#nuevo"
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;
+                                   -fx-cursor: hand; -fx-background-radius: 4;
+                                   -fx-font-weight: bold;"/>
+                </HBox>
+
+                <!-- Tabla -->
+                <TableView fx:id="tablaEmpleados" VBox.vgrow="ALWAYS"
+                           onMouseClicked="#seleccionarEmpleado"
+                           style="-fx-background-color: white;">
+                    <columns>
+                        <TableColumn fx:id="colCodigo"   text="Código"   prefWidth="80"/>
+                        <TableColumn fx:id="colNombre"   text="Nombre"   prefWidth="160"/>
+                        <TableColumn fx:id="colUsuario"  text="Usuario"  prefWidth="100"/>
+                        <TableColumn fx:id="colRol"      text="Rol"      prefWidth="100"/>
+                        <TableColumn fx:id="colEstado"   text="Estado"   prefWidth="80"/>
+                    </columns>
+                </TableView>
+
+                <!-- Label de estado -->
+                <Label fx:id="lblEstado" text=""
+                       style="-fx-text-fill: #27ae60; -fx-font-size: 12;"/>
+
+            </VBox>
+
+            <!-- Panel derecho: formulario -->
+            <VBox fx:id="panelFormulario" spacing="12"
+                  style="-fx-background-color: white; -fx-padding: 20;
+                         -fx-border-color: #ddd; -fx-border-radius: 6;
+                         -fx-background-radius: 6; -fx-min-width: 280;">
+
+                <Label fx:id="lblTituloForm" text="Nuevo Empleado"
+                       style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+
+                <Label text="Nombre completo *"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <TextField fx:id="txtNombre" promptText="Nombre completo"/>
+
+                <Label text="Usuario *"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <TextField fx:id="txtUsuario" promptText="Nombre de usuario"/>
+
+                <Label text="Contraseña temporal *"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <PasswordField fx:id="txtPassword" promptText="Contraseña temporal"/>
+
+                <Label text="Rol *"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <ComboBox fx:id="cmbRol" maxWidth="Infinity">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="ADMIN"/>
+                            <String fx:value="CAJERO"/>
+                            <String fx:value="SUPERVISOR"/>
+                            <String fx:value="GERENTE"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
+                <Label text="Correo electrónico"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <TextField fx:id="txtCorreo" promptText="correo@ejemplo.com"/>
+
+                <Label text="Teléfono"
+                       style="-fx-font-size: 12; -fx-text-fill: #555;"/>
+                <TextField fx:id="txtTelefono" promptText="300 000 0000"/>
+
+                <Label fx:id="lblError" text="" wrapText="true"
+                       style="-fx-text-fill: #e74c3c; -fx-font-size: 12;"/>
+
+                <!-- Botones -->
+                <HBox spacing="8">
+                    <Button fx:id="btnGuardar" text="Guardar"
+                            onAction="#guardar" HBox.hgrow="ALWAYS"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #2980b9; -fx-text-fill: white;
+                                   -fx-cursor: hand; -fx-background-radius: 4;
+                                   -fx-font-weight: bold;"/>
+                    <Button fx:id="btnDesactivar" text="Desactivar"
+                            onAction="#desactivar"
+                            style="-fx-background-color: #e74c3c; -fx-text-fill: white;
+                                   -fx-cursor: hand; -fx-background-radius: 4;"
+                            visible="false"/>
+                </HBox>
+
+                <Button text="Limpiar" onAction="#limpiar" maxWidth="Infinity"
+                        style="-fx-background-color: #ecf0f1; -fx-text-fill: #555;
+                               -fx-cursor: hand; -fx-background-radius: 4;"/>
+
+            </VBox>
+        </HBox>
+    </center>
+
+</BorderPane>
