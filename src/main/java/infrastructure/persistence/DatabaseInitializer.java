@@ -6,8 +6,14 @@ import java.sql.Statement;
 
 public class DatabaseInitializer {
 
-    public static void init() {
-        try (Connection conn = DatabaseConnection.getConnection();
+    private final DatabaseConnection dbConnection;
+
+    public DatabaseInitializer(DatabaseConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
+
+    public void init() {
+        try (Connection conn = dbConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
             ejecutarScript(conn, "/db/schema.sql");
@@ -19,7 +25,7 @@ public class DatabaseInitializer {
         }
     }
 
-    private static void ejecutarScript(Connection conn, String rutaScript) throws Exception {
+    private void ejecutarScript(Connection conn, String rutaScript) throws Exception {
         InputStream is = DatabaseInitializer.class.getResourceAsStream(rutaScript);
 
         if (is == null) {

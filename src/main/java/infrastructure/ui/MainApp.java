@@ -1,5 +1,6 @@
 package infrastructure.ui;
 
+import infrastructure.persistence.DatabaseConnection;
 import infrastructure.persistence.DatabaseInitializer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +14,11 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stageActual = stage;
-        DatabaseInitializer.init();
+
+        DatabaseConnection db = new DatabaseConnection();
+        DatabaseInitializer initializer = new DatabaseInitializer(db);
+        initializer.init();
+
         navegarA("/infrastructure/ui/autenticacion/login.fxml", "MasterMarket - Login", 420, 550);
     }
 

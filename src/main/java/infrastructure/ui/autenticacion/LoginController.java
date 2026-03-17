@@ -2,6 +2,7 @@ package infrastructure.ui.autenticacion;
 
 import application.autenticacion.AutenticarEmpleadoUseCase;
 import domain.model.Empleado;
+import domain.model.Rol;
 import infrastructure.persistence.DatabaseConnection;
 import infrastructure.persistence.H2EmpleadoRepository;
 import infrastructure.ui.MainApp;
@@ -42,32 +43,30 @@ public class LoginController {
 
     private void redirigirSegunRol(Empleado empleado) {
         switch (empleado.getRol()) {
-            case "ADMIN" ->
-                    MainApp.navegarA(
-                            "/infrastructure/ui/admin/admin.fxml",
-                            "MasterMarket - Administrador | " + empleado.getNombre(),
-                            900, 650
-                    );
-            case "CAJERO" ->
-                    MainApp.navegarA(
-                            "/infrastructure/ui/cajero/pos.fxml",
-                            "MasterMarket - Punto de Venta | " + empleado.getNombre(),
-                            1100, 700
-                    );
-            case "SUPERVISOR" ->
-                    MainApp.navegarA(
-                            "/infrastructure/ui/supervisor/inventario.fxml",
-                            "MasterMarket - Inventario | " + empleado.getNombre(),
-                            900, 650
-                    );
-            case "GERENTE" ->
-                    MainApp.navegarA(
-                            "/infrastructure/ui/gerente/dashboard.fxml",
-                            "MasterMarket - Dashboard | " + empleado.getNombre(),
-                            1100, 700
-                    );
-            default ->
-                    lblError.setText("Rol no reconocido: " + empleado.getRol());
+                case ADMINISTRADOR ->
+                        MainApp.navegarA(
+                                "/infrastructure/ui/admin/admin.fxml",
+                                "MasterMarket - Administrador | " + empleado.getNombre(),
+                                900, 650
+                        );
+                case CAJERO ->
+                        MainApp.navegarA(
+                                "/infrastructure/ui/cajero/pos.fxml",
+                                "MasterMarket - Punto de Venta | " + empleado.getNombre(),
+                                1100, 700
+                        );
+                case SUPERVISOR_INVENTARIO ->
+                        MainApp.navegarA(
+                                "/infrastructure/ui/supervisor/inventario.fxml",
+                                "MasterMarket - Inventario | " + empleado.getNombre(),
+                                900, 650
+                        );
+                case GERENTE ->
+                        MainApp.navegarA(
+                                "/infrastructure/ui/gerente/dashboard.fxml",
+                                "MasterMarket - Dashboard | " + empleado.getNombre(),
+                                1100, 700
+                        );
+                }
         }
-    }
 }
