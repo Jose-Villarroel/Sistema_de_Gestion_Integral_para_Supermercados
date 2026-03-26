@@ -20,6 +20,7 @@ public class MainApp extends Application {
         initializer.init();
 
         navegarA("/infrastructure/ui/autenticacion/login.fxml", "MasterMarket - Login", 420, 550);
+        
     }
 
     public static void navegarA(String rutaFxml, String titulo, double ancho, double alto) {
