@@ -19,7 +19,9 @@ public class MainApp extends Application {
         DatabaseInitializer initializer = new DatabaseInitializer(db);
         initializer.init();
 
-        navegarA("/infrastructure/ui/autenticacion/login.fxml", "MasterMarket - Login", 420, 550);
+        //navegarA("/infrastructure/ui/autenticacion/login.fxml", "MasterMarket - Login", 420, 550);
+        navegarA("/infrastructure/ui/admin/productos.fxml", "MasterMarket - Productos", 1200, 700);
+        
     }
 
     public static void navegarA(String rutaFxml, String titulo, double ancho, double alto) {
