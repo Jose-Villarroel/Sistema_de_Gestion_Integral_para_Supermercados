@@ -32,7 +32,12 @@ public class H2MovimientoInventarioRepository implements MovimientoInventarioRep
             stmt.setString(4, movimiento.getMotivo());
             stmt.setInt(5, movimiento.getProductoId());
             stmt.setInt(6, movimiento.getEmpleadoId());
-            stmt.setInt(7, movimiento.getOrdenId());
+            // Si no hay orden asociada se inserta NULL en lugar de 0
+            if (movimiento.getOrdenId() == 0) {
+                stmt.setNull(7, java.sql.Types.INTEGER);
+            } else {
+                stmt.setInt(7, movimiento.getOrdenId());
+            }
             stmt.executeUpdate();
 
         } catch (Exception e) {
