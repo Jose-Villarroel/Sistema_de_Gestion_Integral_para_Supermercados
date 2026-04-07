@@ -12,15 +12,21 @@ public class AutenticarEmpleadoUseCase {
     }
 
     public Empleado ejecutar(String usuario, String password) {
+
         if (usuario == null || usuario.isBlank()) {
-            throw new IllegalArgumentException("El usuario no puede estar vacío");
-        }
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new IllegalArgumentException("El usuario es obligatorio");
         }
 
-        //Busca el empleado por usuario en la base de datos
-        //Si no lo encuentra, lanza el error "Credenciales incorrectas"
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
+
+
+        if (password.length() < 4) {
+            throw new IllegalArgumentException("La contraseña debe tener mínimo 4 caracteres");
+        }
+
+
         Empleado empleado = empleadoRepository
                 .buscarPorUsuario(usuario)
                 .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
