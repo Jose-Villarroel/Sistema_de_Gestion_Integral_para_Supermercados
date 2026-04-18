@@ -140,6 +140,11 @@ public class Producto {
     public int getProveedorId() { return proveedorId; }
     public boolean isActivo() { return activo; }
 
+    //Permite actualizar el stock después de un movimiento de inventario
+    public void setStockActual(int stockActual) {
+        this.stockActual = validarStock(stockActual);
+    }
+
     @Override
     public String toString() {
         return String.format("Producto[%s - %s | $%.2f | Stock: %d]",
