@@ -1,20 +1,10 @@
 package controllers.supervisor;
 
-<<<<<<< HEAD:src/main/java/infrastructure/ui/supervisor/InventarioController.java
-import application.inventario.ControlarInventarioUseCase;
-import domain.model.MovimientoInventario;
-import domain.model.Producto;
-import infrastructure.persistence.DatabaseConnection;
-import infrastructure.persistence.H2MovimientoInventarioRepository;
-import infrastructure.persistence.H2ProductoRepository;
-import infrastructure.ui.MainApp;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-=======
 import aggregates.Producto;
 import controllers.MainApp;
 import entities.MovimientoInventario;
->>>>>>> develop:src/main/java/controllers/supervisor/InventarioController.java
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -39,7 +29,6 @@ public class InventarioController {
     @FXML private TextField txtCantidad;
     @FXML private TextField txtBuscar;
 
-    // Opcionales por compatibilidad con FXML viejos
     @FXML private TextField txtOrdenId;
     @FXML private VBox panelOrden;
 
@@ -78,7 +67,6 @@ public class InventarioController {
 
         configurarTabla();
 
-        // Solo ocultar si realmente existe en el FXML
         if (panelOrden != null) {
             panelOrden.setVisible(false);
             panelOrden.setManaged(false);
