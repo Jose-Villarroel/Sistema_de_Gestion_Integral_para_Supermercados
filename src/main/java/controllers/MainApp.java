@@ -4,8 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import repositories.DatabaseConnection;
-import repositories.DatabaseInitializer;
 
 public class MainApp extends Application {
 
@@ -15,13 +13,8 @@ public class MainApp extends Application {
     public void start(Stage stage) throws Exception {
         stageActual = stage;
 
-        DatabaseConnection db = new DatabaseConnection();
-        DatabaseInitializer initializer = new DatabaseInitializer(db);
-        initializer.init();
-
-        navegarA("/infrastructure/ui/autenticacion/login.fxml", "MasterMarket - Login", 420, 550);
-        //navegarA("/infrastructure/ui/admin/productos.fxml", "MasterMarket - Productos", 1200, 700);
-        //navegarA("/infrastructure/ui/supervisor/inventario.fxml", "MasterMarket - Inventario", 1200, 700);
+        navegarA("/infrastructure/ui/autenticacion/login.fxml",
+                "MasterMarket - Login", 420, 550);
     }
 
     public static void navegarA(String rutaFxml, String titulo, double ancho, double alto) {

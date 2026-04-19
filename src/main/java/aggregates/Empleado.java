@@ -1,52 +1,66 @@
 package aggregates;
 
-import valueobjects.Contrasena;
-import valueobjects.Rol;
+import java.time.LocalDate;
 
 public class Empleado {
+
     private final int id;
-    private final String codigo;
     private final String nombre;
-    private final String usuario;
-    private final Contrasena contrasena;
-    private final Rol rol;
+    private final String apellido;
     private final String correo;
     private final String telefono;
+    private final LocalDate fechaRegistro;
     private boolean activo;
 
-    public Empleado(int id, String codigo, String nombre, String usuario,
-                    String contrasena, String rol, String correo,
-                    String telefono, boolean activo) {
-        if (usuario == null || usuario.isBlank()) {
-            throw new IllegalArgumentException("El usuario no puede estar vacío");
+    public Empleado(int id, String nombre, String apellido, String correo,
+                    String telefono, LocalDate fechaRegistro, boolean activo) {
+
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre es obligatorio");
         }
+
         this.id = id;
-        this.codigo = codigo;
         this.nombre = nombre;
-        this.usuario = usuario;
-        this.contrasena = new Contrasena(contrasena);
-        this.rol = Rol.fromString(rol);
+        this.apellido = apellido;
         this.correo = correo;
         this.telefono = telefono;
+        this.fechaRegistro = fechaRegistro;
         this.activo = activo;
-    }
-
-    public boolean tieneCredenciales(String usuario, String password) {
-        return this.usuario.equals(usuario) &&
-               this.contrasena.equals(new Contrasena(password));
     }
 
     public void desactivar() {
         this.activo = false;
     }
 
-    public int getId() { return id; }
-    public String getCodigo() { return codigo; }
-    public String getNombre() { return nombre; }
-    public String getUsuario() { return usuario; }
-    public Rol getRol() { return rol; }
-    public String getCorreo() { return correo; }
-    public String getTelefono() { return telefono; }
-    public boolean isActivo() { return activo; }
-    public String getContrasena() { return contrasena.getValor(); }
+    public int getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 }

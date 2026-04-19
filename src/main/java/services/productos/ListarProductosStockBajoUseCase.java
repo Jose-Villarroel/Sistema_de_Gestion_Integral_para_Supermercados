@@ -5,6 +5,7 @@ import repositories.ProductoRepository;
 import java.util.List;
 
 public class ListarProductosStockBajoUseCase {
+
     private final ProductoRepository productoRepository;
 
     public ListarProductosStockBajoUseCase(ProductoRepository productoRepository) {

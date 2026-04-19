@@ -15,24 +15,26 @@ import services.productos.RegistrarProductoUseCase;
 
 import java.util.List;
 
+
 public class ProductoController {
 
     // Campos del formulario
-    @FXML private TextField txtCodigo;
     @FXML private TextField txtNombre;
+    @FXML private TextField txtMarca;
     @FXML private TextArea txtDescripcion;
     @FXML private TextField txtPrecioCompra;
     @FXML private TextField txtPrecioVenta;
+    @FXML private TextField txtStockActual;
     @FXML private TextField txtStockMinimo;
-    @FXML private TextField txtStockMaximo;
     @FXML private ComboBox<Integer> cmbCategoria;
-    @FXML private ComboBox<Integer> cmbProveedor;
+    @FXML private CheckBox chkActivo;
     @FXML private Label lblMargen;
 
     // Tabla de productos
     @FXML private TableView<Producto> tableProductos;
-    @FXML private TableColumn<Producto, String> colCodigo;
+    @FXML private TableColumn<Producto, Integer> colId;
     @FXML private TableColumn<Producto, String> colNombre;
+    @FXML private TableColumn<Producto, String> colMarca;
     @FXML private TableColumn<Producto, Double> colPrecioVenta;
     @FXML private TableColumn<Producto, Integer> colStock;
     @FXML private TableColumn<Producto, Boolean> colActivo;
@@ -48,17 +50,17 @@ public class ProductoController {
     private final ListarProductosStockBajoUseCase listarStockBajoUseCase;
 
     private Producto productoSeleccionado;
-    private ObservableList<Producto> productosObservable;
+    private final ObservableList<Producto> productosObservable;
 
     public ProductoController() {
         DatabaseConnection db = new DatabaseConnection();
         H2ProductoRepository repo = new H2ProductoRepository(db);
-        
+
         this.registrarProductoUseCase = new RegistrarProductoUseCase(repo);
         this.modificarProductoUseCase = new ModificarProductoUseCase(repo);
         this.consultarProductoUseCase = new ConsultarProductoUseCase(repo);
         this.listarStockBajoUseCase = new ListarProductosStockBajoUseCase(repo);
-        
+
         this.productosObservable = FXCollections.observableArrayList();
     }
 
@@ -71,52 +73,51 @@ public class ProductoController {
     }
 
     private void configurarTabla() {
-        colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colMarca.setCellValueFactory(new PropertyValueFactory<>("marca"));
         colPrecioVenta.setCellValueFactory(new PropertyValueFactory<>("precioVenta"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
 
         tableProductos.setItems(productosObservable);
 
-        // Evento de selección en la tabla
         tableProductos.getSelectionModel().selectedItemProperty().addListener(
-            (obs, oldSelection, newSelection) -> {
-                if (newSelection != null) {
-                    productoSeleccionado = newSelection;
-                    cargarDatosFormulario(newSelection);
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        productoSeleccionado = newSelection;
+                        cargarDatosFormulario(newSelection);
+                    }
                 }
-            }
         );
     }
 
     private void cargarCombos() {
-        // TODO: Cargar categorías y proveedores desde BD
-        // Por ahora, valores de ejemplo
+        // Temporal mientras conectas categorías reales desde BD
         cmbCategoria.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5));
-        cmbProveedor.setItems(FXCollections.observableArrayList(1, 2, 3));
     }
 
     private void configurarEventos() {
-        // Calcular margen cuando cambien los precios
         txtPrecioCompra.textProperty().addListener((obs, old, nuevo) -> calcularMargen());
         txtPrecioVenta.textProperty().addListener((obs, old, nuevo) -> calcularMargen());
 
-        // Búsqueda en tiempo real
         txtBuscar.textProperty().addListener((obs, old, nuevo) -> buscarProductos());
         chkStockBajo.selectedProperty().addListener((obs, old, nuevo) -> buscarProductos());
     }
 
     private void calcularMargen() {
         try {
-            double compra = Double.parseDouble(txtPrecioCompra.getText());
-            double venta = Double.parseDouble(txtPrecioVenta.getText());
-            
+            double compra = Double.parseDouble(txtPrecioCompra.getText().trim());
+            double venta = Double.parseDouble(txtPrecioVenta.getText().trim());
+
             if (compra > 0) {
                 double margen = ((venta - compra) / compra) * 100;
                 lblMargen.setText(String.format("Margen: %.2f%%", margen));
+            } else {
+                lblMargen.setText("Margen: -");
             }
-        } catch (NumberFormatException e) {
+
+        } catch (Exception e) {
             lblMargen.setText("Margen: -");
         }
     }
@@ -127,18 +128,18 @@ public class ProductoController {
             validarCampos();
 
             Producto producto = registrarProductoUseCase.ejecutar(
-                txtCodigo.getText().trim(),
-                txtNombre.getText().trim(),
-                txtDescripcion.getText().trim(),
-                Double.parseDouble(txtPrecioCompra.getText()),
-                Double.parseDouble(txtPrecioVenta.getText()),
-                Integer.parseInt(txtStockMinimo.getText()),
-                Integer.parseInt(txtStockMaximo.getText()),
-                cmbCategoria.getValue(),
-                cmbProveedor.getValue()
+                    txtNombre.getText().trim(),
+                    txtDescripcion.getText().trim(),
+                    txtMarca.getText().trim(),
+                    Double.parseDouble(txtPrecioCompra.getText().trim()),
+                    Double.parseDouble(txtPrecioVenta.getText().trim()),
+                    Integer.parseInt(txtStockActual.getText().trim()),
+                    Integer.parseInt(txtStockMinimo.getText().trim()),
+                    cmbCategoria.getValue(),
+                    chkActivo.isSelected()
             );
 
-            mostrarMensaje("Producto registrado exitosamente: " + producto.getCodigo());
+            mostrarMensaje("Producto registrado exitosamente: " + producto.getNombre());
             limpiarFormulario();
             cargarProductos();
 
@@ -160,21 +161,23 @@ public class ProductoController {
             validarCampos();
 
             boolean actualizado = modificarProductoUseCase.ejecutar(
-                productoSeleccionado.getId(),
-                txtNombre.getText().trim(),
-                txtDescripcion.getText().trim(),
-                Double.parseDouble(txtPrecioCompra.getText()),
-                Double.parseDouble(txtPrecioVenta.getText()),
-                Integer.parseInt(txtStockMinimo.getText()),
-                Integer.parseInt(txtStockMaximo.getText()),
-                cmbCategoria.getValue(),
-                cmbProveedor.getValue()
+                    productoSeleccionado.getId(),
+                    txtNombre.getText().trim(),
+                    txtDescripcion.getText().trim(),
+                    txtMarca.getText().trim(),
+                    Double.parseDouble(txtPrecioCompra.getText().trim()),
+                    Double.parseDouble(txtPrecioVenta.getText().trim()),
+                    Integer.parseInt(txtStockMinimo.getText().trim()),
+                    cmbCategoria.getValue(),
+                    chkActivo.isSelected()
             );
 
             if (actualizado) {
                 mostrarMensaje("Producto actualizado exitosamente");
                 limpiarFormulario();
                 cargarProductos();
+            } else {
+                mostrarError("No se pudo actualizar el producto");
             }
 
         } catch (IllegalArgumentException e) {
@@ -186,34 +189,32 @@ public class ProductoController {
 
     @FXML
     public void limpiarFormulario() {
-        txtCodigo.clear();
         txtNombre.clear();
+        txtMarca.clear();
         txtDescripcion.clear();
         txtPrecioCompra.clear();
         txtPrecioVenta.clear();
+        txtStockActual.clear();
         txtStockMinimo.clear();
-        txtStockMaximo.clear();
         cmbCategoria.setValue(null);
-        cmbProveedor.setValue(null);
+        chkActivo.setSelected(true);
         lblMargen.setText("Margen: -");
-        
-        txtCodigo.setDisable(false);
+
         productoSeleccionado = null;
         tableProductos.getSelectionModel().clearSelection();
     }
 
     private void cargarDatosFormulario(Producto producto) {
-        txtCodigo.setText(producto.getCodigo());
         txtNombre.setText(producto.getNombre());
+        txtMarca.setText(producto.getMarca());
         txtDescripcion.setText(producto.getDescripcion());
         txtPrecioCompra.setText(String.valueOf(producto.getPrecioCompra()));
         txtPrecioVenta.setText(String.valueOf(producto.getPrecioVenta()));
+        txtStockActual.setText(String.valueOf(producto.getStockActual()));
         txtStockMinimo.setText(String.valueOf(producto.getStockMinimo()));
-        txtStockMaximo.setText(String.valueOf(producto.getStockMaximo()));
         cmbCategoria.setValue(producto.getCategoriaId());
-        cmbProveedor.setValue(producto.getProveedorId());
-        
-        txtCodigo.setDisable(true); // No se puede modificar el código
+        chkActivo.setSelected(producto.isActivo());
+
         calcularMargen();
     }
 
@@ -231,7 +232,7 @@ public class ProductoController {
             } else if (txtBuscar.getText().isBlank()) {
                 productos = consultarProductoUseCase.listarActivos();
             } else {
-                productos = consultarProductoUseCase.buscarPorNombre(txtBuscar.getText());
+                productos = consultarProductoUseCase.buscarPorNombre(txtBuscar.getText().trim());
             }
 
             productosObservable.setAll(productos);
@@ -242,20 +243,46 @@ public class ProductoController {
     }
 
     private void validarCampos() {
-        if (txtCodigo.getText().isBlank()) {
-            throw new IllegalArgumentException("El código es obligatorio");
-        }
         if (txtNombre.getText().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");
         }
+
+        if (txtMarca.getText().isBlank()) {
+            throw new IllegalArgumentException("La marca es obligatoria");
+        }
+
         if (txtPrecioCompra.getText().isBlank() || txtPrecioVenta.getText().isBlank()) {
             throw new IllegalArgumentException("Los precios son obligatorios");
         }
-        if (txtStockMinimo.getText().isBlank() || txtStockMaximo.getText().isBlank()) {
-            throw new IllegalArgumentException("Los stocks son obligatorios");
+
+        if (txtStockActual.getText().isBlank() || txtStockMinimo.getText().isBlank()) {
+            throw new IllegalArgumentException("Los campos de stock son obligatorios");
         }
-        if (cmbCategoria.getValue() == null || cmbProveedor.getValue() == null) {
-            throw new IllegalArgumentException("Debe seleccionar categoría y proveedor");
+
+        if (cmbCategoria.getValue() == null) {
+            throw new IllegalArgumentException("Debe seleccionar una categoría");
+        }
+
+        try {
+            double precioCompra = Double.parseDouble(txtPrecioCompra.getText().trim());
+            double precioVenta = Double.parseDouble(txtPrecioVenta.getText().trim());
+            int stockActual = Integer.parseInt(txtStockActual.getText().trim());
+            int stockMinimo = Integer.parseInt(txtStockMinimo.getText().trim());
+
+            if (precioCompra <= 0) {
+                throw new IllegalArgumentException("El precio de compra debe ser mayor a cero");
+            }
+
+            if (precioVenta <= 0) {
+                throw new IllegalArgumentException("El precio de venta debe ser mayor a cero");
+            }
+
+            if (stockActual < 0 || stockMinimo < 0) {
+                throw new IllegalArgumentException("Los valores de stock no pueden ser negativos");
+            }
+
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Precios y stocks deben ser valores numéricos válidos");
         }
     }
 
@@ -264,7 +291,7 @@ public class ProductoController {
         alert.setTitle("Éxito");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
-        alert.show();
+        alert.showAndWait();
     }
 
     private void mostrarError(String mensaje) {
@@ -272,6 +299,6 @@ public class ProductoController {
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
-        alert.show();
+        alert.showAndWait();
     }
 }

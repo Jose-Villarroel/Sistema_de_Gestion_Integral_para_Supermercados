@@ -3,10 +3,17 @@ package controllers.supervisor;
 import aggregates.Producto;
 import controllers.MainApp;
 import entities.MovimientoInventario;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import repositories.DatabaseConnection;
 import repositories.H2MovimientoInventarioRepository;
@@ -16,20 +23,19 @@ import services.inventario.ControlarInventarioUseCase;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
 public class InventarioController {
 
-    // Campos del formulario
     @FXML private TextField txtCodigo;
     @FXML private TextField txtCantidad;
     @FXML private TextField txtBuscar;
+
     @FXML private TextField txtOrdenId;
+    @FXML private VBox panelOrden;
+
     @FXML private ComboBox<String> cmbTipo;
     @FXML private ComboBox<String> cmbMotivo;
     @FXML private Label lblInfoProducto;
-    @FXML private VBox panelOrden;
 
-    // Tabla de movimientos
     @FXML private TableView<MovimientoInventario> tableMovimientos;
     @FXML private TableColumn<MovimientoInventario, String> colFecha;
     @FXML private TableColumn<MovimientoInventario, String> colTipo;
@@ -38,111 +44,191 @@ public class InventarioController {
     @FXML private TableColumn<MovimientoInventario, String> colMotivo;
 
     private ControlarInventarioUseCase useCase;
+    private H2ProductoRepository productoRepository;
+    private H2MovimientoInventarioRepository movimientoRepository;
 
-    // ID del empleado autenticado (se obtiene de la sesión)
     private int empleadoId = 1;
-
 
     @FXML
     public void initialize() {
-        // Construir dependencias manualmente (inyección por constructor)
         DatabaseConnection db = new DatabaseConnection();
+
+        productoRepository = new H2ProductoRepository(db);
+        movimientoRepository = new H2MovimientoInventarioRepository(db);
+
         useCase = new ControlarInventarioUseCase(
-                new H2ProductoRepository(db),
-                new H2MovimientoInventarioRepository(db)
+                productoRepository,
+                movimientoRepository
         );
 
-        // Cargar opciones del ComboBox de tipo
         cmbTipo.setItems(FXCollections.observableArrayList(
                 "ENTRADA", "SALIDA", "AJUSTE"
         ));
 
-        // Configurar columnas de la tabla
-        colFecha.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getFecha()
-                            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
-                ));
-        colTipo.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getTipo().name()
-                ));
-        colCantidad.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleIntegerProperty(
-                        data.getValue().getCantidad()).asObject()
-                );
-        colMotivo.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        data.getValue().getMotivo()
-                ));
-        // colProducto muestra el id del producto hasta tener join
-        colProducto.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleStringProperty(
-                        "ID: " + data.getValue().getProductoId()
-                ));
+        configurarTabla();
+
+        if (panelOrden != null) {
+            panelOrden.setVisible(false);
+            panelOrden.setManaged(false);
+        }
 
         cargarMovimientos();
     }
 
-    //Busca el producto por código y muestra su info 
-    @FXML
-    public void buscarProducto() {
-        String codigo = txtCodigo.getText().trim();
-        if (codigo.isBlank()) {
-            mostrarAlerta("Ingrese un código de producto");
-            return;
-        }
-        // Usamos el repositorio directo para mostrar info del producto
-        DatabaseConnection db = new DatabaseConnection();
-        H2ProductoRepository repo = new H2ProductoRepository(db);
-        repo.buscarPorCodigo(codigo).ifPresentOrElse(
-                p -> lblInfoProducto.setText(
-                        p.getNombre() + " | Stock actual: " + p.getStockActual()),
-                () -> lblInfoProducto.setText("Producto no encontrado")
+    private void configurarTabla() {
+        colFecha.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        data.getValue()
+                                .getFechaMovimiento()
+                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                )
+        );
+
+        colTipo.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        obtenerNombreTipoMovimiento(data.getValue().getIdTipoMovimiento())
+                )
+        );
+
+        colProducto.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        "ID: " + data.getValue().getIdProducto()
+                )
+        );
+
+        colCantidad.setCellValueFactory(data ->
+                new SimpleIntegerProperty(
+                        data.getValue().getCantidad()
+                ).asObject()
+        );
+
+        colMotivo.setCellValueFactory(data ->
+                new SimpleStringProperty(
+                        data.getValue().getMotivo()
+                )
         );
     }
 
-    //Actualiza los motivos disponibles según el tipo seleccionado 
     @FXML
-    public void onTipoChanged() {
-        String tipo = cmbTipo.getValue();
-        if (tipo == null) return;
+    public void buscarProducto() {
+        String texto = txtCodigo.getText().trim();
 
-        if (tipo.equals("ENTRADA")) {
-            cmbMotivo.setItems(FXCollections.observableArrayList(
-                    "Compra a proveedor", "Devolucion de cliente", "Ajuste por conteo"));
-            panelOrden.setVisible(true);
-        } else if (tipo.equals("SALIDA")) {
-            cmbMotivo.setItems(FXCollections.observableArrayList(
-                    "Merma", "Robo", "Vencimiento", "Ajuste por conteo"));
-            panelOrden.setVisible(false);
-        } else {
-            cmbMotivo.setItems(FXCollections.observableArrayList(
-                    "Correccion manual", "Conteo fisico"));
-            panelOrden.setVisible(false);
+        if (texto.isBlank()) {
+            mostrarAlerta("Ingrese el ID del producto");
+            return;
+        }
+
+        try {
+            int productoId = Integer.parseInt(texto);
+
+            productoRepository.buscarPorId(productoId).ifPresentOrElse(
+                    producto -> lblInfoProducto.setText(
+                            producto.getNombre()
+                                    + " | Stock actual: " + producto.getStockActual()
+                                    + " | Stock mínimo: " + producto.getStockMinimo()
+                    ),
+                    () -> lblInfoProducto.setText("Producto no encontrado")
+            );
+
+        } catch (NumberFormatException e) {
+            mostrarAlerta("El ID del producto debe ser un número entero");
         }
     }
 
-    //Registra el movimiento de inventario
+    @FXML
+    public void onTipoChanged() {
+        String tipo = cmbTipo.getValue();
+
+        if (tipo == null) {
+            return;
+        }
+
+        if (tipo.equals("ENTRADA")) {
+            cmbMotivo.setItems(FXCollections.observableArrayList(
+                    "Compra a proveedor",
+                    "Devolucion de cliente",
+                    "Ajuste por conteo"
+            ));
+        } else if (tipo.equals("SALIDA")) {
+            cmbMotivo.setItems(FXCollections.observableArrayList(
+                    "Merma",
+                    "Robo",
+                    "Vencimiento",
+                    "Ajuste por conteo"
+            ));
+        } else {
+            cmbMotivo.setItems(FXCollections.observableArrayList(
+                    "Correccion manual",
+                    "Conteo fisico"
+            ));
+        }
+
+        cmbMotivo.setValue(null);
+
+        if (panelOrden != null) {
+            panelOrden.setVisible(false);
+            panelOrden.setManaged(false);
+        }
+    }
+
     @FXML
     public void registrarMovimiento() {
         try {
-            String codigo = txtCodigo.getText().trim();
-            String tipo = cmbTipo.getValue();
+            String textoProducto = txtCodigo.getText().trim();
+            String tipoSeleccionado = cmbTipo.getValue();
             String motivo = cmbMotivo.getValue();
-            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-            int ordenId = txtOrdenId.getText().isBlank() ? 0
-                          : Integer.parseInt(txtOrdenId.getText().trim());
+            String textoCantidad = txtCantidad.getText().trim();
 
+            if (textoProducto.isBlank()) {
+                throw new IllegalArgumentException("Debe ingresar el ID del producto");
+            }
+
+            if (tipoSeleccionado == null || tipoSeleccionado.isBlank()) {
+                throw new IllegalArgumentException("Debe seleccionar el tipo de movimiento");
+            }
+
+            if (motivo == null || motivo.isBlank()) {
+                throw new IllegalArgumentException("Debe seleccionar un motivo");
+            }
+
+            if (textoCantidad.isBlank()) {
+                throw new IllegalArgumentException("Debe ingresar una cantidad");
+            }
+
+            int productoId = Integer.parseInt(textoProducto);
+            int cantidad = Integer.parseInt(textoCantidad);
+
+            if (cantidad <= 0) {
+                throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
+            }
+
+            int tipoMovimientoId = obtenerTipoMovimientoId(tipoSeleccionado);
             int nuevoStock;
 
-            if (tipo.equals("ENTRADA")) {
-                nuevoStock = useCase.registrarEntrada(codigo, cantidad, motivo,
-                                                      empleadoId, ordenId);
-            } else if (tipo.equals("SALIDA")) {
-                nuevoStock = useCase.registrarSalida(codigo, cantidad, motivo, empleadoId);
+            if (tipoSeleccionado.equals("ENTRADA")) {
+                nuevoStock = useCase.registrarEntrada(
+                        productoId,
+                        cantidad,
+                        motivo,
+                        empleadoId,
+                        tipoMovimientoId
+                );
+            } else if (tipoSeleccionado.equals("SALIDA")) {
+                nuevoStock = useCase.registrarSalida(
+                        productoId,
+                        cantidad,
+                        motivo,
+                        empleadoId,
+                        tipoMovimientoId
+                );
             } else {
-                nuevoStock = useCase.ajustarStock(codigo, cantidad, motivo, empleadoId);
+                nuevoStock = useCase.ajustarStock(
+                        productoId,
+                        cantidad,
+                        motivo,
+                        empleadoId,
+                        tipoMovimientoId
+                );
             }
 
             mostrarInfo("Movimiento registrado. Stock actual: " + nuevoStock);
@@ -150,62 +236,95 @@ public class InventarioController {
             cargarMovimientos();
 
         } catch (NumberFormatException e) {
-            mostrarAlerta("La cantidad debe ser un número entero");
+            mostrarAlerta("El ID del producto y la cantidad deben ser números enteros");
         } catch (IllegalArgumentException e) {
             mostrarAlerta(e.getMessage());
+        } catch (Exception e) {
+            mostrarAlerta("Ocurrió un error al registrar el movimiento");
+            e.printStackTrace();
         }
     }
 
-    // Muestra productos con stock bajo en una alerta 
     @FXML
     public void verAlertasStock() {
         List<Producto> alertas = useCase.obtenerAlertasStockBajo();
+
         if (alertas.isEmpty()) {
             mostrarInfo("No hay productos con stock bajo");
             return;
         }
+
         StringBuilder mensaje = new StringBuilder("Productos con stock bajo:\n\n");
-        for (Producto p : alertas) {
-            mensaje.append("- ").append(p.getNombre())
-                   .append(" | Stock: ").append(p.getStockActual())
-                   .append(" | Minimo: ").append(p.getStockMinimo()).append("\n");
+
+        for (Producto producto : alertas) {
+            mensaje.append("- ")
+                    .append(producto.getNombre())
+                    .append(" | Stock: ").append(producto.getStockActual())
+                    .append(" | Mínimo: ").append(producto.getStockMinimo())
+                    .append("\n");
         }
+
         mostrarInfo(mensaje.toString());
     }
 
-    // Limpia todos los campos del formulario
     @FXML
     public void limpiarFormulario() {
         txtCodigo.clear();
         txtCantidad.clear();
-        txtOrdenId.clear();
+        txtBuscar.clear();
+
+        if (txtOrdenId != null) {
+            txtOrdenId.clear();
+        }
+
         cmbTipo.setValue(null);
         cmbMotivo.setValue(null);
         lblInfoProducto.setText("");
-        panelOrden.setVisible(false);
+
+        if (panelOrden != null) {
+            panelOrden.setVisible(false);
+            panelOrden.setManaged(false);
+        }
     }
 
-    //Cierra sesión y vuelve al login 
     @FXML
     public void cerrarSesion() {
         MainApp.navegarA(
                 "/infrastructure/ui/autenticacion/login.fxml",
                 "MasterMarket - Login",
-                420, 550
+                420,
+                550
         );
     }
 
-    // Carga todos los movimientos en la tabla
     private void cargarMovimientos() {
-        ObservableList<MovimientoInventario> lista = FXCollections.observableArrayList(
-                useCase.consultarMovimientos(0)
-        );
-        // Si no hay producto seleccionado cargamos todos
-        DatabaseConnection db = new DatabaseConnection();
-        H2MovimientoInventarioRepository repo = new H2MovimientoInventarioRepository(db);
-        tableMovimientos.setItems(
-                FXCollections.observableArrayList(repo.listarTodos())
-        );
+        try {
+            ObservableList<MovimientoInventario> lista =
+                    FXCollections.observableArrayList(movimientoRepository.listarTodos());
+
+            tableMovimientos.setItems(lista);
+        } catch (Exception e) {
+            tableMovimientos.setItems(FXCollections.observableArrayList());
+            System.out.println("No se pudieron cargar movimientos: " + e.getMessage());
+        }
+    }
+
+    private int obtenerTipoMovimientoId(String tipo) {
+        return switch (tipo.toUpperCase()) {
+            case "ENTRADA" -> 1;
+            case "SALIDA" -> 2;
+            case "AJUSTE" -> 3;
+            default -> throw new IllegalArgumentException("Tipo de movimiento no válido");
+        };
+    }
+
+    private String obtenerNombreTipoMovimiento(int idTipoMovimiento) {
+        return switch (idTipoMovimiento) {
+            case 1 -> "ENTRADA";
+            case 2 -> "SALIDA";
+            case 3 -> "AJUSTE";
+            default -> "TIPO " + idTipoMovimiento;
+        };
     }
 
     private void mostrarAlerta(String mensaje) {
@@ -218,7 +337,7 @@ public class InventarioController {
 
     private void mostrarInfo(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Informacion");
+        alert.setTitle("Información");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();

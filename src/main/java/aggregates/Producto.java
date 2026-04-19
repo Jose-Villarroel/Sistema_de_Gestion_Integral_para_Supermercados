@@ -1,63 +1,53 @@
 package aggregates;
 
+import java.time.LocalDate;
+
 public class Producto {
+
     private final int id;
-    private final String codigo;
+    private int categoriaId;
     private String nombre;
     private String descripcion;
+    private String marca;
     private double precioCompra;
     private double precioVenta;
     private int stockActual;
     private int stockMinimo;
-    private int stockMaximo;
-    private int categoriaId;
-    private int proveedorId;
     private boolean activo;
+    private LocalDate fechaRegistro;
 
     // Constructor completo (desde BD)
-    public Producto(int id, String codigo, String nombre, String descripcion,
-                    double precioCompra, double precioVenta, int stockActual,
-                    int stockMinimo, int stockMaximo, int categoriaId,
-                    int proveedorId, boolean activo) {
+    public Producto(int id, int categoriaId, String nombre, String descripcion,
+                    String marca, double precioCompra, double precioVenta,
+                    int stockActual, int stockMinimo,
+                    boolean activo, LocalDate fechaRegistro) {
+
         this.id = id;
-        this.codigo = validarCodigo(codigo);
+        this.categoriaId = categoriaId;
         this.nombre = validarNombre(nombre);
         this.descripcion = descripcion;
+        this.marca = marca;
         this.precioCompra = validarPrecioCompra(precioCompra);
         this.precioVenta = validarPrecioVenta(precioVenta, precioCompra);
-        this.stockActual = stockActual;
+        this.stockActual = validarStock(stockActual);
         this.stockMinimo = validarStock(stockMinimo);
-        this.stockMaximo = validarStockMaximo(stockMaximo, stockMinimo);
-        this.categoriaId = categoriaId;
-        this.proveedorId = proveedorId;
         this.activo = activo;
+        this.fechaRegistro = fechaRegistro;
     }
 
-    // Constructor para nuevo producto (sin id, sin stock actual)
-    public Producto(String codigo, String nombre, String descripcion,
-                    double precioCompra, double precioVenta, int stockMinimo,
-                    int stockMaximo, int categoriaId, int proveedorId) {
-        this(0, codigo, nombre, descripcion, precioCompra, precioVenta,
-             0, stockMinimo, stockMaximo, categoriaId, proveedorId, true);
+    // Constructor para nuevo producto
+    public Producto(int categoriaId, String nombre, String descripcion,
+                    String marca, double precioCompra, double precioVenta,
+                    int stockActual, int stockMinimo, boolean activo, LocalDate fechaRegistro) {
+
+        this(0, categoriaId, nombre, descripcion, marca, precioCompra,
+                precioVenta, stockActual, stockMinimo, activo, fechaRegistro);
     }
 
     // Validaciones
-    private String validarCodigo(String codigo) {
-        if (codigo == null || codigo.isBlank()) {
-            throw new IllegalArgumentException("El código del producto no puede estar vacío");
-        }
-        if (codigo.length() > 20) {
-            throw new IllegalArgumentException("El código no puede exceder 20 caracteres");
-        }
-        return codigo.trim().toUpperCase();
-    }
-
     private String validarNombre(String nombre) {
         if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("El nombre del producto no puede estar vacío");
-        }
-        if (nombre.length() > 100) {
-            throw new IllegalArgumentException("El nombre no puede exceder 100 caracteres");
         }
         return nombre.trim();
     }
@@ -70,11 +60,8 @@ public class Producto {
     }
 
     private double validarPrecioVenta(double precioVenta, double precioCompra) {
-        if (precioVenta <= 0) {
-            throw new IllegalArgumentException("El precio de venta debe ser mayor a cero");
-        }
         if (precioVenta <= precioCompra) {
-            throw new IllegalArgumentException("El precio de venta debe ser mayor al precio de compra");
+            throw new IllegalArgumentException("El precio de venta debe ser mayor al de compra");
         }
         return precioVenta;
     }
@@ -86,68 +73,44 @@ public class Producto {
         return stock;
     }
 
-    private int validarStockMaximo(int stockMaximo, int stockMinimo) {
-        if (stockMaximo < 0) {
-            throw new IllegalArgumentException("El stock máximo no puede ser negativo");
-        }
-        if (stockMaximo > 0 && stockMaximo < stockMinimo) {
-            throw new IllegalArgumentException("El stock máximo no puede ser menor al stock mínimo");
-        }
-        return stockMaximo;
-    }
-
     // Métodos de negocio
-    public double calcularMargenGanancia() {
-        return ((precioVenta - precioCompra) / precioCompra) * 100;
-    }
-
     public boolean tieneStockBajo() {
         return stockActual < stockMinimo;
     }
 
-    public void desactivar() {
-        this.activo = false;
-    }
+    public void actualizarDatos(String nombre, String descripcion, String marca,
+                                double precioCompra, double precioVenta,
+                                int stockMinimo, int categoriaId, boolean activo) {
 
-    public void activar() {
-        this.activo = true;
-    }
-
-    public void actualizarDatos(String nombre, String descripcion, double precioCompra,
-                                double precioVenta, int stockMinimo, int stockMaximo,
-                                int categoriaId, int proveedorId) {
         this.nombre = validarNombre(nombre);
         this.descripcion = descripcion;
+        this.marca = marca;
         this.precioCompra = validarPrecioCompra(precioCompra);
         this.precioVenta = validarPrecioVenta(precioVenta, precioCompra);
         this.stockMinimo = validarStock(stockMinimo);
-        this.stockMaximo = validarStockMaximo(stockMaximo, stockMinimo);
         this.categoriaId = categoriaId;
-        this.proveedorId = proveedorId;
+        this.activo = activo;
     }
 
-    // Getters
-    public int getId() { return id; }
-    public String getCodigo() { return codigo; }
-    public String getNombre() { return nombre; }
-    public String getDescripcion() { return descripcion; }
-    public double getPrecioCompra() { return precioCompra; }
-    public double getPrecioVenta() { return precioVenta; }
-    public int getStockActual() { return stockActual; }
-    public int getStockMinimo() { return stockMinimo; }
-    public int getStockMaximo() { return stockMaximo; }
-    public int getCategoriaId() { return categoriaId; }
-    public int getProveedorId() { return proveedorId; }
-    public boolean isActivo() { return activo; }
-
-    //Permite actualizar el stock después de un movimiento de inventario
     public void setStockActual(int stockActual) {
         this.stockActual = validarStock(stockActual);
     }
 
+    public int getId() { return id; }
+    public int getCategoriaId() { return categoriaId; }
+    public String getNombre() { return nombre; }
+    public String getDescripcion() { return descripcion; }
+    public String getMarca() { return marca; }
+    public double getPrecioCompra() { return precioCompra; }
+    public double getPrecioVenta() { return precioVenta; }
+    public int getStockActual() { return stockActual; }
+    public int getStockMinimo() { return stockMinimo; }
+    public boolean isActivo() { return activo; }
+    public LocalDate getFechaRegistro() { return fechaRegistro; }
+
     @Override
     public String toString() {
-        return String.format("Producto[%s - %s | $%.2f | Stock: %d]",
-                codigo, nombre, precioVenta, stockActual);
+        return String.format("Producto[%d - %s | $%.2f | Stock: %d]",
+                id, nombre, precioVenta, stockActual);
     }
 }

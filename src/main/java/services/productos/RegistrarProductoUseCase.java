@@ -3,30 +3,43 @@ package services.productos;
 import aggregates.Producto;
 import repositories.ProductoRepository;
 
+import java.time.LocalDate;
+
 public class RegistrarProductoUseCase {
+
     private final ProductoRepository productoRepository;
 
     public RegistrarProductoUseCase(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
     }
 
-    public Producto ejecutar(String codigo, String nombre, String descripcion,
+    public Producto ejecutar(String nombre, String descripcion, String marca,
                              double precioCompra, double precioVenta,
-                             int stockMinimo, int stockMaximo,
-                             int categoriaId, int proveedorId) {
+                             int stockActual, int stockMinimo,
+                             int categoriaId, boolean estadoActivo) {
 
-        // Validar que el código no exista
-        if (productoRepository.existeCodigo(codigo)) {
-            throw new IllegalArgumentException("Ya existe un producto con el código: " + codigo);
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre del producto es obligatorio");
         }
 
-        // Crear el producto (las validaciones están en el constructor)
+        if (productoRepository.existeNombre(nombre)) {
+            throw new IllegalArgumentException("Ya existe un producto con el nombre: " + nombre);
+        }
+
         Producto producto = new Producto(
-            codigo, nombre, descripcion, precioCompra, precioVenta,
-            stockMinimo, stockMaximo, categoriaId, proveedorId
+                0,
+                categoriaId,
+                nombre,
+                descripcion,
+                marca,
+                precioCompra,
+                precioVenta,
+                stockActual,
+                stockMinimo,
+                estadoActivo,
+                LocalDate.now()
         );
 
-        // Guardar en BD
         return productoRepository.guardar(producto);
     }
 }

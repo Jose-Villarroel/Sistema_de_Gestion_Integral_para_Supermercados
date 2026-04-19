@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL = "jdbc:h2:./supermercado_db";
+    private static final String URL = "jdbc:h2:./supermercado_db;AUTO_SERVER=TRUE;AUTO_RECONNECT=TRUE";
     private static final String USER = "sa";
     private static final String PASS = "";
 
