@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.admin.ProductoController"
+            stylesheets="@productos.css">
+    
+    <!-- HEADER -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="📦" styleClass="header-icon"/>
+                <Label text="Gestión de Productos" styleClass="header-title"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <center>
+        <SplitPane dividerPositions="0.4" styleClass="main-split">
+            
+            <!-- PANEL IZQUIERDO: Formulario -->
+            <VBox styleClass="form-panel" spacing="15">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <Label text="Información del Producto" styleClass="section-title"/>
+                
+                <!-- Código -->
+                <VBox spacing="5">
+                    <Label text="Código *" styleClass="field-label"/>
+                    <TextField fx:id="txtCodigo" promptText="Ej: PROD001" 
+                              styleClass="text-field"/>
+                </VBox>
+                
+                <!-- Nombre -->
+                <VBox spacing="5">
+                    <Label text="Nombre *" styleClass="field-label"/>
+                    <TextField fx:id="txtNombre" promptText="Nombre del producto" 
+                              styleClass="text-field"/>
+                </VBox>
+                
+                <!-- Descripción -->
+                <VBox spacing="5">
+                    <Label text="Descripción" styleClass="field-label"/>
+                    <TextArea fx:id="txtDescripcion" promptText="Descripción opcional"
+                             styleClass="text-area" prefRowCount="2"/>
+                </VBox>
+                
+                <!-- Precios -->
+                <HBox spacing="10">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Precio Compra *" styleClass="field-label"/>
+                        <TextField fx:id="txtPrecioCompra" promptText="0.00" 
+                                  styleClass="text-field"/>
+                    </VBox>
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Precio Venta *" styleClass="field-label"/>
+                        <TextField fx:id="txtPrecioVenta" promptText="0.00" 
+                                  styleClass="text-field"/>
+                    </VBox>
+                </HBox>
+                
+                <!-- Margen -->
+                <Label fx:id="lblMargen" text="Margen: -" styleClass="margen-label"/>
+                
+                <!-- Stock -->
+                <HBox spacing="10">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Stock Mínimo *" styleClass="field-label"/>
+                        <TextField fx:id="txtStockMinimo" promptText="0" 
+                                  styleClass="text-field"/>
+                    </VBox>
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label text="Stock Máximo *" styleClass="field-label"/>
+                        <TextField fx:id="txtStockMaximo" promptText="0" 
+                                  styleClass="text-field"/>
+                    </VBox>
+                </HBox>
+                
+                <!-- Categoría y Proveedor -->
+                <VBox spacing="5">
+                    <Label text="Categoría *" styleClass="field-label"/>
+                    <ComboBox fx:id="cmbCategoria" promptText="Seleccione categoría"
+                             styleClass="combo-box" maxWidth="Infinity"/>
+                </VBox>
+                
+                <VBox spacing="5">
+                    <Label text="Proveedor *" styleClass="field-label"/>
+                    <ComboBox fx:id="cmbProveedor" promptText="Seleccione proveedor"
+                             styleClass="combo-box" maxWidth="Infinity"/>
+                </VBox>
+                
+                <!-- Botones de acción -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button text="Registrar" onAction="#registrarProducto" 
+                           styleClass="btn-primary" prefWidth="120"/>
+                    <Button text="Modificar" onAction="#modificarProducto" 
+                           styleClass="btn-secondary" prefWidth="120"/>
+                    <Button text="Limpiar" onAction="#limpiarFormulario" 
+                           styleClass="btn-clear" prefWidth="120"/>
+                </HBox>
+                
+                <Label text="* Campos obligatorios" styleClass="required-label"/>
+            </VBox>
+            
+            <!-- PANEL DERECHO: Tabla y búsqueda -->
+            <VBox styleClass="table-panel" spacing="10">
+                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+                
+                <!-- Búsqueda y filtros -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscar" promptText="🔍 Buscar por nombre..." 
+                              styleClass="search-field" HBox.hgrow="ALWAYS"/>
+                    <CheckBox fx:id="chkStockBajo" text="Stock Bajo" 
+                             styleClass="check-box"/>
+                </HBox>
+                
+                <!-- Tabla de productos -->
+                <TableView fx:id="tableProductos" styleClass="table-view" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colCodigo" text="Código" prefWidth="100"/>
+                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200"/>
+                        <TableColumn fx:id="colPrecioVenta" text="Precio" prefWidth="80"/>
+                        <TableColumn fx:id="colStock" text="Stock" prefWidth="70"/>
+                        <TableColumn fx:id="colActivo" text="Activo" prefWidth="70"/>
+                    </columns>
+                </TableView>
+                
+                <!-- Info de ayuda -->
+                <Label text="💡 Seleccione un producto de la tabla para modificarlo" 
+                      styleClass="help-label"/>
+            </VBox>
+            
+        </SplitPane>
+    </center>
+    
+</BorderPane>

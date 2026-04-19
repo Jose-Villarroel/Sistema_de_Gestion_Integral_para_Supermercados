@@ -1,4 +1,4 @@
-package infrastructure.persistence;
+package repositories;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,7 +10,7 @@ public class DatabaseConnection {
     private static final String USER = "sa";
     private static final String PASS = "";
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASS);
     }
 }
