@@ -15,103 +15,78 @@
                        style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
                 <Pane HBox.hgrow="ALWAYS"/>
                 <Button text="Cerrar Sesion" onAction="#cerrarSesion"
-                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand;"/>
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
             </HBox>
         </VBox>
     </top>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <center>
         <SplitPane dividerPositions="0.4">
 
-            <!-- PANEL IZQUIERDO: Formulario de movimiento -->
+            <!-- FORMULARIO -->
             <VBox spacing="15">
                 <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
                 <Label text="Registrar Movimiento"
                        style="-fx-font-size: 16; -fx-font-weight: bold;"/>
 
-                <!-- Codigo del producto -->
+                <!-- ID producto -->
                 <VBox spacing="5">
-                    <Label text="Codigo del Producto *"/>
+                    <Label text="ID del Producto *"/>
                     <HBox spacing="8">
-                        <TextField fx:id="txtCodigo" promptText="Ej: PROD001"
+                        <TextField fx:id="txtCodigo" promptText="Ej: 1"
                                    HBox.hgrow="ALWAYS"/>
-                        <Button text="Buscar" onAction="#buscarProducto"
-                                style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                        <Button text="Buscar" onAction="#buscarProducto"/>
                     </HBox>
                 </VBox>
 
-                <!-- Info del producto encontrado -->
-                <Label fx:id="lblInfoProducto" text=""
-                       style="-fx-text-fill: #27ae60; -fx-font-size: 12;"
-                       wrapText="true"/>
+                <Label fx:id="lblInfoProducto" wrapText="true"/>
 
-                <!-- Tipo de movimiento -->
+                <!-- Tipo -->
                 <VBox spacing="5">
                     <Label text="Tipo de Movimiento *"/>
-                    <ComboBox fx:id="cmbTipo" promptText="Seleccione tipo"
-                              maxWidth="Infinity" onAction="#onTipoChanged"/>
+                    <ComboBox fx:id="cmbTipo" onAction="#onTipoChanged"/>
                 </VBox>
 
                 <!-- Cantidad -->
                 <VBox spacing="5">
                     <Label text="Cantidad *"/>
-                    <TextField fx:id="txtCantidad" promptText="0"/>
+                    <TextField fx:id="txtCantidad"/>
                 </VBox>
 
                 <!-- Motivo -->
                 <VBox spacing="5">
                     <Label text="Motivo *"/>
-                    <ComboBox fx:id="cmbMotivo" promptText="Seleccione motivo"
-                              maxWidth="Infinity"/>
-                </VBox>
-
-                <!-- Numero de orden (solo para entradas) -->
-                <VBox fx:id="panelOrden" spacing="5">
-                    <Label text="Numero de Orden de Compra"/>
-                    <TextField fx:id="txtOrdenId" promptText="0 si no aplica"/>
+                    <ComboBox fx:id="cmbMotivo"/>
                 </VBox>
 
                 <!-- Botones -->
                 <HBox spacing="10" alignment="CENTER">
-                    <Button text="Registrar" onAction="#registrarMovimiento"
-                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"
-                            prefWidth="120"/>
-                    <Button text="Limpiar" onAction="#limpiarFormulario"
-                            style="-fx-background-color: #95a5a6; -fx-text-fill: white;"
-                            prefWidth="120"/>
+                    <Button text="Registrar" onAction="#registrarMovimiento"/>
+                    <Button text="Limpiar" onAction="#limpiarFormulario"/>
                 </HBox>
 
-                <Label text="* Campos obligatorios"
-                       style="-fx-font-size: 11; -fx-text-fill: #7f8c8d;"/>
             </VBox>
 
-            <!-- PANEL DERECHO: Tabla y alertas -->
+            <!-- TABLA -->
             <VBox spacing="10">
                 <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
-                <!-- Busqueda y filtros -->
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtBuscar" promptText="Buscar por codigo de producto..."
-                               HBox.hgrow="ALWAYS"/>
-                    <Button text="Ver alertas stock bajo" onAction="#verAlertasStock"
-                            style="-fx-background-color: #e67e22; -fx-text-fill: white;"/>
+                <HBox spacing="10">
+                    <TextField fx:id="txtBuscar" promptText="Buscar por ID..."/>
+                    <Button text="Alertas" onAction="#verAlertasStock"/>
                 </HBox>
 
-                <!-- Tabla de movimientos -->
                 <TableView fx:id="tableMovimientos" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colFecha" text="Fecha" prefWidth="130"/>
-                        <TableColumn fx:id="colTipo" text="Tipo" prefWidth="100"/>
-                        <TableColumn fx:id="colProducto" text="Producto" prefWidth="150"/>
-                        <TableColumn fx:id="colCantidad" text="Cantidad" prefWidth="80"/>
-                        <TableColumn fx:id="colMotivo" text="Motivo" prefWidth="150"/>
+                        <TableColumn fx:id="colFecha" text="Fecha"/>
+                        <TableColumn fx:id="colTipo" text="Tipo"/>
+                        <TableColumn fx:id="colProducto" text="Producto"/>
+                        <TableColumn fx:id="colCantidad" text="Cantidad"/>
+                        <TableColumn fx:id="colMotivo" text="Motivo"/>
                     </columns>
                 </TableView>
 
-                <Label text="Seleccione una fila para ver el detalle del movimiento"
-                       style="-fx-font-size: 11; -fx-text-fill: #7f8c8d;"/>
             </VBox>
 
         </SplitPane>

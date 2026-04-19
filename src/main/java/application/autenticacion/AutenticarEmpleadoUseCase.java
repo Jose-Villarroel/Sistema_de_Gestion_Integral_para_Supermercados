@@ -1,19 +1,19 @@
 package application.autenticacion;
 
-import domain.model.Empleado;
-import domain.repository.EmpleadoRepository;
+import domain.model.Usuario;
+import domain.repository.UsuarioRepository;
 
 public class AutenticarEmpleadoUseCase {
 
-    private final EmpleadoRepository empleadoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public AutenticarEmpleadoUseCase(EmpleadoRepository empleadoRepository) {
-        this.empleadoRepository = empleadoRepository;
+    public AutenticarEmpleadoUseCase(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public Empleado ejecutar(String usuario, String password) {
+    public Usuario ejecutar(String username, String password) {
 
-        if (usuario == null || usuario.isBlank()) {
+        if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("El usuario es obligatorio");
         }
 
@@ -21,24 +21,26 @@ public class AutenticarEmpleadoUseCase {
             throw new IllegalArgumentException("La contraseña es obligatoria");
         }
 
-
         if (password.length() < 4) {
             throw new IllegalArgumentException("La contraseña debe tener mínimo 4 caracteres");
         }
 
-
-        Empleado empleado = empleadoRepository
-                .buscarPorUsuario(usuario)
+        Usuario usuario = usuarioRepository
+                .buscarPorUsername(username)
                 .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
 
-        if (!empleado.isActivo()) {
-            throw new RuntimeException("Cuenta desactivada. Contacte al administrador");
+        if (!usuario.isEstadoUsuario()) {
+            throw new RuntimeException("Usuario desactivado");
         }
 
-        if (!empleado.tieneCredenciales(usuario, password)) {
+        if (usuario.estaBloqueado()) {
+            throw new RuntimeException("Usuario bloqueado temporalmente");
+        }
+
+        if (!usuario.passwordCoincide(password)) {
             throw new RuntimeException("Credenciales incorrectas");
         }
 
-        return empleado;
+        return usuario;
     }
 }

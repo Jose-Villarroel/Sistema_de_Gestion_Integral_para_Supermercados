@@ -1,149 +1,154 @@
 package application.inventario;
 
 import domain.model.MovimientoInventario;
-import domain.model.MovimientoInventario.TipoMovimiento;
 import domain.model.Producto;
 import domain.repository.MovimientoInventarioRepository;
 import domain.repository.ProductoRepository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
-
 
 public class ControlarInventarioUseCase {
 
     private final ProductoRepository productoRepository;
     private final MovimientoInventarioRepository movimientoRepository;
 
-    // Inyección de dependencias, ninguna clase crea sus propias dependencias
     public ControlarInventarioUseCase(ProductoRepository productoRepository,
                                       MovimientoInventarioRepository movimientoRepository) {
         this.productoRepository = productoRepository;
         this.movimientoRepository = movimientoRepository;
     }
 
-    /**
-     * Registra una entrada de inventario
-     * Suma la cantidad al stock actual del producto.
-     */
-    public int registrarEntrada(String codigoProducto, int cantidad,
-                                String motivo, int empleadoId, int ordenId) {
-        //Buscar el producto en el catálogo
-        Producto producto = productoRepository.buscarPorCodigo(codigoProducto)
+    public int registrarEntrada(int productoId, int cantidad,
+                                String motivo, int empleadoId, int tipoMovimientoId) {
+        
+        Producto producto = productoRepository.buscarPorId(productoId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        //Validar que la cantidad sea positiva
-        if (cantidad <= 0)
+        if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser un número positivo");
+        }
 
-        //Calcular nuevo stock
-        int nuevoStock = producto.getStockActual() + cantidad;
-        actualizarStock(producto, nuevoStock);
+        int stockAnterior = producto.getStockActual();
+        int stockNuevo = stockAnterior + cantidad;
 
-        //Registrar movimiento en el historial
-        guardarMovimiento(TipoMovimiento.ENTRADA, cantidad, motivo,
-                          producto.getId(), empleadoId, ordenId);
+        actualizarStock(producto, stockNuevo);
 
-        return nuevoStock;
+        guardarMovimiento(
+                producto.getId(),
+                empleadoId,
+                tipoMovimientoId,
+                cantidad,
+                stockAnterior,
+                stockNuevo,
+                motivo
+        );
+
+        return stockNuevo;
     }
 
-    /**
-     * Registra una salida de inventario.
-     * Resta la cantidad al stock actual del producto.
-     */
-    public int registrarSalida(String codigoProducto, int cantidad,
-                               String motivo, int empleadoId) {
-        Producto producto = productoRepository.buscarPorCodigo(codigoProducto)
+    public int registrarSalida(int productoId, int cantidad,
+                               String motivo, int empleadoId, int tipoMovimientoId) {
+
+        Producto producto = productoRepository.buscarPorId(productoId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        if (cantidad <= 0)
+        if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser un número positivo");
+        }
 
-        //No permitir stock negativo
-        if (cantidad > producto.getStockActual())
+        int stockAnterior = producto.getStockActual();
+
+        if (cantidad > stockAnterior) {
             throw new IllegalArgumentException(
-                    "Stock insuficiente. Stock actual: " + producto.getStockActual() + " unidades");
+                    "Stock insuficiente. Stock actual: " + stockAnterior + " unidades");
+        }
 
-        int nuevoStock = producto.getStockActual() - cantidad;
-        actualizarStock(producto, nuevoStock);
+        int stockNuevo = stockAnterior - cantidad;
 
-        guardarMovimiento(TipoMovimiento.SALIDA, cantidad, motivo,
-                          producto.getId(), empleadoId, 0);
+        actualizarStock(producto, stockNuevo);
 
-        return nuevoStock;
+        guardarMovimiento(
+                producto.getId(),
+                empleadoId,
+                tipoMovimientoId,
+                cantidad,
+                stockAnterior,
+                stockNuevo,
+                motivo
+        );
+
+        return stockNuevo;
     }
 
-    /**
-     * Ajusta el stock a un valor exacto.
-     * Calcula la diferencia y la registra como movimiento.
-     */
-    public int ajustarStock(String codigoProducto, int nuevoStock,
-                            String motivo, int empleadoId) {
-        Producto producto = productoRepository.buscarPorCodigo(codigoProducto)
+    public int ajustarStock(int productoId, int nuevoStock,
+                            String motivo, int empleadoId, int tipoMovimientoId) {
+
+        Producto producto = productoRepository.buscarPorId(productoId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        if (nuevoStock < 0)
+        if (nuevoStock < 0) {
             throw new IllegalArgumentException("El stock no puede ser negativo");
+        }
 
-        // La cantidad del movimiento es la diferencia absoluta
-        int diferencia = Math.abs(nuevoStock - producto.getStockActual());
+        int stockAnterior = producto.getStockActual();
+        int diferencia = Math.abs(nuevoStock - stockAnterior);
 
-        // Si no hay diferencia no hay nada que ajustar
-        if (diferencia == 0)
+        if (diferencia == 0) {
             throw new IllegalArgumentException("El stock ingresado es igual al stock actual");
-
-        TipoMovimiento tipo;
-        if (nuevoStock > producto.getStockActual()) {
-            tipo = TipoMovimiento.ENTRADA;
-        } else {
-            tipo = TipoMovimiento.AJUSTE;
         }
 
         actualizarStock(producto, nuevoStock);
-        guardarMovimiento(tipo, diferencia, motivo, producto.getId(), empleadoId, 0);
+
+        guardarMovimiento(
+                producto.getId(),
+                empleadoId,
+                tipoMovimientoId,
+                diferencia,
+                stockAnterior,
+                nuevoStock,
+                motivo
+        );
 
         return nuevoStock;
     }
 
-    /**
-     * Retorna todos los productos con stock por debajo del mínimo.
-     * Usado para generar alertas de reposición.
-     */
     public List<Producto> obtenerAlertasStockBajo() {
         return productoRepository.listarConStockBajo();
     }
 
-    /**
-     * Retorna el historial completo de movimientos de un producto.
-     */
     public List<MovimientoInventario> consultarMovimientos(int productoId) {
         return movimientoRepository.listarPorProducto(productoId);
     }
 
-    //Métodos privados de apoyo 
-
-    // Actualiza el stock del producto en la base de datos
     private void actualizarStock(Producto producto, int nuevoStock) {
-        producto.actualizarDatos(
-                producto.getNombre(), producto.getDescripcion(),
-                producto.getPrecioCompra(), producto.getPrecioVenta(),
-                producto.getStockMinimo(), producto.getStockMaximo(),
-                producto.getCategoriaId(), producto.getProveedorId()
-        );
-        // Actualizamos directamente el stock via SQL en el repositorio
+        producto.setStockActual(nuevoStock);
         productoRepository.actualizar(producto);
     }
 
-    // Crea y persiste el registro del movimiento
-    private void guardarMovimiento(TipoMovimiento tipo, int cantidad, String motivo,
-                                   int productoId, int empleadoId, int ordenId) {
+    private void guardarMovimiento(int productoId,
+                                   int empleadoId,
+                                   int tipoMovimientoId,
+                                   int cantidad,
+                                   int stockAnterior,
+                                   int stockNuevo,
+                                   String motivo) {
+
         MovimientoInventario movimiento = new MovimientoInventario(
-                0, LocalDateTime.now(), tipo, cantidad,
-                motivo, productoId, empleadoId, ordenId
+                0,
+                empleadoId,
+                tipoMovimientoId,
+                productoId,
+                cantidad,
+                stockAnterior,
+                stockNuevo,
+                motivo,
+                LocalDate.now()
         );
+
         movimientoRepository.guardar(movimiento);
     }
 }

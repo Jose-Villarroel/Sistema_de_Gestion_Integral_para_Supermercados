@@ -10,8 +10,12 @@ public class ListarProductosStockBajoUseCase {
     public ListarProductosStockBajoUseCase(ProductoRepository productoRepository) {
         this.productoRepository = productoRepository;
     }
-
+    //se añadio un mensaje si no hay productos con bajo stock
     public List<Producto> ejecutar() {
-        return productoRepository.listarConStockBajo();
+        List<Producto> productos = productoRepository.listarConStockBajo();
+        if (productos.isEmpty()) {
+            throw new IllegalArgumentException("No hay productos con bajo stock");
+        }
+        return productos;
     }
 }
