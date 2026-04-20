@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.caja.CierreCajaController"
+            prefWidth="1365" prefHeight="768"
+            stylesheets="@cierre-caja.css">
+
+    <top>
+        <VBox spacing="8" styleClass="header">
+            <Label text="Cierre de Caja" styleClass="header-title"/>
+            <Label text="Resumen y cuadre del turno" styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="content">
+
+            <VBox prefWidth="540" styleClass="card">
+                <Label text="Resumen del turno" styleClass="card-title"/>
+                <Pane styleClass="separator-line"/>
+
+                <GridPane hgap="18" vgap="20">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="160"/>
+                        <ColumnConstraints prefWidth="260"/>
+                    </columnConstraints>
+
+                    <Label text="Fecha:" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dateFecha" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Turno:" styleClass="field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="cbTurno" prefWidth="260" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Efectivo esperado:" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblEsperado" text="0.00" styleClass="value-label" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Transacciones:" styleClass="field-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblTransacciones" text="0" styleClass="value-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <Button text="Cargar resumen"
+                        onAction="#cargarResumen"
+                        styleClass="primary-button"/>
+            </VBox>
+
+            <VBox prefWidth="540" styleClass="card">
+                <Label text="Registrar cierre" styleClass="card-title"/>
+                <Pane styleClass="separator-line"/>
+
+                <Label text="Efectivo contado" styleClass="field-label"/>
+                <TextField fx:id="txtContado"
+                           promptText="Ingrese el efectivo contado"
+                           onKeyReleased="#calcularDiferencia"/>
+
+                <Label text="Observación" styleClass="field-label"/>
+                <TextArea fx:id="txtObservacion"
+                          prefHeight="150"
+                          promptText="Observación opcional"/>
+
+                <HBox spacing="40">
+                    <VBox spacing="8">
+                        <Label text="Diferencia" styleClass="field-label"/>
+                        <Label fx:id="lblDiferencia" text="0.00" styleClass="value-label"/>
+                    </VBox>
+
+                    <VBox spacing="8">
+                        <Label text="Estado" styleClass="field-label"/>
+                        <Label fx:id="lblEstado" text="PENDIENTE" styleClass="status-pending"/>
+                    </VBox>
+                </HBox>
+
+                <Button text="Confirmar cierre"
+                        onAction="#confirmarCierre"
+                        styleClass="accent-button"/>
+            </VBox>
+
+        </HBox>
+    </center>
+</BorderPane>

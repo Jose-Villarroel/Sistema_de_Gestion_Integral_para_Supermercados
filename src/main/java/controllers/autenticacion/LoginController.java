@@ -1,6 +1,7 @@
 package controllers.autenticacion;
 
 import controllers.MainApp;
+import controllers.SesionUsuario;
 import entities.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -34,6 +35,7 @@ public class LoginController {
                     txtPassword.getText()
             );
 
+            SesionUsuario.iniciarSesion(usuario);
             redirigirSegunRol(usuario);
 
         } catch (Exception e) {

@@ -13,4 +13,11 @@ public class PosController {
                 420, 550
         );
     }
+    public void abrirCierreCaja() {
+        MainApp.navegarA(
+                "/infrastructure/ui/cajero/cierre-caja-view.fxml",
+                "Cierre de Caja",
+                1100, 700
+        );
+}
 }
