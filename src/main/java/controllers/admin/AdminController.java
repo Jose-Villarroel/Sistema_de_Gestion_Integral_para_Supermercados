@@ -39,7 +39,7 @@ public class AdminController {
 
     @FXML
     public void mostrarClientes() {
-        cargarVista("/infrastructure/ui/admin/clientes.fxml");
+        cargarVista("/infrastructure/ui/admin/cliente.fxml");
         marcarActivo(btnClientes);
     }
 
