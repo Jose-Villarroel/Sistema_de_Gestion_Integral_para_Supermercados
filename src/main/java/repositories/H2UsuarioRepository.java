@@ -25,16 +25,16 @@ public class H2UsuarioRepository implements UsuarioRepository {
     @Override
     public Optional<Usuario> buscarPorUsername(String username) {
         String sql = """
-            SELECT u.id_usuario, u.username, u.password_hash, u.intentos_fallidos,
-                   u.bloqueado_hasta, u.ultimo_acceso, u.estado_usuario,
-                   r.id_rol, r.nombre_rol, r.descripcion AS descripcion_rol,
-                   e.id_empleado, e.nombre, e.apellido, e.correo, e.telefono,
-                   e.estado_activo, e.fecha_registro
-            FROM Usuario u
-            INNER JOIN Rol r ON u.id_rol = r.id_rol
-            INNER JOIN Empleado e ON u.id_empleado = e.id_empleado
-            WHERE u.username = ?
-        """;
+        SELECT u.id_usuario, u.username, u.password_hash, u.intentos_fallidos,
+               u.bloqueado_hasta, u.ultimo_acceso, u.estado_usuario,
+               r.id_rol, r.nombre_rol, r.descripcion AS descripcion_rol,
+               e.id_empleado, e.nombre, e.apellido, e.correo, e.telefono,
+               e.estado_activo, e.fecha_registro
+        FROM Usuario u
+        INNER JOIN Rol r ON u.id_rol = r.id_rol
+        INNER JOIN Empleado e ON u.id_empleado = e.id_empleado
+        WHERE u.username = ?
+    """;
 
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -47,12 +47,12 @@ public class H2UsuarioRepository implements UsuarioRepository {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Error al buscar usuario por username", e);
         }
 
         return Optional.empty();
     }
-
     @Override
     public Optional<Usuario> buscarPorId(int id) {
         String sql = """
