@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import repositories.DatabaseConnection;
 import repositories.H2UsuarioRepository;
 import services.autenticacion.AutenticarEmpleadoUseCase;
+import services.autenticacion.SesionUsuario;
 
 public class LoginController {
 
@@ -34,6 +35,7 @@ public class LoginController {
                     txtPassword.getText()
             );
 
+            SesionUsuario.iniciar(usuario);
             redirigirSegunRol(usuario);
 
         } catch (Exception e) {

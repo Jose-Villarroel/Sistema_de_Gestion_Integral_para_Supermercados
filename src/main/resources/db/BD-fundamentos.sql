@@ -283,6 +283,11 @@ INSERT INTO Empleado (id_empleado, nombre, apellido, correo, telefono, estado_ac
 (2, 'Laura', 'Gomez', 'laura@mail.com', '3002222222', TRUE, CURRENT_DATE),
 (3, 'Carlos', 'Ruiz', 'carlos@mail.com', '3003333333', TRUE, CURRENT_DATE);
 
+-- CLIENTES
+INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, estado_activo, fecha_registro) VALUES
+(1, 'Mariana', 'Perez', 'mariana@mail.com', '3004444444', 'Calle 10 # 20-30', TRUE, CURRENT_DATE),
+(2, 'Santiago', 'Lopez', 'santiago@mail.com', '3005555555', 'Carrera 7 # 45-12', TRUE, CURRENT_DATE);
+
 -- =========================
 -- USUARIOS (password.hashCode())
 -- admin = 3198785
@@ -316,6 +321,23 @@ INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
 (1, 'ENTRADA', 'Entrada de inventario'),
 (2, 'SALIDA', 'Salida de inventario'),
 (3, 'AJUSTE', 'Ajuste de inventario');
+
+-- TIPOS DE MOVIMIENTO DE PUNTOS
+INSERT INTO Tipo_movimiento_puntos (id_tipo_movimiento_puntos, descripcion) VALUES
+(1, 'ACUMULACION'),
+(2, 'CANJE');
+
+-- TIPOS DE PAGO
+INSERT INTO Tipo_pago (id_tipo_pago, descripcion) VALUES
+(1, 'EFECTIVO'),
+(2, 'TARJETA'),
+(3, 'TRANSFERENCIA'),
+(4, 'MIXTO');
+
+-- CUENTAS DE FIDELIZACION
+INSERT INTO Cuenta_fidelizacion (id_fidelizacion, id_cliente, numero_tarjeta, puntos_actuales, fecha_creacion, estado) VALUES
+(1, 1, 1001, 120, CURRENT_DATE, TRUE),
+(2, 2, 1002, 40, CURRENT_DATE, TRUE);
 
 
 -- MOVIMIENTOS DE INVENTARIO
