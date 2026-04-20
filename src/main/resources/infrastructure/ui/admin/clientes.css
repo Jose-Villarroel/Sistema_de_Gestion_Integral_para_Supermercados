@@ -1,0 +1,222 @@
+/* ================================
+   ESTILOS GENERALES
+   ================================ */
+.main-container {
+    -fx-background-color: #f5f6fa;
+}
+
+.header {
+    -fx-background-color: #2c3e50;
+    -fx-padding: 15;
+}
+
+.header-icon {
+    -fx-font-size: 22px;
+}
+
+.header-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* ================================
+   TARJETAS DE RESUMEN
+   ================================ */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 5;
+}
+
+.card-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.card-value-accent {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #c0392b;
+}
+
+.card-value-muted {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c;
+}
+
+/* ================================
+   BOTÓN NUEVO CLIENTE
+   ================================ */
+.btn-nuevo {
+    -fx-background-color: #c0392b;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+/* ================================
+   FORMULARIO
+   ================================ */
+.form-panel {
+    -fx-background-color: #ecf0f1;
+}
+
+.field-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #34495e;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-pref-height: 34;
+}
+
+.text-field:focused {
+    -fx-border-color: #c0392b;
+    -fx-border-width: 2;
+}
+
+.required-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-style: italic;
+}
+
+/* ================================
+   BOTONES
+   ================================ */
+.btn-primary {
+    -fx-background-color: #c0392b;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #a93226;
+}
+
+.btn-secondary {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #229954;
+}
+
+.btn-clear {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4;
+}
+
+.btn-clear:hover {
+    -fx-background-color: #7f8c8d;
+}
+
+.btn-danger {
+    -fx-background-color: #e74c3c;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4;
+    -fx-pref-height: 34;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* ================================
+   TABLA
+   ================================ */
+.table-panel {
+    -fx-background-color: white;
+}
+
+.search-field {
+    -fx-pref-height: 35;
+    -fx-font-size: 13px;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.search-field:focused {
+    -fx-border-color: #c0392b;
+    -fx-border-width: 2;
+}
+
+.table-view {
+    -fx-background-color: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: #34495e;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #fadbd8;
+}
+
+.table-row-cell:selected .text {
+    -fx-fill: #2c3e50;
+}
+
+.help-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-style: italic;
+}
+
+/* ================================
+   SPLIT PANE
+   ================================ */
+.main-split {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.main-split > .split-pane-divider {
+    -fx-background-color: #bdc3c7;
+    -fx-padding: 0 1 0 1;
+}

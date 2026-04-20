@@ -24,14 +24,59 @@
         </HBox>
     </top>
 
-    <!-- Contenido central -->
-    <center>
-        <VBox style="-fx-padding: 40;" alignment="CENTER" spacing="16">
-            <Label text="Panel de Administrador"
-                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-            <Label text="Módulo en construcción — Iteración próxima"
-                   style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
+    <!-- Sidebar izquierdo -->
+    <left>
+        <VBox style="-fx-background-color: #922b21; -fx-pref-width: 180; -fx-padding: 10 0;"
+              spacing="2">
+
+            <Button fx:id="btnEmpleados" text="Empleados"
+                    onAction="#mostrarEmpleados"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
+                           -fx-padding: 12 20;"/>
+
+            <Button fx:id="btnProductos" text="Catálogo"
+                    onAction="#mostrarProductos"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
+                           -fx-padding: 12 20;"/>
+
+            <Button fx:id="btnInventario" text="Inventario"
+                    onAction="#mostrarInventario"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
+                           -fx-padding: 12 20;"/>
+
+            <Button fx:id="btnClientes" text="Clientes"
+                    onAction="#mostrarClientes"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
+                           -fx-padding: 12 20;"/>
+
+            <Button fx:id="btnReportes" text="Reportes"
+                    onAction="#mostrarReportes"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
+                           -fx-padding: 12 20;"/>
         </VBox>
+    </left>
+
+    <!-- Contenido central dinámico -->
+    <center>
+        <StackPane fx:id="contenidoCentral"
+                   style="-fx-background-color: #f5f5f5;">
+            <VBox alignment="CENTER" spacing="16">
+                <Label text="Panel de Administrador"
+                       style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <Label text="Seleccione una opción del menú"
+                       style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
+            </VBox>
+        </StackPane>
     </center>
 
 </BorderPane>
