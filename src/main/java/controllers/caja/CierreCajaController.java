@@ -1,6 +1,7 @@
 package controllers.caja;
 
 import entities.Usuario;
+import controllers.MainApp;
 import dtos.ResumenCierreCajaDTO;
 import entities.CierreCaja;
 import javafx.fxml.FXML;
@@ -130,10 +131,20 @@ public class CierreCajaController {
                             "\nEstado: " + cierre.getEstadoCierre()
             );
             alert.showAndWait();
+            volverAPos();
 
         } catch (Exception e) {
             mostrarAlerta("No se pudo registrar el cierre: " + e.getMessage());
         }
+    }
+
+    @FXML
+    public void volverAPos() {
+        MainApp.navegarA(
+                "/infrastructure/ui/cajero/pos.fxml",
+                "MasterMarket - POS",
+                1365, 768
+        );
     }
 
     private BigDecimal obtenerContado() {
