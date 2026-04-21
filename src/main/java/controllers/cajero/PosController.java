@@ -274,6 +274,16 @@ public class PosController {
         );
     }
 
+    @FXML
+    public void abrirDevoluciones() {
+        String nombreEmpleado = usuarioActual != null ? usuarioActual.getEmpleado().getNombre() : "Cajero";
+        MainApp.navegarA(
+                "/infrastructure/ui/cajero/devolucion.fxml",
+                "MasterMarket - Devoluciones | " + nombreEmpleado,
+                1100, 700
+        );
+    }
+
     private void configurarTabla() {
         tblVenta.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colCodigo.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getProductoId()));
