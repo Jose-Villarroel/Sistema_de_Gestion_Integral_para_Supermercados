@@ -33,9 +33,16 @@
                 <Label text="Cajero" style="-fx-text-fill: #9fd6c6; -fx-font-size: 11;"/>
                 <Label fx:id="lblCajero" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
             </VBox>
+          
+          
             <Button text="Devoluciones"
                     onAction="#abrirDevoluciones"
                     style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+
+            <Button text="Cierre de Caja"
+                    onAction="#abrirCierreCaja"
+                    style="-fx-background-color: #2e86ab; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+          
             <Button text="Cerrar sesion"
                     onAction="#cerrarSesion"
                     style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>

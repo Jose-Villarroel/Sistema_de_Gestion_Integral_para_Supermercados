@@ -6,12 +6,17 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    private static final String URL = "jdbc:h2:./supermercado_db;AUTO_SERVER=TRUE";
+    private static final String URL = "jdbc:h2:file:./supermercado_db;AUTO_SERVER=TRUE";
     private static final String USER = "sa";
     private static final String PASS = "";
 
+    private static Connection connection;
+
     public Connection getConnection() throws SQLException {
-        System.out.println("Conectando a H2...");
-        return DriverManager.getConnection(URL, USER, PASS);
+        if (connection == null || connection.isClosed()) {
+            System.out.println("Conectando a H2...");
+            connection = DriverManager.getConnection(URL, USER, PASS);
+        }
+        return connection;
     }
 }
