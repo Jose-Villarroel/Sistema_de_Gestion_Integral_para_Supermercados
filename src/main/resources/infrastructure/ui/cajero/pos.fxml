@@ -1,46 +1,167 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.cajero.PosController"
-            style="-fx-background-color: #f5f5f5;">
+            style="-fx-background-color: linear-gradient(to bottom, #f7efe4, #fffdf9);">
 
-    <!-- Barra superior -->
     <top>
-        <HBox style="-fx-background-color: #2c3e50; -fx-padding: 12 20;"
-              alignment="CENTER_LEFT" spacing="16">
-            <Label text="🛒 MasterMarket"
-                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Label text="Punto de Venta"
-                   style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
-            <Button text="Cerrar Sesión"
+        <HBox alignment="CENTER_LEFT" spacing="14"
+              style="-fx-background-color: #173f35; -fx-padding: 16 22;">
+            <Label text="MasterMarket POS"
+                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
+            <Label text="Procesar y finalizar venta"
+                   style="-fx-text-fill: #d4efe6; -fx-font-size: 13;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox spacing="2">
+                <Label text="Cajero" style="-fx-text-fill: #9fd6c6; -fx-font-size: 11;"/>
+                <Label fx:id="lblCajero" style="-fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;"/>
+            </VBox>
+            <Button text="Cierre de Caja"
+                    onAction="#abrirCierreCaja"
+                    style="-fx-background-color: #2e86ab; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+            <Button text="Cerrar sesion"
                     onAction="#cerrarSesion"
-                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;
-                           -fx-cursor: hand; -fx-border-radius: 4; -fx-background-radius: 4;"/>
+                    style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
         </HBox>
     </top>
 
-    <!-- Contenido central -->
     <center>
-        <VBox style="-fx-padding: 40;" alignment="CENTER" spacing="20">
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    style="-fx-background-color: transparent; -fx-background: transparent;">
+        <content>
+        <HBox spacing="18" style="-fx-padding: 18;" minHeight="-Infinity">
+            <VBox spacing="14" HBox.hgrow="ALWAYS">
+                <VBox spacing="10"
+                      style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
+                    <Label text="Escaneo y productos"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                    <HBox spacing="10">
+                        <TextField fx:id="txtCodigoProducto" promptText="id_producto" HBox.hgrow="ALWAYS"/>
+                        <Button text="Agregar"
+                                onAction="#agregarProducto"
+                                style="-fx-background-color: #d86f45; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <TextField fx:id="txtCantidad" promptText="Nueva cantidad"/>
+                        <Button text="Actualizar cantidad"
+                                onAction="#actualizarCantidad"
+                                style="-fx-background-color: #2e86ab; -fx-text-fill: white;"/>
+                        <Button text="Delete"
+                                onAction="#eliminarProducto"
+                                style="-fx-background-color: #6c5b7b; -fx-text-fill: white;"/>
+                    </HBox>
+                    <TableView fx:id="tblVenta" prefHeight="320">
+                        <columns>
+                            <TableColumn fx:id="colCodigo" text="id_producto"/>
+                            <TableColumn fx:id="colProducto" text="Producto"/>
+                            <TableColumn fx:id="colCantidad" text="Cantidad"/>
+                            <TableColumn fx:id="colPrecio" text="Precio unitario"/>
+                            <TableColumn fx:id="colSubtotal" text="Subtotal"/>
+                            <TableColumn fx:id="colStock" text="Stock"/>
+                        </columns>
+                    </TableView>
+                </VBox>
 
-            <Label text="Punto de Venta"
-                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+                <VBox spacing="10"
+                      style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
+                    <Label text="Cliente, descuentos y cierre"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                    <HBox spacing="10">
+                        <TextField fx:id="txtCodigoCliente" promptText="id_cliente o numero_tarjeta" HBox.hgrow="ALWAYS"/>
+                        <Button text="Buscar cliente" onAction="#buscarCliente"
+                                style="-fx-background-color: #2d6a4f; -fx-text-fill: white;"/>
+                    </HBox>
+                    <Label fx:id="lblCliente" style="-fx-text-fill: #4a4a4a; -fx-font-weight: bold;"/>
+                    <HBox spacing="10">
+                        <ComboBox fx:id="cmbTipoDescuento" prefWidth="160"/>
+                        <TextField fx:id="txtDescuentoManual" promptText="Valor o porcentaje"/>
+                        <Button text="Aplicar descuento" onAction="#aplicarDescuentoManual"
+                                style="-fx-background-color: #8e6c88; -fx-text-fill: white;"/>
+                        <Button text="Complete Sale" onAction="#prepararFinalizacion"
+                                style="-fx-background-color: #d94841; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <Label fx:id="lblResumenPago" wrapText="true" style="-fx-text-fill: #576574;"/>
+                </VBox>
+            </VBox>
 
-            <Label text="Seleccione una opción"
-                   style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
+            <VBox spacing="14" prefWidth="340">
+                <VBox spacing="12"
+                      style="-fx-background-color: #fffaf2; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
+                    <Label text="Resumen de venta"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                    <GridPane hgap="10" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="55"/>
+                            <ColumnConstraints percentWidth="45"/>
+                        </columnConstraints>
+                        <Label text="Subtotal"/>
+                        <Label fx:id="lblSubtotal" GridPane.columnIndex="1"/>
+                        <Label text="Descuento automatico" GridPane.rowIndex="1"/>
+                        <Label fx:id="lblDescuentoAuto" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Descuento manual" GridPane.rowIndex="2"/>
+                        <Label fx:id="lblDescuentoManual" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label text="Impuestos" GridPane.rowIndex="3"/>
+                        <Label fx:id="lblImpuestos" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <Separator GridPane.rowIndex="4" GridPane.columnSpan="2"/>
+                        <Label text="Total final" GridPane.rowIndex="5"
+                               style="-fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                        <Label fx:id="lblTotal" GridPane.columnIndex="1" GridPane.rowIndex="5"
+                               style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #d94841;"/>
+                        <Label text="Cambio" GridPane.rowIndex="6"/>
+                        <Label fx:id="lblCambio" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                    </GridPane>
+                </VBox>
 
-            <Button text="🧾 Cierre de Caja"
-                    onAction="#abrirCierreCaja"
-                    style="-fx-background-color: #34495e; -fx-text-fill: white;
-                   -fx-font-size: 14; -fx-padding: 10 20;
-                   -fx-background-radius: 8; -fx-cursor: hand;"/>
+                <VBox spacing="12"
+                      style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
+                    <Label text="Pago y ticket"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                    <ComboBox fx:id="cmbMetodoPago" promptText="Metodo de pago" onAction="#actualizarSeccionPago"/>
+                    <TextField fx:id="txtMontoRecibido" promptText="Monto recibido"/>
+                    <TextField fx:id="txtReferenciaPago" promptText="Referencia o autorizacion"/>
+                    <CheckBox fx:id="chkFacturaElectronica" text="Solicita factura electronica" onAction="#actualizarSeccionPago"/>
+                    <TextField fx:id="txtDatosFacturacion" promptText="Datos fiscales"/>
+                    <CheckBox fx:id="chkImprimir" text="Imprimir ticket" selected="true" onAction="#actualizarSeccionPago"/>
+                    <CheckBox fx:id="chkEnviarCorreo" text="Send by email" onAction="#actualizarSeccionPago"/>
+                    <TextField fx:id="txtCorreoTicket" promptText="Correo destinatario"/>
+                    <Button text="Confirmar transaccion"
+                            onAction="#confirmarVenta"
+                            maxWidth="Infinity"
+                            style="-fx-background-color: #173f35; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 14;"/>
+                </VBox>
 
-        </VBox>
+                <VBox spacing="8"
+                      style="-fx-background-color: #edf7f1; -fx-background-radius: 16; -fx-padding: 16; -fx-border-color: #d1e7d8; -fx-border-radius: 16;">
+                    <Label text="Estado del POS"
+                           style="-fx-font-weight: bold; -fx-text-fill: #173f35;"/>
+                    <Label fx:id="lblMensaje" wrapText="true" style="-fx-text-fill: #1e8449;"/>
+                </VBox>
+            </VBox>
+        </HBox>
+        </content>
+        </ScrollPane>
     </center>
 
+    <padding>
+        <Insets top="0" right="0" bottom="0" left="0"/>
+    </padding>
 </BorderPane>

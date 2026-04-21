@@ -1,6 +1,5 @@
 package controllers.caja;
 
-import controllers.SesionUsuario;
 import entities.Usuario;
 import dtos.ResumenCierreCajaDTO;
 import entities.CierreCaja;
@@ -9,6 +8,7 @@ import javafx.scene.control.*;
 import repositories.CierreCajaRepository;
 import repositories.DatabaseConnection;
 import repositories.H2CierreCajaRepository;
+import services.autenticacion.SesionUsuario;
 import services.caja.GestionarCierreCajaUseCase;
 
 import java.math.BigDecimal;
