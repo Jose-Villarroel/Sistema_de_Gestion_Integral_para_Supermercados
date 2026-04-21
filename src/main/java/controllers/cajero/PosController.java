@@ -274,6 +274,15 @@ public class PosController {
         );
     }
 
+    @FXML
+    public void abrirCierreCaja() {
+        MainApp.navegarA(
+                "/infrastructure/ui/cajero/cierre-caja-view.fxml",
+                "Cierre de Caja",
+                1100, 700
+        );
+    }
+
     private void configurarTabla() {
         tblVenta.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         colCodigo.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getProductoId()));

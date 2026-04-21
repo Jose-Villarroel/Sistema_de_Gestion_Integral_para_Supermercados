@@ -1,0 +1,126 @@
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: #f3efeb;
+}
+
+.header {
+    -fx-background-color: linear-gradient(to right, #2f4768, #3a5272);
+    -fx-padding: 32 40 28 40;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+}
+
+.header-subtitle {
+    -fx-text-fill: #d9e2ee;
+    -fx-font-size: 18px;
+}
+
+.content {
+    -fx-padding: 28;
+    -fx-spacing: 28;
+    -fx-alignment: top-center;
+}
+
+.card {
+    -fx-background-color: #fcfbfa;
+    -fx-background-radius: 18;
+    -fx-border-color: #ddd6cf;
+    -fx-border-radius: 18;
+    -fx-padding: 28;
+    -fx-spacing: 18;
+}
+
+.card-title {
+    -fx-text-fill: #3d4652;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.separator-line {
+    -fx-background-color: #e7e0d9;
+    -fx-pref-height: 1;
+    -fx-max-height: 1;
+}
+
+.field-label {
+    -fx-text-fill: #444;
+    -fx-font-size: 16px;
+}
+
+.value-label {
+    -fx-text-fill: #2c2c2c;
+    -fx-font-size: 16px;
+}
+
+.text-field,
+.text-area,
+.combo-box,
+.date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #cbc3bc;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-font-size: 15px;
+    -fx-padding: 8 10 8 10;
+}
+
+.text-area .content {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+}
+
+.primary-button {
+    -fx-background-color: #3b536f;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #304760;
+}
+
+.accent-button {
+    -fx-background-color: #a77650;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+}
+
+.accent-button:hover {
+    -fx-background-color: #946848;
+}
+
+.status-pending {
+    -fx-text-fill: #4f4f4f;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.status-ok {
+    -fx-text-fill: #2e7d32;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.status-warning {
+    -fx-text-fill: #ef6c00;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.status-error {
+    -fx-text-fill: #c62828;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
