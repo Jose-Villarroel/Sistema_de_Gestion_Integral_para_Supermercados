@@ -13,6 +13,7 @@ public class Cliente {
     private final LocalDate fechaRegistro;
     private boolean activo;
 
+
     public Cliente(int id, String nombre, String apellido, String correo,
                    String telefono, String direccion, LocalDate fechaRegistro, boolean activo) {
 
