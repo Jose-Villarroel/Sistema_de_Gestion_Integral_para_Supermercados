@@ -1,0 +1,119 @@
+/* =============================================================
+   DASHBOARD.CSS — MasterMarket · Dashboard Gerencial
+   Pontificia Universidad Javeriana · 2026
+   ============================================================= */
+
+/* ── Root ─────────────────────────────────────────────────── */
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #F5F2EE;
+}
+
+/* ── Top-bar ──────────────────────────────────────────────── */
+.top-bar {
+    -fx-background-color: #1A1A1A;
+    -fx-padding: 12 20 12 20;
+}
+
+.top-bar-brand {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.top-bar-context {
+    -fx-text-fill: #A0A0A0;
+    -fx-font-size: 12px;
+}
+
+.btn-cerrar-sesion {
+    -fx-background-color: #C0392B;
+    -fx-background-radius: 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.btn-cerrar-sesion:hover {
+    -fx-background-color: #A93226;
+}
+
+/* ── Contenido ────────────────────────────────────────────── */
+.content-area {
+    -fx-background-color: #F5F2EE;
+    -fx-padding: 40;
+}
+
+.page-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.page-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6B6B6B;
+}
+
+/* ── Tarjetas métricas ────────────────────────────────────── */
+.metric-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E8E0D8;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+    -fx-padding: 20;
+    -fx-spacing: 8;
+}
+
+.metric-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6B6B6B;
+}
+
+.metric-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.metric-value-accent {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #C0392B;
+}
+
+/* ── ScrollPane ───────────────────────────────────────────── */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .scroll-bar:vertical > .track {
+    -fx-background-color: #E8E0D8;
+    -fx-background-radius: 4;
+}
+
+.scroll-pane > .scroll-bar:vertical > .thumb {
+    -fx-background-color: #C0392B;
+    -fx-background-radius: 4;
+    -fx-opacity: 0.55;
+}
+
+.scroll-pane > .scroll-bar:vertical > .thumb:hover {
+    -fx-opacity: 1.0;
+}
+
+.scroll-pane > .scroll-bar:horizontal {
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}

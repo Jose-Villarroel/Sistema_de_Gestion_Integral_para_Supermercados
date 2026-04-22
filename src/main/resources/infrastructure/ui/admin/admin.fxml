@@ -6,77 +6,64 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.admin.AdminController"
-            style="-fx-background-color: #f5f5f5;">
+            stylesheets="@../base.css,@admin.css">
 
-    <!-- Barra superior -->
     <top>
-        <HBox style="-fx-background-color: #2c3e50; -fx-padding: 12 20;"
-              alignment="CENTER_LEFT" spacing="16">
-            <Label text="🛒 MasterMarket"
-                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
+            <Label text="🛒 MasterMarket" styleClass="top-bar-brand"/>
             <Pane HBox.hgrow="ALWAYS"/>
-            <Label text="Panel de Administrador"
-                   style="-fx-text-fill: #bdc3c7; -fx-font-size: 13;"/>
+            <Label text="Panel de Administrador" styleClass="top-bar-context"/>
             <Button text="Cerrar Sesión"
                     onAction="#cerrarSesion"
-                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;
-                           -fx-cursor: hand; -fx-border-radius: 4; -fx-background-radius: 4;"/>
+                    styleClass="btn-cerrar-sesion"/>
         </HBox>
     </top>
 
-    <!-- Sidebar izquierdo -->
     <left>
-        <VBox style="-fx-background-color: #922b21; -fx-pref-width: 180; -fx-padding: 10 0;"
-              spacing="2">
+        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox styleClass="sidebar" spacing="2">
 
-            <Button fx:id="btnEmpleados" text="Empleados"
+            <Button fx:id="btnEmpleados" text="👤  Empleados"
                     onAction="#mostrarEmpleados"
                     maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: white;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
-                           -fx-padding: 12 20;"/>
+                    styleClass="sidebar-btn"/>
 
-            <Button fx:id="btnProductos" text="Catálogo"
+            <Button fx:id="btnProductos" text="📦  Catálogo"
                     onAction="#mostrarProductos"
                     maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: white;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
-                           -fx-padding: 12 20;"/>
+                    styleClass="sidebar-btn"/>
 
-            <Button fx:id="btnInventario" text="Inventario"
+            <Button fx:id="btnInventario" text="📊  Inventario"
                     onAction="#mostrarInventario"
                     maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: white;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
-                           -fx-padding: 12 20;"/>
+                    styleClass="sidebar-btn"/>
 
-            <Button fx:id="btnClientes" text="Clientes"
+            <Button fx:id="btnClientes" text="👥  Clientes"
                     onAction="#mostrarClientes"
                     maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: white;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
-                           -fx-padding: 12 20;"/>
+                    styleClass="sidebar-btn"/>
 
-            <Button fx:id="btnReportes" text="Reportes"
+            <Button fx:id="btnReportes" text="📋  Reportes"
                     onAction="#mostrarReportes"
                     maxWidth="Infinity"
-                    style="-fx-background-color: transparent; -fx-text-fill: white;
-                           -fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT;
-                           -fx-padding: 12 20;"/>
-        </VBox>
+                    styleClass="sidebar-btn"/>
+                </VBox>
+            </content>
+        </ScrollPane>
     </left>
 
-    <!-- Contenido central dinámico -->
     <center>
-        <StackPane fx:id="contenidoCentral"
-                   style="-fx-background-color: #f5f5f5;">
-            <VBox alignment="CENTER" spacing="16">
-                <Label text="Panel de Administrador"
-                       style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                <Label text="Seleccione una opción del menú"
-                       style="-fx-font-size: 14; -fx-text-fill: #7f8c8d;"/>
-            </VBox>
-        </StackPane>
+        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <StackPane fx:id="contenidoCentral" styleClass="content-area">
+                    <VBox alignment="CENTER" spacing="16">
+                        <Label text="Panel de Administrador" styleClass="welcome-title"/>
+                        <Label text="Seleccione una opción del menú" styleClass="welcome-subtitle"/>
+                    </VBox>
+                </StackPane>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>

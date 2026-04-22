@@ -1,5 +1,5 @@
 /* =============================================================
-   CLIENTES.CSS — MasterMarket · Administrar Clientes
+   INVENTARIO.CSS — MasterMarket · Control de Inventario
    Pontificia Universidad Javeriana · 2026
    ============================================================= */
 
@@ -7,11 +7,6 @@
 .root {
     -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 13px;
-    -fx-background-color: #F5F2EE;
-}
-
-/* ── Contenedor principal ─────────────────────────────────── */
-.main-container {
     -fx-background-color: #F5F2EE;
 }
 
@@ -24,10 +19,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
 }
 
-.header-icon {
-    -fx-font-size: 20px;
-}
-
 .header-title {
     -fx-font-size: 17px;
     -fx-font-weight: bold;
@@ -38,54 +29,6 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #1A1A1A;
-}
-
-/* ── Tarjetas de resumen ──────────────────────────────────── */
-.card {
-    -fx-background-color: #FFFFFF;
-    -fx-background-radius: 10;
-    -fx-border-color: #E8E0D8;
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
-    -fx-padding: 16 20 16 20;
-    -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 6;
-}
-
-.card-label {
-    -fx-font-size: 11px;
-    -fx-text-fill: #6B6B6B;
-}
-
-.card-value {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1A1A1A;
-}
-
-.card-value-accent {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #C0392B;
-}
-
-.card-value-muted {
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #E67E22;
-}
-
-/* ── Botón Nuevo cliente (etiqueta estilizada) ────────────── */
-.btn-nuevo {
-    -fx-background-color: #C0392B;
-    -fx-background-radius: 6;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-padding: 9 16 9 16;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(192,57,43,0.28), 8, 0, 0, 2);
 }
 
 /* ── Panel formulario ─────────────────────────────────────── */
@@ -101,7 +44,7 @@
     -fx-text-fill: #3A3A3A;
 }
 
-/* ── Campos de texto ──────────────────────────────────────── */
+/* ── Campos ───────────────────────────────────────────────── */
 .text-field {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 6;
@@ -112,7 +55,6 @@
     -fx-font-size: 13px;
     -fx-text-fill: #1A1A1A;
     -fx-prompt-text-fill: #B0A89E;
-    -fx-pref-height: 34;
 }
 
 .text-field:focused {
@@ -121,10 +63,36 @@
     -fx-effect: dropshadow(gaussian, rgba(192,57,43,0.10), 6, 0, 0, 0);
 }
 
-.required-label {
-    -fx-font-size: 11px;
-    -fx-text-fill: #9A9290;
-    -fx-font-style: italic;
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6;
+    -fx-border-color: #CFCAC4;
+    -fx-border-radius: 6;
+    -fx-border-width: 1.2;
+    -fx-font-size: 13px;
+    -fx-padding: 2 6 2 6;
+}
+
+.combo-box:focused {
+    -fx-border-color: #C0392B;
+    -fx-border-width: 1.8;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #1A1A1A;
+    -fx-padding: 6 10 6 10;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E8E0D8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 4);
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #FDEEEE;
+    -fx-text-fill: #C0392B;
 }
 
 /* ── Botones ──────────────────────────────────────────────── */
@@ -184,26 +152,46 @@
     -fx-border-color: #A09890;
 }
 
-.btn-danger {
-    -fx-background-color: #FDEEEE;
+/* Botón de alerta */
+.btn-alert {
+    -fx-background-color: #FEF5EB;
     -fx-background-radius: 6;
-    -fx-text-fill: #C0392B;
+    -fx-text-fill: #E67E22;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-padding: 9 18 9 18;
+    -fx-padding: 8 14 8 14;
     -fx-cursor: hand;
-    -fx-border-color: #F1A9A9;
+    -fx-border-color: #F5CBA7;
     -fx-border-radius: 6;
     -fx-border-width: 1.2;
-    -fx-pref-height: 36;
 }
 
-.btn-danger:hover {
-    -fx-background-color: #F9D8D5;
+.btn-alert:hover {
+    -fx-background-color: #FDEBD0;
+    -fx-border-color: #E67E22;
+}
+
+/* Botón buscar (secundario neutro) */
+.btn-search {
+    -fx-background-color: #F5F2EE;
+    -fx-background-radius: 6;
+    -fx-text-fill: #3A3A3A;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+    -fx-border-color: #CFCAC4;
+    -fx-border-radius: 6;
+    -fx-border-width: 1.2;
+}
+
+.btn-search:hover {
+    -fx-background-color: #FDEEEE;
+    -fx-text-fill: #C0392B;
     -fx-border-color: #C0392B;
 }
 
-/* ── Panel tabla ──────────────────────────────────────────── */
+/* ── Panel de tabla ───────────────────────────────────────── */
 .table-panel {
     -fx-background-color: #FFFFFF;
 }
@@ -285,20 +273,13 @@
     -fx-background-color: #F5F2EE;
 }
 
-.help-label {
-    -fx-font-size: 11px;
-    -fx-text-fill: #9A9290;
-    -fx-font-style: italic;
-    -fx-padding: 4 0 0 0;
-}
-
 /* ── SplitPane ────────────────────────────────────────────── */
-.main-split {
+.split-pane {
     -fx-background-color: #F5F2EE;
     -fx-padding: 0;
 }
 
-.main-split > .split-pane-divider {
+.split-pane > .split-pane-divider {
     -fx-background-color: #E8E0D8;
     -fx-padding: 0 1 0 1;
 }

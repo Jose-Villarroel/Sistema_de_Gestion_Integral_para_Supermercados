@@ -10,7 +10,7 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="controllers.autenticacion.LoginController"
            styleClass="root-pane"
-           stylesheets="@login.css">
+           stylesheets="@../base.css,@login.css">
 
     <!-- Background split -->
     <HBox>
@@ -24,7 +24,7 @@
         <!-- Logo / Icon area -->
         <VBox alignment="CENTER" styleClass="logo-area">
             <Label text="🛒" styleClass="logo-icon"/>
-            <Label text="SUPERMARKET" styleClass="brand-name"/>
+            <Label text="MasterMarket" styleClass="brand-name"/>
             <Label text="Sistema de Gestión" styleClass="brand-sub"/>
         </VBox>
 
@@ -56,7 +56,7 @@
         </VBox>
 
         <!-- Footer -->
-        <Label text="2026 SuperMarket Pro"
+        <Label text="v1.0 · Pontificia Universidad Javeriana · 2026"
                styleClass="footer-label"/>
 
     </VBox>

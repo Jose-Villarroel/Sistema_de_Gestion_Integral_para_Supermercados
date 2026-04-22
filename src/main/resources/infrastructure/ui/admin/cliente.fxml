@@ -6,7 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.admin.ClienteController"
-            stylesheets="@clientes.css">
+            stylesheets="@../base.css,@clientes.css">
 
     <top>
         <VBox styleClass="header">
@@ -19,29 +19,31 @@
     </top>
 
     <center>
-        <VBox spacing="15" styleClass="main-container">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="15" styleClass="main-container">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
 
             <!-- Tarjetas de resumen -->
             <HBox spacing="15">
-                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Total clientes" styleClass="card-label"/>
                     <Label fx:id="lblTotalClientes" text="0" styleClass="card-value"/>
                 </VBox>
-                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Puntos acumulados (mes)" styleClass="card-label"/>
                     <Label fx:id="lblPuntosAcumulados" text="0" styleClass="card-value-accent"/>
                 </VBox>
-                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
                     <Label text="Puntos canjeados (mes)" styleClass="card-label"/>
                     <Label fx:id="lblPuntosCanjeados" text="0" styleClass="card-value-muted"/>
                 </VBox>
             </HBox>
 
             <!-- Contenido principal -->
-            <SplitPane dividerPositions="0.35" styleClass="main-split" VBox.vgrow="ALWAYS">
+                    <SplitPane dividerPositions="0.35" styleClass="main-split" VBox.vgrow="ALWAYS">
 
                 <!-- Panel formulario -->
                 <VBox styleClass="form-panel" spacing="15">
@@ -144,8 +146,10 @@
                            styleClass="help-label"/>
                 </VBox>
 
-            </SplitPane>
-        </VBox>
+                    </SplitPane>
+                </VBox>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>

@@ -5,17 +5,16 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controllers.supervisor.InventarioController">
+            fx:controller="controllers.supervisor.InventarioController"
+            stylesheets="@../base.css,@inventario.css">
 
-    <!-- HEADER -->
     <top>
-        <VBox style="-fx-background-color: #2c3e50; -fx-padding: 12 20;">
+        <VBox styleClass="header">
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Control de Inventario"
-                       style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+                <Label text="Control de Inventario" styleClass="header-title"/>
                 <Pane HBox.hgrow="ALWAYS"/>
-                <Button text="Cerrar Sesion" onAction="#cerrarSesion"
-                        style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                <Button text="Cerrar Sesión" onAction="#cerrarSesion"
+                        styleClass="btn-primary"/>
             </HBox>
         </VBox>
     </top>
@@ -24,66 +23,74 @@
         <SplitPane dividerPositions="0.4">
 
             <!-- FORMULARIO -->
-            <VBox spacing="15">
-                <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                <content>
+                    <VBox styleClass="form-panel" spacing="14">
+                        <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
-                <Label text="Registrar Movimiento"
-                       style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                        <Label text="Registrar Movimiento" styleClass="section-title"/>
 
-                <!-- ID producto -->
-                <VBox spacing="5">
-                    <Label text="ID del Producto *"/>
-                    <HBox spacing="8">
-                        <TextField fx:id="txtCodigo" promptText="Ej: 1"
-                                   HBox.hgrow="ALWAYS"/>
-                        <Button text="Buscar" onAction="#buscarProducto"/>
-                    </HBox>
-                </VBox>
+                        <VBox spacing="5">
+                            <Label text="ID del Producto *" styleClass="field-label"/>
+                            <HBox spacing="8">
+                                <TextField fx:id="txtCodigo" promptText="Ej: 1"
+                                           styleClass="text-field" HBox.hgrow="ALWAYS"/>
+                                <Button text="Buscar" onAction="#buscarProducto"
+                                        styleClass="btn-search"/>
+                            </HBox>
+                        </VBox>
 
-                <Label fx:id="lblInfoProducto" wrapText="true"/>
+                        <Label fx:id="lblInfoProducto" wrapText="true"
+                               style="-fx-text-fill: #3A3A3A; -fx-font-size: 12px;"/>
 
-                <!-- Tipo -->
-                <VBox spacing="5">
-                    <Label text="Tipo de Movimiento *"/>
-                    <ComboBox fx:id="cmbTipo" onAction="#onTipoChanged"/>
-                </VBox>
+                        <VBox spacing="5">
+                            <Label text="Tipo de Movimiento *" styleClass="field-label"/>
+                            <ComboBox fx:id="cmbTipo" onAction="#onTipoChanged"
+                                      styleClass="combo-box" maxWidth="Infinity"/>
+                        </VBox>
 
-                <!-- Cantidad -->
-                <VBox spacing="5">
-                    <Label text="Cantidad *"/>
-                    <TextField fx:id="txtCantidad"/>
-                </VBox>
+                        <VBox spacing="5">
+                            <Label text="Cantidad *" styleClass="field-label"/>
+                            <TextField fx:id="txtCantidad" styleClass="text-field"
+                                       promptText="0"/>
+                        </VBox>
 
-                <!-- Motivo -->
-                <VBox spacing="5">
-                    <Label text="Motivo *"/>
-                    <ComboBox fx:id="cmbMotivo"/>
-                </VBox>
+                        <VBox spacing="5">
+                            <Label text="Motivo *" styleClass="field-label"/>
+                            <ComboBox fx:id="cmbMotivo" styleClass="combo-box"
+                                      maxWidth="Infinity"/>
+                        </VBox>
 
-                <!-- Botones -->
-                <HBox spacing="10" alignment="CENTER">
-                    <Button text="Registrar" onAction="#registrarMovimiento"/>
-                    <Button text="Limpiar" onAction="#limpiarFormulario"/>
-                </HBox>
+                        <HBox spacing="10" alignment="CENTER">
+                            <Button text="Registrar" onAction="#registrarMovimiento"
+                                    styleClass="btn-primary" prefWidth="130"/>
+                            <Button text="Limpiar" onAction="#limpiarFormulario"
+                                    styleClass="btn-clear" prefWidth="110"/>
+                        </HBox>
 
-            </VBox>
+                    </VBox>
+                </content>
+            </ScrollPane>
 
             <!-- TABLA -->
-            <VBox spacing="10">
+            <VBox styleClass="table-panel" spacing="10">
                 <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
 
                 <HBox spacing="10">
-                    <TextField fx:id="txtBuscar" promptText="Buscar por ID..."/>
-                    <Button text="Alertas" onAction="#verAlertasStock"/>
+                    <TextField fx:id="txtBuscar" promptText="Buscar por ID..."
+                               styleClass="search-field" HBox.hgrow="ALWAYS"/>
+                    <Button text="Ver Alertas" onAction="#verAlertasStock"
+                            styleClass="btn-alert"/>
                 </HBox>
 
-                <TableView fx:id="tableMovimientos" VBox.vgrow="ALWAYS">
+                <TableView fx:id="tableMovimientos" VBox.vgrow="ALWAYS"
+                           styleClass="table-view">
                     <columns>
-                        <TableColumn fx:id="colFecha" text="Fecha"/>
-                        <TableColumn fx:id="colTipo" text="Tipo"/>
-                        <TableColumn fx:id="colProducto" text="Producto"/>
-                        <TableColumn fx:id="colCantidad" text="Cantidad"/>
-                        <TableColumn fx:id="colMotivo" text="Motivo"/>
+                        <TableColumn fx:id="colFecha" text="FECHA" prefWidth="130"/>
+                        <TableColumn fx:id="colTipo" text="TIPO" prefWidth="100"/>
+                        <TableColumn fx:id="colProducto" text="PRODUCTO" prefWidth="160"/>
+                        <TableColumn fx:id="colCantidad" text="CANTIDAD" prefWidth="90"/>
+                        <TableColumn fx:id="colMotivo" text="MOTIVO" prefWidth="140"/>
                     </columns>
                 </TableView>
 

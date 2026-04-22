@@ -69,21 +69,13 @@ public class AdminController {
     }
 
     private void marcarActivo(Button boton) {
-        // Resetear el botón anterior
         if (botonActivo != null) {
-            botonActivo.setStyle(
-                "-fx-background-color: transparent; -fx-text-fill: white; " +
-                "-fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT; " +
-                "-fx-padding: 12 20;"
-            );
+            botonActivo.getStyleClass().remove("sidebar-btn-active");
         }
 
-        // Marcar el nuevo botón activo
-        boton.setStyle(
-            "-fx-background-color: #7b241c; -fx-text-fill: white; " +
-            "-fx-font-size: 13; -fx-cursor: hand; -fx-alignment: CENTER_LEFT; " +
-            "-fx-padding: 12 20; -fx-font-weight: bold;"
-        );
+        if (!boton.getStyleClass().contains("sidebar-btn-active")) {
+            boton.getStyleClass().add("sidebar-btn-active");
+        }
 
         botonActivo = boton;
     }

@@ -6,7 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.admin.ProductoController"
-            stylesheets="@productos.css">
+            stylesheets="@../base.css,@productos.css">
 
     <top>
         <VBox styleClass="header">
@@ -19,7 +19,9 @@
     </top>
 
     <center>
-        <SplitPane dividerPositions="0.4" styleClass="main-split">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <SplitPane dividerPositions="0.4" styleClass="main-split">
 
             <VBox styleClass="form-panel" spacing="15">
                 <padding>
@@ -149,7 +151,9 @@
                        styleClass="help-label"/>
             </VBox>
 
-        </SplitPane>
+                </SplitPane>
+            </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>
