@@ -91,6 +91,7 @@
                         <TableColumn fx:id="colProducto" text="PRODUCTO" prefWidth="160"/>
                         <TableColumn fx:id="colCantidad" text="CANTIDAD" prefWidth="90"/>
                         <TableColumn fx:id="colMotivo" text="MOTIVO" prefWidth="140"/>
+                        <TableColumn fx:id="colStockNuevo" text="STOCK ACTUAL" prefWidth="110"/>
                     </columns>
                 </TableView>
 

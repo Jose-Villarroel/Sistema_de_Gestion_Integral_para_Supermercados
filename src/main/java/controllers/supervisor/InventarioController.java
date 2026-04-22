@@ -43,6 +43,8 @@ public class InventarioController {
     @FXML private TableColumn<MovimientoInventario, Integer> colCantidad;
     @FXML private TableColumn<MovimientoInventario, String> colMotivo;
 
+    @FXML private TableColumn<MovimientoInventario, Integer> colStockNuevo;
+
     private ControlarInventarioUseCase useCase;
     private H2ProductoRepository productoRepository;
     private H2MovimientoInventarioRepository movimientoRepository;
@@ -90,11 +92,12 @@ public class InventarioController {
                 )
         );
 
-        colProducto.setCellValueFactory(data ->
-                new SimpleStringProperty(
-                        "ID: " + data.getValue().getIdProducto()
-                )
-        );
+        colProducto.setCellValueFactory(data -> {
+            int idProducto = data.getValue().getIdProducto();
+            return productoRepository.buscarPorId(idProducto)
+                    .map(p -> new SimpleStringProperty(idProducto + " - " + p.getNombre()))
+                    .orElse(new SimpleStringProperty("ID: " + idProducto));
+        });
 
         colCantidad.setCellValueFactory(data ->
                 new SimpleIntegerProperty(
@@ -107,6 +110,13 @@ public class InventarioController {
                         data.getValue().getMotivo()
                 )
         );
+
+        colStockNuevo.setCellValueFactory(data -> {
+            int idProducto = data.getValue().getIdProducto();
+            return productoRepository.buscarPorId(idProducto)
+                    .map(p -> new SimpleIntegerProperty(p.getStockActual()).asObject())
+                    .orElse(new SimpleIntegerProperty(0).asObject());
+        });
     }
 
     @FXML
@@ -296,6 +306,8 @@ public class InventarioController {
                 550
         );
     }
+
+
 
     private void cargarMovimientos() {
         try {
