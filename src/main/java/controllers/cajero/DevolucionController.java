@@ -7,17 +7,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import repositories.DatabaseConnection;
 import services.autenticacion.SesionUsuario;
 import services.ventas.ProcesarDevolucionUseCase;
 import services.ventas.ProcesarDevolucionUseCase.DetalleVentaRetornable;
+import services.ventas.ProcesarDevolucionUseCase.EstadoProductoDevolucion;
 import services.ventas.ProcesarDevolucionUseCase.ItemDevolucion;
+import services.ventas.ProcesarDevolucionUseCase.MetodoReembolso;
+import services.ventas.ProcesarDevolucionUseCase.ResultadoDevolucion;
 import services.ventas.ProcesarDevolucionUseCase.SolicitudDevolucion;
 import services.ventas.ProcesarFinalizarVentaUseCase;
 
@@ -30,10 +28,16 @@ public class DevolucionController {
     @FXML private TextField txtCantidadDevolver;
     @FXML private TextField txtMotivoProducto;
     @FXML private TextField txtMotivoGeneral;
-    
+
+    @FXML private ComboBox<String> cmbEstadoProducto;
+    @FXML private ComboBox<String> cmbMetodoReembolso;
+
+    @FXML private TextField txtSupervisorUsuario;
+    @FXML private PasswordField txtSupervisorPassword;
+
     @FXML private Label lblTotalDevolver;
     @FXML private Label lblMensaje;
-    
+
     @FXML private TableView<DetalleDevolucionFx> tblDetalles;
     @FXML private TableColumn<DetalleDevolucionFx, Number> colCodigo;
     @FXML private TableColumn<DetalleDevolucionFx, String> colProducto;
@@ -42,16 +46,19 @@ public class DevolucionController {
     @FXML private TableColumn<DetalleDevolucionFx, String> colPrecio;
     @FXML private TableColumn<DetalleDevolucionFx, Number> colADevolver;
     @FXML private TableColumn<DetalleDevolucionFx, String> colMotivo;
+    @FXML private TableColumn<DetalleDevolucionFx, String> colEstado;
 
     private final ObservableList<DetalleDevolucionFx> detallesObList = FXCollections.observableArrayList();
+
+    private final DatabaseConnection databaseConnection;
     private final ProcesarDevolucionUseCase procesarDevolucionUseCase;
     private final Usuario usuarioActual;
-    
+
     private int idVentaActual = -1;
 
     public DevolucionController() {
-        DatabaseConnection db = new DatabaseConnection();
-        this.procesarDevolucionUseCase = new ProcesarDevolucionUseCase(db);
+        this.databaseConnection = new DatabaseConnection();
+        this.procesarDevolucionUseCase = new ProcesarDevolucionUseCase(databaseConnection);
         this.usuarioActual = SesionUsuario.getUsuarioActual();
     }
 
@@ -59,10 +66,23 @@ public class DevolucionController {
     public void initialize() {
         configurarTabla();
         tblDetalles.setItems(detallesObList);
+
+        cmbEstadoProducto.setItems(FXCollections.observableArrayList(
+                "CERRADO",
+                "ABIERTO",
+                "DEFECTUOSO",
+                "VENCIDO"
+        ));
+        cmbMetodoReembolso.setItems(FXCollections.observableArrayList(
+                "EFECTIVO",
+                "NOTA_CREDITO",
+                "CAMBIO_PRODUCTO"
+        ));
+
         lblTotalDevolver.setText("$0.00");
-        
+
         if (usuarioActual == null) {
-            mostrarMensaje("No hay un cajero autenticado. Inicie sesion nuevamente.", true);
+            mostrarMensaje("No hay un cajero autenticado. Inicie sesión nuevamente.", true);
         } else {
             mostrarMensaje("Módulo de devoluciones listo.", false);
         }
@@ -83,23 +103,28 @@ public class DevolucionController {
         try {
             int idVenta = Integer.parseInt(txtIdVenta.getText().trim());
             List<DetalleVentaRetornable> detalles = procesarDevolucionUseCase.obtenerDetallesVenta(idVenta);
-            
+
             if (detalles.isEmpty()) {
                 mostrarMensaje("No se encontró la venta o no tiene detalles.", true);
                 return;
             }
-            
+
             idVentaActual = idVenta;
             detallesObList.clear();
+
             for (DetalleVentaRetornable d : detalles) {
                 detallesObList.add(new DetalleDevolucionFx(
-                    d.idProducto(), d.nombreProducto(), d.comprada(), d.devuelta(), d.precioRealUnitario()
+                        d.idProducto(),
+                        d.nombreProducto(),
+                        d.comprada(),
+                        d.devuelta(),
+                        d.precioRealUnitario()
                 ));
             }
-            
+
             calcularTotal();
             mostrarMensaje("Venta cargada exitosamente.", false);
-            
+
         } catch (NumberFormatException e) {
             mostrarMensaje("El ID de la venta debe ser numérico.", true);
         } catch (Exception e) {
@@ -121,22 +146,32 @@ public class DevolucionController {
                 mostrarMensaje("La cantidad no puede ser negativa.", true);
                 return;
             }
-            
+
             int disponibleParaDevolver = seleccionado.getComprada() - seleccionado.getDevuelta();
             if (cantidad > disponibleParaDevolver) {
                 mostrarMensaje("La cantidad a devolver no puede superar la cantidad disponible (" + disponibleParaDevolver + ").", true);
                 return;
             }
-            
-            seleccionado.setaDevolver(cantidad);
+
+            String estado = cmbEstadoProducto.getValue();
+            if (estado == null || estado.isBlank()) {
+                mostrarMensaje("Debe seleccionar el estado del producto.", true);
+                return;
+            }
+
+            seleccionado.setADevolver(cantidad);
             seleccionado.setMotivo(txtMotivoProducto.getText().trim());
+            seleccionado.setEstadoProducto(estado);
+
             tblDetalles.refresh();
             calcularTotal();
-            
+
             txtCantidadDevolver.clear();
             txtMotivoProducto.clear();
-            mostrarMensaje("Cantidad a devolver actualizada.", false);
-            
+            cmbEstadoProducto.getSelectionModel().clearSelection();
+
+            mostrarMensaje("Producto preparado para devolución.", false);
+
         } catch (NumberFormatException e) {
             mostrarMensaje("La cantidad debe ser numérica.", true);
         }
@@ -148,19 +183,29 @@ public class DevolucionController {
             mostrarMensaje("Primero busque una venta.", true);
             return;
         }
-        
+
+        if (cmbMetodoReembolso.getValue() == null) {
+            mostrarMensaje("Debe seleccionar un método de reembolso.", true);
+            return;
+        }
+
         List<ItemDevolucion> itemsParaDevolver = new ArrayList<>();
         for (DetalleDevolucionFx d : detallesObList) {
-            if (d.getaDevolver() > 0) {
-                itemsParaDevolver.add(new ItemDevolucion(d.getIdProducto(), d.getaDevolver(), d.getMotivo()));
+            if (d.getADevolver() > 0) {
+                itemsParaDevolver.add(new ItemDevolucion(
+                        d.getIdProducto(),
+                        d.getADevolver(),
+                        d.getMotivo(),
+                        EstadoProductoDevolucion.valueOf(d.getEstadoProducto())
+                ));
             }
         }
-        
+
         if (itemsParaDevolver.isEmpty()) {
             mostrarMensaje("No ha asignado ninguna cantidad a devolver.", true);
             return;
         }
-        
+
         String motivoGeneral = txtMotivoGeneral.getText().trim();
         if (motivoGeneral.isEmpty()) {
             mostrarMensaje("Debe ingresar un motivo general para la devolución.", true);
@@ -168,12 +213,27 @@ public class DevolucionController {
         }
 
         try {
-            SolicitudDevolucion solicitud = new SolicitudDevolucion(idVentaActual, usuarioActual.getEmpleado().getId(), motivoGeneral, itemsParaDevolver);
-            procesarDevolucionUseCase.procesarDevolucion(solicitud);
-            
-            mostrarAlerta("Devolución Procesada", "La devolución ha sido procesada y el inventario actualizado.");
+            SolicitudDevolucion solicitud = new SolicitudDevolucion(
+                    idVentaActual,
+                    usuarioActual.getEmpleado().getId(),
+                    motivoGeneral,
+                    MetodoReembolso.valueOf(cmbMetodoReembolso.getValue()),
+                    txtSupervisorUsuario.getText().trim(),
+                    txtSupervisorPassword.getText(),
+                    itemsParaDevolver
+            );
+
+            ResultadoDevolucion resultado = procesarDevolucionUseCase.procesarDevolucion(solicitud);
+
+            mostrarAlerta(
+                    "Devolución Procesada",
+                    "Devolución procesada.\n" +
+                            "Reembolso: " + ProcesarFinalizarVentaUseCase.formatearMoneda(resultado.totalDevuelto()) +
+                            "\nNúmero: " + resultado.numeroDevolucion()
+            );
+
             limpiarFormulario();
-            
+
         } catch (Exception e) {
             mostrarMensaje(e.getMessage(), true);
         }
@@ -182,7 +242,7 @@ public class DevolucionController {
     private void calcularTotal() {
         double total = 0;
         for (DetalleDevolucionFx d : detallesObList) {
-            total += (d.getaDevolver() * d.getPrecioUnitario());
+            total += d.getADevolver() * d.getPrecioUnitario();
         }
         lblTotalDevolver.setText(ProcesarFinalizarVentaUseCase.formatearMoneda(total));
     }
@@ -194,19 +254,27 @@ public class DevolucionController {
         txtCantidadDevolver.clear();
         txtMotivoProducto.clear();
         txtMotivoGeneral.clear();
+        txtSupervisorUsuario.clear();
+        txtSupervisorPassword.clear();
+        cmbMetodoReembolso.getSelectionModel().clearSelection();
+        cmbEstadoProducto.getSelectionModel().clearSelection();
         lblTotalDevolver.setText("$0.00");
         mostrarMensaje("Listo para una nueva devolución.", false);
     }
 
     private void configurarTabla() {
         tblDetalles.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+
         colCodigo.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getIdProducto()));
         colProducto.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNombre()));
         colComprada.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getComprada()));
         colDevuelta.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getDevuelta()));
-        colPrecio.setCellValueFactory(data -> new SimpleStringProperty(ProcesarFinalizarVentaUseCase.formatearMoneda(data.getValue().getPrecioUnitario())));
-        colADevolver.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getaDevolver()));
+        colPrecio.setCellValueFactory(data -> new SimpleStringProperty(
+                ProcesarFinalizarVentaUseCase.formatearMoneda(data.getValue().getPrecioUnitario())
+        ));
+        colADevolver.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getADevolver()));
         colMotivo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMotivo()));
+        colEstado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEstadoProducto()));
     }
 
     private void mostrarMensaje(String mensaje, boolean error) {
@@ -231,6 +299,7 @@ public class DevolucionController {
         private final double precioUnitario;
         private int aDevolver;
         private String motivo;
+        private String estadoProducto;
 
         public DetalleDevolucionFx(int idProducto, String nombre, int comprada, int devuelta, double precioUnitario) {
             this.idProducto = idProducto;
@@ -240,6 +309,7 @@ public class DevolucionController {
             this.precioUnitario = precioUnitario;
             this.aDevolver = 0;
             this.motivo = "";
+            this.estadoProducto = "";
         }
 
         public int getIdProducto() { return idProducto; }
@@ -247,9 +317,11 @@ public class DevolucionController {
         public int getComprada() { return comprada; }
         public int getDevuelta() { return devuelta; }
         public double getPrecioUnitario() { return precioUnitario; }
-        public int getaDevolver() { return aDevolver; }
-        public void setaDevolver(int aDevolver) { this.aDevolver = aDevolver; }
+        public int getADevolver() { return aDevolver; }
+        public void setADevolver(int aDevolver) { this.aDevolver = aDevolver; }
         public String getMotivo() { return motivo; }
-        public void setMotivo(String motivo) { this.motivo = motivo; }
+        public void setMotivo(String motivo) { this.motivo = motivo == null ? "" : motivo; }
+        public String getEstadoProducto() { return estadoProducto; }
+        public void setEstadoProducto(String estadoProducto) { this.estadoProducto = estadoProducto == null ? "" : estadoProducto; }
     }
 }
