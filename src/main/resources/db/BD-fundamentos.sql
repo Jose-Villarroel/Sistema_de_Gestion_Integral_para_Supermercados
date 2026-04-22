@@ -206,6 +206,8 @@ CREATE TABLE CIERRE_CAJA (
     estado_cierre VARCHAR(30),
     total_transacciones INT,
     observacion VARCHAR(500),
+    id_caja INT UNIQUE,
+    FOREIGN KEY (id_caja) REFERENCES Caja(id_caja),
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
     UNIQUE (fecha_cierre, turno)
 );
@@ -230,6 +232,8 @@ CREATE TABLE Devoluciones (
     motivo VARCHAR(255),
     total_devuelto DECIMAL(10,2),
     estado BOOLEAN,
+    metodo_reembolso VARCHAR(30),
+    numero_devolucion VARCHAR(50) UNIQUE,
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
     FOREIGN KEY (id_venta) REFERENCES Venta(id_venta)
 );
@@ -266,6 +270,8 @@ CREATE TABLE Detalle_devolucion (
     cantidad INT,
     subtotal_devuelto DECIMAL(10,2),
     motivo VARCHAR(255),
+    estado_producto VARCHAR(30),
+    reintegra_inventario BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_devoluciones) REFERENCES Devoluciones(id_devoluciones),
     FOREIGN KEY (id_producto) REFERENCES Producto(id_producto)
 );
@@ -360,7 +366,7 @@ INSERT INTO Cuenta_fidelizacion (id_fidelizacion, id_cliente, numero_tarjeta, pu
 
 
 -- MOVIMIENTOS DE INVENTARIO
-INSERT INTO Movimiento_inventario 
+INSERT INTO Movimiento_inventario
 (id_movimiento, id_empleado, id_tipo_movimiento, id_producto, cantidad, stock_anterior, stock_nuevo, motivo, fecha_movimiento) VALUES
 
 -- Entrada arroz
