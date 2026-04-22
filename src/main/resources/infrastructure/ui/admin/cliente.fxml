@@ -11,7 +11,6 @@
     <top>
         <VBox styleClass="header">
             <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="👥" styleClass="header-icon"/>
                 <Label text="Administrar clientes" styleClass="header-title"/>
             </HBox>
             <Separator/>
@@ -19,12 +18,10 @@
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
-            <content>
-                <VBox spacing="15" styleClass="main-container">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
+        <VBox spacing="15" styleClass="main-container">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
 
             <!-- Tarjetas de resumen -->
             <HBox spacing="15">
@@ -43,77 +40,77 @@
             </HBox>
 
             <!-- Contenido principal -->
-                    <SplitPane dividerPositions="0.35" styleClass="main-split" VBox.vgrow="ALWAYS">
+            <SplitPane dividerPositions="0.35" VBox.vgrow="ALWAYS">
 
-                <!-- Panel formulario -->
-                <VBox styleClass="form-panel" spacing="15">
-                    <padding>
-                        <Insets top="20" right="20" bottom="20" left="20"/>
-                    </padding>
+                <!-- Panel formulario con scroll -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            style="-fx-background-color: #ecf0f1; -fx-border-color: transparent;">
+                    <content>
+                        <VBox styleClass="form-panel" spacing="12">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
 
-                    <HBox alignment="CENTER_LEFT" spacing="10">
-                        <Label text="+ Nuevo cliente" styleClass="btn-nuevo"/>
-                    </HBox>
+                            <Label text="Datos del cliente" styleClass="section-title"/>
 
-                    <Label text="Datos del cliente" styleClass="section-title"/>
+                            <VBox spacing="5">
+                                <Label text="Nombre *" styleClass="field-label"/>
+                                <TextField fx:id="txtNombre"
+                                           promptText="Nombre"
+                                           styleClass="text-field"/>
+                            </VBox>
 
-                    <VBox spacing="5">
-                        <Label text="Nombre *" styleClass="field-label"/>
-                        <TextField fx:id="txtNombre"
-                                   promptText="Nombre"
-                                   styleClass="text-field"/>
-                    </VBox>
+                            <VBox spacing="5">
+                                <Label text="Apellido *" styleClass="field-label"/>
+                                <TextField fx:id="txtApellido"
+                                           promptText="Apellido"
+                                           styleClass="text-field"/>
+                            </VBox>
 
-                    <VBox spacing="5">
-                        <Label text="Apellido *" styleClass="field-label"/>
-                        <TextField fx:id="txtApellido"
-                                   promptText="Apellido"
-                                   styleClass="text-field"/>
-                    </VBox>
+                            <VBox spacing="5">
+                                <Label text="Correo *" styleClass="field-label"/>
+                                <TextField fx:id="txtCorreo"
+                                           promptText="correo@ejemplo.com"
+                                           styleClass="text-field"/>
+                            </VBox>
 
-                    <VBox spacing="5">
-                        <Label text="Correo *" styleClass="field-label"/>
-                        <TextField fx:id="txtCorreo"
-                                   promptText="correo@ejemplo.com"
-                                   styleClass="text-field"/>
-                    </VBox>
+                            <VBox spacing="5">
+                                <Label text="Teléfono *" styleClass="field-label"/>
+                                <TextField fx:id="txtTelefono"
+                                           promptText="3001234567"
+                                           styleClass="text-field"/>
+                            </VBox>
 
-                    <VBox spacing="5">
-                        <Label text="Teléfono *" styleClass="field-label"/>
-                        <TextField fx:id="txtTelefono"
-                                   promptText="3001234567"
-                                   styleClass="text-field"/>
-                    </VBox>
+                            <VBox spacing="5">
+                                <Label text="Dirección" styleClass="field-label"/>
+                                <TextField fx:id="txtDireccion"
+                                           promptText="Dirección (opcional)"
+                                           styleClass="text-field"/>
+                            </VBox>
 
-                    <VBox spacing="5">
-                        <Label text="Dirección" styleClass="field-label"/>
-                        <TextField fx:id="txtDireccion"
-                                   promptText="Dirección (opcional)"
-                                   styleClass="text-field"/>
-                    </VBox>
+                            <VBox spacing="8">
+                                <Button text="Registrar cliente"
+                                        onAction="#registrarCliente"
+                                        styleClass="btn-primary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Modificar cliente"
+                                        onAction="#modificarCliente"
+                                        styleClass="btn-secondary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Desactivar cliente"
+                                        onAction="#desactivarCliente"
+                                        styleClass="btn-danger"
+                                        maxWidth="Infinity"/>
+                                <Button text="Limpiar formulario"
+                                        onAction="#limpiarFormulario"
+                                        styleClass="btn-clear"
+                                        maxWidth="Infinity"/>
+                            </VBox>
 
-                    <HBox spacing="10" alignment="CENTER">
-                        <Button text="Registrar"
-                                onAction="#registrarCliente"
-                                styleClass="btn-primary"
-                                prefWidth="100"/>
-                        <Button text="Modificar"
-                                onAction="#modificarCliente"
-                                styleClass="btn-secondary"
-                                prefWidth="100"/>
-                        <Button text="Limpiar"
-                                onAction="#limpiarFormulario"
-                                styleClass="btn-clear"
-                                prefWidth="100"/>
-                    </HBox>
-
-                    <Button text="Desactivar cliente"
-                            onAction="#desactivarCliente"
-                            styleClass="btn-danger"
-                            maxWidth="Infinity"/>
-
-                    <Label text="* Campos obligatorios" styleClass="required-label"/>
-                </VBox>
+                            <Label text="* Campos obligatorios" styleClass="required-label"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
 
                 <!-- Panel tabla -->
                 <VBox styleClass="table-panel" spacing="10">
@@ -121,24 +118,28 @@
                         <Insets top="20" right="20" bottom="20" left="20"/>
                     </padding>
 
-                    <HBox spacing="10" alignment="CENTER_LEFT">
+                    <!-- Buscador con botón -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
                         <TextField fx:id="txtBuscar"
-                                   promptText="🔍 Buscar por nombre o cédula..."
+                                   promptText="Buscar por nombre o cédula..."
                                    styleClass="search-field"
                                    HBox.hgrow="ALWAYS"/>
+                        <Button text="Buscar"
+                                onAction="#buscarCliente"
+                                styleClass="btn-search"/>
                     </HBox>
 
                     <TableView fx:id="tableClientes"
                                styleClass="table-view"
                                VBox.vgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="colId" text="CÓDIGO" prefWidth="80"/>
-                            <TableColumn fx:id="colNombre" text="NOMBRE" prefWidth="160"/>
-                            <TableColumn fx:id="colCorreo" text="CORREO" prefWidth="160"/>
-                            <TableColumn fx:id="colTelefono" text="TELÉFONO" prefWidth="110"/>
-                            <TableColumn fx:id="colTarjeta" text="TARJETA" prefWidth="110"/>
-                            <TableColumn fx:id="colPuntos" text="PUNTOS" prefWidth="80"/>
-                            <TableColumn fx:id="colActivo" text="ESTADO" prefWidth="80"/>
+                            <TableColumn fx:id="colId" text="CÓDIGO" prefWidth="75"/>
+                            <TableColumn fx:id="colNombre" text="NOMBRE" prefWidth="150"/>
+                            <TableColumn fx:id="colCorreo" text="CORREO" prefWidth="155"/>
+                            <TableColumn fx:id="colTelefono" text="TELÉFONO" prefWidth="105"/>
+                            <TableColumn fx:id="colTarjeta" text="TARJETA" prefWidth="105"/>
+                            <TableColumn fx:id="colPuntos" text="PUNTOS" prefWidth="75"/>
+                            <TableColumn fx:id="colActivo" text="ESTADO" prefWidth="75"/>
                         </columns>
                     </TableView>
 
@@ -146,10 +147,8 @@
                            styleClass="help-label"/>
                 </VBox>
 
-                    </SplitPane>
-                </VBox>
-            </content>
-        </ScrollPane>
+            </SplitPane>
+        </VBox>
     </center>
 
 </BorderPane>
