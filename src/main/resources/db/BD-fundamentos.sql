@@ -309,13 +309,13 @@ INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, 
 
 -- =========================
 -- USUARIOS (password.hashCode())
--- admin = 3198785
+-- admin = 92668751
 -- 1234 = 1509442
 -- inventario / contraseña 1234
 -- cajero / contraseña 1234
 -- =========================
 INSERT INTO Usuario (id_usuario, id_rol, id_empleado, username, password_hash, intentos_fallidos, bloqueado_hasta, ultimo_acceso, estado_usuario) VALUES
-(1, 1, 1, 'admin', '3198785', 0, NULL, CURRENT_DATE, TRUE),
+(1, 1, 1, 'admin', '92668751', 0, NULL, CURRENT_DATE, TRUE),
 (2, 3, 2, 'inventario', '1509442', 0, NULL, CURRENT_DATE, TRUE),
 (3, 2, 3, 'cajero', '1509442', 0, NULL, CURRENT_DATE, TRUE);
 
