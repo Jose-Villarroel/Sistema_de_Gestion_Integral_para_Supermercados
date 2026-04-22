@@ -276,6 +276,17 @@ public class PosController {
         );
     }
 
+    
+    @FXML
+    public void abrirDevoluciones() {
+        String nombreEmpleado = usuarioActual != null ? usuarioActual.getEmpleado().getNombre() : "Cajero";
+        MainApp.navegarA(
+                "/infrastructure/ui/cajero/devolucion.fxml",
+                "MasterMarket - Devoluciones | " + nombreEmpleado,
+                1100, 700
+        );
+    }
+
     @FXML
     public void abrirCierreCaja() {
         MainApp.navegarA(
