@@ -58,6 +58,7 @@ public class PosController {
 
     @FXML private ComboBox<String> cmbTipoDescuento;
     @FXML private ComboBox<String> cmbMetodoPago;
+    @FXML private ComboBox<String> cmbTurno;
 
     @FXML private CheckBox chkFacturaElectronica;
     @FXML private CheckBox chkImprimir;
@@ -233,6 +234,7 @@ public class PosController {
                     construirItemsVenta(),
                     clienteSeleccionado,
                     usuarioActual.getEmpleado(),
+                    obtenerTurno(),
                     obtenerDescuentoManual(),
                     obtenerMetodoPago(),
                     obtenerMontoRecibido(),
@@ -310,6 +312,7 @@ public class PosController {
         cmbTipoDescuento.setItems(FXCollections.observableArrayList("NINGUNO", "PORCENTAJE", "VALOR_FIJO"));
         cmbTipoDescuento.setValue("NINGUNO");
         cmbMetodoPago.setItems(FXCollections.observableArrayList("EFECTIVO", "TARJETA", "TRANSFERENCIA", "MIXTO"));
+        cmbTurno.setItems(FXCollections.observableArrayList("MANANA", "TARDE", "NOCHE"));
     }
 
     private void aplicarEstilosLegibles() {
@@ -336,8 +339,10 @@ public class PosController {
         String comboStyle = "-fx-text-fill: #1f2933; -fx-background-color: white;";
         cmbTipoDescuento.setStyle(comboStyle);
         cmbMetodoPago.setStyle(comboStyle);
+        cmbTurno.setStyle(comboStyle);
         configurarTextoCombo(cmbTipoDescuento);
         configurarTextoCombo(cmbMetodoPago);
+        configurarTextoCombo(cmbTurno);
 
         chkFacturaElectronica.setStyle("-fx-text-fill: #1f2933;");
         chkImprimir.setStyle("-fx-text-fill: #1f2933;");
@@ -423,6 +428,14 @@ public class PosController {
         return MetodoPago.valueOf(metodo);
     }
 
+    private String obtenerTurno() {
+        String turno = cmbTurno.getValue();
+        if (turno == null || turno.isBlank()) {
+            throw new IllegalArgumentException("Debe seleccionar el turno de la venta");
+        }
+        return turno;
+    }
+
     private double obtenerMontoRecibido() {
         String texto = txtMontoRecibido.getText() == null ? "" : txtMontoRecibido.getText().trim();
         if (texto.isBlank()) {
@@ -439,6 +452,7 @@ public class PosController {
         if (usuarioActual == null) {
             throw new IllegalArgumentException("No hay un cajero autenticado. Inicie sesion nuevamente.");
         }
+        obtenerTurno();
         if (lineas.isEmpty()) {
             throw new IllegalArgumentException("You must add at least one product to the sale");
         }

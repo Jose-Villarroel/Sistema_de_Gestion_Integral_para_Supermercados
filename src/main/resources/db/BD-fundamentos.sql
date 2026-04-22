@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS Detalle_orden_compra;
 DROP TABLE IF EXISTS Detalle_venta;
 DROP TABLE IF EXISTS Devoluciones;
 DROP TABLE IF EXISTS Orden_compra;
+DROP TABLE IF EXISTS CIERRE_CAJA;
 DROP TABLE IF EXISTS Caja;
 DROP TABLE IF EXISTS Pago_venta;
 DROP TABLE IF EXISTS Movimiento_puntos;
@@ -133,6 +134,8 @@ CREATE TABLE Venta (
     id_venta INT PRIMARY KEY AUTO_INCREMENT,
     id_empleado INT,
     fecha_venta DATE,
+    turno VARCHAR(20),
+    metodo_pago VARCHAR(30),
     subtotal DECIMAL(10,2),
     descuento_total INT,
     impuesto_total DECIMAL(10,2),
@@ -189,6 +192,22 @@ CREATE TABLE Caja (
     estado BOOLEAN,
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
     FOREIGN KEY (id_venta) REFERENCES Venta(id_venta)
+);
+
+CREATE TABLE CIERRE_CAJA (
+    id_cierre INT PRIMARY KEY AUTO_INCREMENT,
+    numero_cierre VARCHAR(50) UNIQUE,
+    fecha_cierre DATE,
+    turno VARCHAR(20),
+    id_empleado INT,
+    efectivo_esperado DECIMAL(10,2),
+    efectivo_contado DECIMAL(10,2),
+    diferencia DECIMAL(10,2),
+    estado_cierre VARCHAR(30),
+    total_transacciones INT,
+    observacion VARCHAR(500),
+    FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+    UNIQUE (fecha_cierre, turno)
 );
 
 CREATE TABLE Orden_compra (
@@ -290,13 +309,13 @@ INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, 
 
 -- =========================
 -- USUARIOS (password.hashCode())
--- admin = 3198785
+-- admin = 92668751
 -- 1234 = 1509442
 -- inventario / contraseña 1234
 -- cajero / contraseña 1234
 -- =========================
 INSERT INTO Usuario (id_usuario, id_rol, id_empleado, username, password_hash, intentos_fallidos, bloqueado_hasta, ultimo_acceso, estado_usuario) VALUES
-(1, 1, 1, 'admin', '3198785', 0, NULL, CURRENT_DATE, TRUE),
+(1, 1, 1, 'admin', '92668751', 0, NULL, CURRENT_DATE, TRUE),
 (2, 3, 2, 'inventario', '1509442', 0, NULL, CURRENT_DATE, TRUE),
 (3, 2, 3, 'cajero', '1509442', 0, NULL, CURRENT_DATE, TRUE);
 

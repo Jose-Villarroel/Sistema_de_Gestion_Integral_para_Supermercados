@@ -34,13 +34,14 @@ public class H2CierreCajaRepository implements CierreCajaRepository {
     @Override
     public ResumenCierreCajaDTO obtenerResumenTurno(LocalDate fecha, String turno) throws SQLException {
         String sql = """
-                SELECT COALESCE(SUM(TOTAL_FINAL), 0) AS EFECTIVO_ESPERADO,
-                       COUNT(*) AS TOTAL_TRANSACCIONES
-                FROM VENTA
-                WHERE FECHA_VENTA = ?
-                  AND TURNO = ?
-                  AND METODO_PAGO = 'EFECTIVO'
-                  AND ESTADO_VENTA = TRUE
+                SELECT COALESCE(SUM(c.MONTO_FINAL), 0) AS EFECTIVO_ESPERADO,
+                       COUNT(DISTINCT v.ID_VENTA) AS TOTAL_TRANSACCIONES
+                FROM CAJA c
+                INNER JOIN VENTA v ON v.ID_VENTA = c.ID_VENTA
+                WHERE v.FECHA_VENTA = ?
+                  AND v.TURNO = ?
+                  AND v.ESTADO_VENTA = TRUE
+                  AND c.ESTADO = TRUE
                 """;
 
         try (Connection conn = databaseConnection.getConnection();

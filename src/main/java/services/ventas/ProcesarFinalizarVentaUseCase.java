@@ -135,6 +135,7 @@ public class ProcesarFinalizarVentaUseCase {
         if (solicitud.empleado() == null) {
             throw new IllegalArgumentException("No hay un cajero autenticado. Inicie sesion nuevamente.");
         }
+        validarTurno(solicitud.turno());
 
         ResumenVenta resumen = calcularResumen(solicitud.items(), solicitud.cliente(), solicitud.descuentoManual());
         PagoProcesado pago = procesarPago(solicitud.metodoPago(), resumen.total(), solicitud.montoRecibido(),
@@ -192,18 +193,21 @@ public class ProcesarFinalizarVentaUseCase {
     private int guardarVenta(Connection conn, SolicitudVenta solicitud, ResumenVenta resumen) throws SQLException {
         String sql = """
             INSERT INTO Venta
-            (id_empleado, fecha_venta, subtotal, descuento_total, impuesto_total, total_final, estado_venta)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (id_empleado, fecha_venta, turno, metodo_pago, subtotal, descuento_total,
+             impuesto_total, total_final, estado_venta)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, solicitud.empleado().getId());
             stmt.setDate(2, Date.valueOf(LocalDate.now()));
-            stmt.setDouble(3, resumen.subtotal());
-            stmt.setInt(4, (int) Math.round(resumen.descuentoTotal()));
-            stmt.setDouble(5, resumen.impuestos());
-            stmt.setDouble(6, resumen.total());
-            stmt.setBoolean(7, true);
+            stmt.setString(3, solicitud.turno());
+            stmt.setString(4, solicitud.metodoPago().name());
+            stmt.setDouble(5, resumen.subtotal());
+            stmt.setInt(6, (int) Math.round(resumen.descuentoTotal()));
+            stmt.setDouble(7, resumen.impuestos());
+            stmt.setDouble(8, resumen.total());
+            stmt.setBoolean(9, true);
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();
@@ -461,6 +465,7 @@ public class ProcesarFinalizarVentaUseCase {
         contenido.append("Venta BD: ").append(ventaId).append(System.lineSeparator());
         contenido.append("Cajero: ").append(solicitud.empleado().getNombre()).append(" ")
                 .append(solicitud.empleado().getApellido()).append(System.lineSeparator());
+        contenido.append("Turno: ").append(solicitud.turno()).append(System.lineSeparator());
         if (solicitud.cliente() != null) {
             contenido.append("Cliente: ").append(solicitud.cliente().cliente().getNombreCompleto()).append(System.lineSeparator());
         }
@@ -505,6 +510,17 @@ public class ProcesarFinalizarVentaUseCase {
         return "TK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
+    private void validarTurno(String turno) {
+        if (turno == null || turno.isBlank()) {
+            throw new IllegalArgumentException("Debe seleccionar el turno de la venta");
+        }
+        try {
+            Turno.valueOf(turno);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Turno no valido: " + turno);
+        }
+    }
+
     private static double redondear(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }
@@ -524,6 +540,12 @@ public class ProcesarFinalizarVentaUseCase {
         NINGUNO,
         PORCENTAJE,
         VALOR_FIJO
+    }
+
+    public enum Turno {
+        MANANA,
+        TARDE,
+        NOCHE
     }
 
     public record ClienteConCuenta(Cliente cliente, Integer cuentaId, Integer numeroTarjeta, Integer puntosActuales) {
@@ -559,9 +581,9 @@ public class ProcesarFinalizarVentaUseCase {
     }
 
     public record SolicitudVenta(List<ItemVenta> items, ClienteConCuenta cliente, Empleado empleado,
-                                 DescuentoManual descuentoManual, MetodoPago metodoPago, double montoRecibido,
-                                 String referenciaPago, boolean facturaElectronica, String datosFacturacion,
-                                 boolean enviarPorCorreo, String correoTicket) {
+                                 String turno, DescuentoManual descuentoManual, MetodoPago metodoPago,
+                                 double montoRecibido, String referenciaPago, boolean facturaElectronica,
+                                 String datosFacturacion, boolean enviarPorCorreo, String correoTicket) {
     }
 
     public record ResultadoVenta(String numeroTicket, double cambio, String mensaje,

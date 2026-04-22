@@ -20,10 +20,16 @@
             stylesheets="@cierre-caja.css">
 
     <top>
-        <VBox spacing="8" styleClass="header">
-            <Label text="Cierre de Caja" styleClass="header-title"/>
-            <Label text="Resumen y cuadre del turno" styleClass="header-subtitle"/>
-        </VBox>
+        <HBox spacing="12" styleClass="header">
+            <VBox spacing="8">
+                <Label text="Cierre de Caja" styleClass="header-title"/>
+                <Label text="Resumen y cuadre del turno" styleClass="header-subtitle"/>
+            </VBox>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="Volver al POS"
+                    onAction="#volverAPos"
+                    styleClass="primary-button"/>
+        </HBox>
     </top>
 
     <center>
