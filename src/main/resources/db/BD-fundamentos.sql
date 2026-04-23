@@ -341,6 +341,9 @@ INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, pre
 (3, 2, 'Leche', 'Leche entera', 'Alpina', 2500, 3800, 15, 5, TRUE, CURRENT_DATE),
 (4, 3, 'Gaseosa', 'Coca Cola 1.5L', 'CocaCola', 4000, 6000, 8, 3, TRUE, CURRENT_DATE);
 
+-- FIX AUTO_INCREMENT PRODUCTO
+ALTER TABLE Producto ALTER COLUMN id_producto RESTART WITH 5;
+
 -- TIPOS DE MOVIMIENTO
 INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
 (1, 'ENTRADA', 'Entrada de inventario'),

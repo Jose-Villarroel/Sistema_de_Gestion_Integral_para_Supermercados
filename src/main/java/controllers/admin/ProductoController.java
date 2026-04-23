@@ -94,7 +94,7 @@ public class ProductoController {
 
     private void cargarCombos() {
         // Temporal mientras conectas categorías reales desde BD
-        cmbCategoria.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5));
+        cmbCategoria.setItems(FXCollections.observableArrayList(1, 2, 3));
     }
 
     private void configurarEventos() {

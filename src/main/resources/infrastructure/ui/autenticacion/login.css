@@ -1,143 +1,108 @@
-/* =========================================
-   LOGIN.CSS — SuperMarket Pro
-   ========================================= */
+/* =============================================================
+   LOGIN.CSS — MasterMarket
+   Diseño basado en logo negro/rojo
+   ============================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-
-/* ---------- ROOT ---------- */
 .root-pane {
-    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #F7F7F8, #ECEDEF);
+    -fx-padding: 28;
 }
 
-.bg-left {
-    -fx-background-color: #0f4c35;
-    -fx-min-width: 50%;
-    -fx-min-height: 700px;
-}
-
-.bg-right {
-    -fx-background-color: #f5f0e8;
-    -fx-min-width: 50%;
-    -fx-min-height: 700px;
-}
-
-/* ---------- CARD ---------- */
 .card {
-    -fx-background-color: white;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 40, 0, 0, 8);
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 28, 0, 0, 8);
     -fx-padding: 0 0 28 0;
-    -fx-min-width: 380;
-    -fx-max-width: 420;
+    -fx-min-width: 400;
+    -fx-max-width: 430;
+    -fx-spacing: 0;
 }
 
-/* ---------- LOGO AREA ---------- */
 .logo-area {
-    -fx-background-color: #0f4c35;
-    -fx-background-radius: 20 20 0 0;
-    -fx-padding: 36 32 28 32;
-    -fx-alignment: center;
-    -fx-spacing: 4;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 24 24 0 0;
+    -fx-padding: 20 28 12 28;
+    -fx-alignment: CENTER;
+    -fx-spacing: 6;
 }
 
-.logo-icon {
-    -fx-font-size: 52px;
-}
-
-.brand-name {
-    -fx-text-fill: #f5f0e8;
-    -fx-font-size: 26px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-letter-spacing: 4px;
+.logo-image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
 }
 
 .brand-sub {
-    -fx-text-fill: #a8c5b8;
-    -fx-font-size: 12px;
+    -fx-text-fill: #A40000;
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-letter-spacing: 1px;
 }
 
-/* ---------- DIVIDER ---------- */
-.divider {
-    -fx-background-color: #e8c84a;
-    -fx-min-height: 4px;
-    -fx-max-height: 4px;
-    -fx-min-width: 380;
-}
-
-/* ---------- FORM AREA ---------- */
 .form-area {
-    -fx-padding: 28 36 8 36;
+    -fx-padding: 28 34 10 34;
 }
 
 .field-label {
-    -fx-text-fill: #3a3a3a;
-    -fx-font-size: 11px;
+    -fx-text-fill: #111111;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-letter-spacing: 1px;
 }
 
 .text-field {
-    -fx-background-color: #f7f7f7;
-    -fx-background-radius: 8;
-    -fx-border-color: #e0ddd5;
-    -fx-border-radius: 8;
-    -fx-border-width: 1.5;
-    -fx-padding: 12 16;
-    -fx-font-size: 14px;
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 11;
+    -fx-border-color: #D4D7DC;
+    -fx-border-radius: 11;
+    -fx-border-width: 1.4;
+    -fx-padding: 12 14 12 14;
+    -fx-font-size: 13px;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-text-fill: #1a1a1a;
-    -fx-prompt-text-fill: #b0aba0;
+    -fx-text-fill: #111111;
+    -fx-prompt-text-fill: #9DA3AE;
 }
 
 .text-field:focused {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #0f4c35;
-    -fx-effect: dropshadow(gaussian, rgba(15,76,53,0.15), 8, 0, 0, 0);
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #B00000;
+    -fx-border-width: 1.8;
+    -fx-effect: dropshadow(gaussian, rgba(176,0,0,0.16), 8, 0, 0, 0);
 }
 
-/* ---------- ERROR LABEL ---------- */
 .error-label {
-    -fx-text-fill: #c0392b;
+    -fx-text-fill: #B00000;
     -fx-font-size: 12px;
     -fx-font-family: "Segoe UI", sans-serif;
     -fx-min-height: 16px;
 }
 
-/* ---------- LOGIN BUTTON ---------- */
 .login-btn {
-    -fx-background-color: #e8c84a;
-    -fx-background-radius: 8;
-    -fx-text-fill: #0f4c35;
-    -fx-font-size: 13px;
+    -fx-background-color: linear-gradient(to right, #111111, #B00000);
+    -fx-background-radius: 11;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-letter-spacing: 1.5px;
-    -fx-padding: 14 0;
+    -fx-padding: 14 0 14 0;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(232,200,74,0.4), 10, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 12, 0, 0, 4);
 }
 
 .login-btn:hover {
-    -fx-background-color: #d4b438;
-    -fx-effect: dropshadow(gaussian, rgba(232,200,74,0.6), 16, 0, 0, 4);
-    -fx-scale-x: 1.01;
-    -fx-scale-y: 1.01;
+    -fx-background-color: linear-gradient(to right, #1E1E1E, #D10000);
+    -fx-effect: dropshadow(gaussian, rgba(176,0,0,0.22), 16, 0, 0, 4);
 }
 
 .login-btn:pressed {
-    -fx-background-color: #c0a030;
-    -fx-scale-x: 0.99;
-    -fx-scale-y: 0.99;
+    -fx-background-color: #8E0000;
+    -fx-scale-x: 0.985;
+    -fx-scale-y: 0.985;
 }
 
-/* ---------- FOOTER ---------- */
 .footer-label {
-    -fx-text-fill: #b0aba0;
+    -fx-text-fill: #8A8F99;
     -fx-font-size: 10px;
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-padding: 20 0 0 0;
+    -fx-padding: 18 0 0 0;
 }

@@ -1,99 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.caja.CierreCajaController"
             prefWidth="1365" prefHeight="768"
-            stylesheets="@cierre-caja.css">
+            stylesheets="@../base.css,@pos.css">
 
+    <!-- TOP BAR IGUAL AL POS -->
     <top>
-        <HBox spacing="12" styleClass="header">
-            <VBox spacing="8">
-                <Label text="Cierre de Caja" styleClass="header-title"/>
-                <Label text="Resumen y cuadre del turno" styleClass="header-subtitle"/>
-            </VBox>
-            <Pane HBox.hgrow="ALWAYS"/>
+        <HBox styleClass="top-bar" alignment="BOTTOM_LEFT" spacing="14">
+            <Label text="🛒 MasterMarket" styleClass="top-bar-brand"/>
+            <Label text="Cierre de Caja" styleClass="top-bar-context"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
             <Button text="Volver al POS"
                     onAction="#volverAPos"
-                    styleClass="primary-button"/>
+                    styleClass="btn-topbar"/>
         </HBox>
     </top>
 
+    <!-- CONTENIDO -->
     <center>
-        <HBox styleClass="content">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+            <content>
+                <HBox spacing="18"
+                      style="-fx-padding: 18; -fx-background-color: #F5F2EE;">
 
-            <VBox prefWidth="540" styleClass="card">
-                <Label text="Resumen del turno" styleClass="card-title"/>
-                <Pane styleClass="separator-line"/>
+                    <!-- 🧾 RESUMEN -->
+                    <VBox prefWidth="540" spacing="14" styleClass="panel-card">
 
-                <GridPane hgap="18" vgap="20">
-                    <columnConstraints>
-                        <ColumnConstraints prefWidth="160"/>
-                        <ColumnConstraints prefWidth="260"/>
-                    </columnConstraints>
+                        <Label text="Resumen del turno" styleClass="panel-title"/>
 
-                    <Label text="Fecha:" styleClass="field-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <DatePicker fx:id="dateFecha" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <GridPane hgap="18" vgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="160"/>
+                                <ColumnConstraints prefWidth="260"/>
+                            </columnConstraints>
 
-                    <Label text="Turno:" styleClass="field-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                    <ComboBox fx:id="cbTurno" prefWidth="260" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Fecha:" styleClass="summary-row-label"/>
+                            <DatePicker fx:id="dateFecha" GridPane.columnIndex="1"/>
 
-                    <Label text="Efectivo esperado:" styleClass="field-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblEsperado" text="0.00" styleClass="value-label" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Turno:" styleClass="summary-row-label" GridPane.rowIndex="1"/>
+                            <ComboBox fx:id="cbTurno"
+                                      prefWidth="260"
+                                      styleClass="combo-box"
+                                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                    <Label text="Transacciones:" styleClass="field-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                    <Label fx:id="lblTransacciones" text="0" styleClass="value-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                </GridPane>
+                            <Label text="Efectivo esperado:" styleClass="summary-row-label" GridPane.rowIndex="2"/>
+                            <Label fx:id="lblEsperado"
+                                   text="0.00"
+                                   styleClass="summary-row-label"
+                                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Button text="Cargar resumen"
-                        onAction="#cargarResumen"
-                        styleClass="primary-button"/>
-            </VBox>
+                            <Label text="Transacciones:" styleClass="summary-row-label" GridPane.rowIndex="3"/>
+                            <Label fx:id="lblTransacciones"
+                                   text="0"
+                                   styleClass="summary-row-label"
+                                   GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
 
-            <VBox prefWidth="540" styleClass="card">
-                <Label text="Registrar cierre" styleClass="card-title"/>
-                <Pane styleClass="separator-line"/>
-
-                <Label text="Efectivo contado" styleClass="field-label"/>
-                <TextField fx:id="txtContado"
-                           promptText="Ingrese el efectivo contado"
-                           onKeyReleased="#calcularDiferencia"/>
-
-                <Label text="Observación" styleClass="field-label"/>
-                <TextArea fx:id="txtObservacion"
-                          prefHeight="150"
-                          promptText="Observación opcional"/>
-
-                <HBox spacing="40">
-                    <VBox spacing="8">
-                        <Label text="Diferencia" styleClass="field-label"/>
-                        <Label fx:id="lblDiferencia" text="0.00" styleClass="value-label"/>
+                        <Button text="Cargar resumen"
+                                onAction="#cargarResumen"
+                                styleClass="btn-add"/>
                     </VBox>
 
-                    <VBox spacing="8">
-                        <Label text="Estado" styleClass="field-label"/>
-                        <Label fx:id="lblEstado" text="PENDIENTE" styleClass="status-pending"/>
+                    <!-- 💰 REGISTRO -->
+                    <VBox prefWidth="540" spacing="14" styleClass="panel-card">
+
+                        <Label text="Registrar cierre" styleClass="panel-title"/>
+
+                        <Label text="Efectivo contado" styleClass="summary-row-label"/>
+                        <TextField fx:id="txtContado"
+                                   promptText="Ingrese el efectivo contado"
+                                   onKeyReleased="#calcularDiferencia"
+                                   styleClass="text-field"/>
+
+                        <Label text="Observación" styleClass="summary-row-label"/>
+                        <TextArea fx:id="txtObservacion"
+                                  prefHeight="150"
+                                  promptText="Observación opcional"
+                                  styleClass="text-field"/>
+
+                        <HBox spacing="40">
+                            <VBox spacing="8">
+                                <Label text="Diferencia" styleClass="summary-row-label"/>
+                                <Label fx:id="lblDiferencia"
+                                       text="0.00"
+                                       styleClass="summary-row-label"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Label text="Estado" styleClass="summary-row-label"/>
+                                <Label fx:id="lblEstado"
+                                       text="PENDIENTE"
+                                       styleClass="panel-status-msg"/>
+                            </VBox>
+                        </HBox>
+
+                        <Button text="Confirmar cierre"
+                                onAction="#confirmarCierre"
+                                maxWidth="Infinity"
+                                styleClass="btn-confirm"/>
                     </VBox>
+
                 </HBox>
-
-                <Button text="Confirmar cierre"
-                        onAction="#confirmarCierre"
-                        styleClass="accent-button"/>
-            </VBox>
-
-        </HBox>
+            </content>
+        </ScrollPane>
     </center>
+
+    <padding>
+        <Insets top="0" right="0" bottom="0" left="0"/>
+    </padding>
 </BorderPane>

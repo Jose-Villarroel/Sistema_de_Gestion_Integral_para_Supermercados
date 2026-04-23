@@ -2,7 +2,8 @@ package controllers.admin;
 
 import aggregates.Cliente;
 import entities.CuentaFidelizacion;
-import valueobjects.CategoriaFidelidad;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import services.clientes.ModificarClienteUseCase;
 import services.clientes.RegistrarClienteUseCase;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ClienteController {
 
@@ -34,11 +36,9 @@ public class ClienteController {
     @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colCorreo;
     @FXML private TableColumn<Cliente, String> colTelefono;
-    @FXML private TableColumn<Cliente, Boolean> colActivo;
-
-    // Columnas de fidelización (se llenan manualmente)
     @FXML private TableColumn<Cliente, String> colTarjeta;
     @FXML private TableColumn<Cliente, Integer> colPuntos;
+    @FXML private TableColumn<Cliente, String> colActivo;
 
     // Campo de búsqueda
     @FXML private TextField txtBuscar;
@@ -48,7 +48,8 @@ public class ClienteController {
     @FXML private Label lblPuntosAcumulados;
     @FXML private Label lblPuntosCanjeados;
 
-    // Casos de uso
+    // Repositorios y casos de uso
+    private final H2CuentaFidelizacionRepository cuentaRepo;
     private final RegistrarClienteUseCase registrarClienteUseCase;
     private final ConsultarClienteUseCase consultarClienteUseCase;
     private final ModificarClienteUseCase modificarClienteUseCase;
@@ -61,7 +62,7 @@ public class ClienteController {
     public ClienteController() {
         DatabaseConnection db = new DatabaseConnection();
         H2ClienteRepository clienteRepo = new H2ClienteRepository(db);
-        H2CuentaFidelizacionRepository cuentaRepo = new H2CuentaFidelizacionRepository(db);
+        this.cuentaRepo = new H2CuentaFidelizacionRepository(db);
 
         this.registrarClienteUseCase = new RegistrarClienteUseCase(clienteRepo, cuentaRepo);
         this.consultarClienteUseCase = new ConsultarClienteUseCase(clienteRepo);
@@ -76,7 +77,6 @@ public class ClienteController {
     public void initialize() {
         configurarTabla();
         cargarClientes();
-        configurarEventos();
         actualizarResumen();
     }
 
@@ -86,29 +86,31 @@ public class ClienteController {
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
+        colActivo.setCellValueFactory(cellData ->
+            new SimpleStringProperty(cellData.getValue().isActivo() ? "Activo" : "Inactivo")
+        );
 
-        // Columna tarjeta: consulta cuenta de fidelización
+        // Columna tarjeta: consulta la cuenta real de fidelización
         colTarjeta.setCellValueFactory(cellData -> {
             try {
-                CuentaFidelizacion cuenta = gestionarPuntosUseCase
-                        .consultarPuntos(cellData.getValue().getId()) != -1
-                        ? null : null;
-                // Se muestra el id del cliente como referencia hasta tener getter de tarjeta
-                return new javafx.beans.property.SimpleStringProperty(
-                        "FID-" + String.format("%05d", cellData.getValue().getId())
-                );
+                Optional<CuentaFidelizacion> cuenta = cuentaRepo
+                        .buscarPorCliente(cellData.getValue().getId());
+                return cuenta.map(c -> new SimpleStringProperty(
+                        String.valueOf(c.getNumeroTarjeta())))
+                        .orElse(new SimpleStringProperty("-"));
             } catch (Exception e) {
-                return new javafx.beans.property.SimpleStringProperty("-");
+                return new SimpleStringProperty("-");
             }
         });
 
         // Columna puntos: consulta puntos actuales
         colPuntos.setCellValueFactory(cellData -> {
             try {
-                int puntos = gestionarPuntosUseCase.consultarPuntos(cellData.getValue().getId());
-                return new javafx.beans.property.SimpleIntegerProperty(puntos).asObject();
+                int puntos = gestionarPuntosUseCase.consultarPuntos(
+                        cellData.getValue().getId());
+                return new SimpleIntegerProperty(puntos).asObject();
             } catch (Exception e) {
-                return new javafx.beans.property.SimpleIntegerProperty(0).asObject();
+                return new SimpleIntegerProperty(0).asObject();
             }
         });
 
@@ -124,10 +126,6 @@ public class ClienteController {
         );
     }
 
-    private void configurarEventos() {
-        txtBuscar.textProperty().addListener((obs, old, nuevo) -> buscarClientes());
-    }
-
     @FXML
     public void registrarCliente() {
         try {
@@ -141,8 +139,17 @@ public class ClienteController {
                     txtDireccion.getText().trim()
             );
 
-            mostrarMensaje("Cliente registrado exitosamente: "
-                    + cliente.getNombre() + " " + cliente.getApellido());
+            // Obtener número de tarjeta generado automáticamente
+            String numeroTarjeta = cuentaRepo.buscarPorCliente(cliente.getId())
+                    .map(c -> String.valueOf(c.getNumeroTarjeta()))
+                    .orElse("N/A");
+
+            mostrarMensaje(
+                    "Cliente registrado exitosamente.\n" +
+                    "Código: " + cliente.getId() + "\n" +
+                    "Tarjeta: " + numeroTarjeta
+            );
+
             limpiarFormulario();
             cargarClientes();
             actualizarResumen();
@@ -200,12 +207,14 @@ public class ClienteController {
         confirmacion.setTitle("Confirmar desactivación");
         confirmacion.setHeaderText(null);
         confirmacion.setContentText("¿Está seguro que desea desactivar al cliente "
-                + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellido() + "?");
+                + clienteSeleccionado.getNombre() + " "
+                + clienteSeleccionado.getApellido() + "?");
 
         confirmacion.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    boolean desactivado = desactivarClienteUseCase.ejecutar(clienteSeleccionado.getId());
+                    boolean desactivado = desactivarClienteUseCase
+                            .ejecutar(clienteSeleccionado.getId());
                     if (desactivado) {
                         mostrarMensaje("Cliente desactivado exitosamente");
                         limpiarFormulario();
@@ -222,38 +231,15 @@ public class ClienteController {
     }
 
     @FXML
-    public void limpiarFormulario() {
-        txtNombre.clear();
-        txtApellido.clear();
-        txtCorreo.clear();
-        txtTelefono.clear();
-        txtDireccion.clear();
-
-        clienteSeleccionado = null;
-        tableClientes.getSelectionModel().clearSelection();
-    }
-
-    private void cargarDatosFormulario(Cliente cliente) {
-        txtNombre.setText(cliente.getNombre());
-        txtApellido.setText(cliente.getApellido());
-        txtCorreo.setText(cliente.getCorreo());
-        txtTelefono.setText(cliente.getTelefono());
-        txtDireccion.setText(cliente.getDireccion());
-    }
-
-    private void cargarClientes() {
-        List<Cliente> clientes = consultarClienteUseCase.listarActivos();
-        clientesObservable.setAll(clientes);
-    }
-
-    private void buscarClientes() {
+    public void buscarCliente() {
         try {
             List<Cliente> clientes;
+            String texto = txtBuscar.getText().trim();
 
-            if (txtBuscar.getText().isBlank()) {
+            if (texto.isBlank()) {
                 clientes = consultarClienteUseCase.listarActivos();
             } else {
-                clientes = consultarClienteUseCase.porNombre(txtBuscar.getText().trim());
+                clientes = consultarClienteUseCase.porNombre(texto);
             }
 
             clientesObservable.setAll(clientes);
@@ -263,12 +249,38 @@ public class ClienteController {
         }
     }
 
+    @FXML
+    public void limpiarFormulario() {
+        txtNombre.clear();
+        txtApellido.clear();
+        txtCorreo.clear();
+        txtTelefono.clear();
+        txtDireccion.clear();
+        txtBuscar.clear();
+
+        clienteSeleccionado = null;
+        tableClientes.getSelectionModel().clearSelection();
+        cargarClientes();
+    }
+
+    private void cargarDatosFormulario(Cliente cliente) {
+        txtNombre.setText(cliente.getNombre());
+        txtApellido.setText(cliente.getApellido());
+        txtCorreo.setText(cliente.getCorreo());
+        txtTelefono.setText(cliente.getTelefono());
+        txtDireccion.setText(cliente.getDireccion() != null ? cliente.getDireccion() : "");
+    }
+
+    private void cargarClientes() {
+        List<Cliente> clientes = consultarClienteUseCase.listarActivos();
+        clientesObservable.setAll(clientes);
+    }
+
     private void actualizarResumen() {
         try {
             List<Cliente> todos = consultarClienteUseCase.listarActivos();
             lblTotalClientes.setText(String.valueOf(todos.size()));
 
-            // Suma de puntos acumulados de todos los clientes activos
             int totalPuntos = todos.stream()
                     .mapToInt(c -> {
                         try {
@@ -280,7 +292,7 @@ public class ClienteController {
                     .sum();
 
             lblPuntosAcumulados.setText(String.format("%,d", totalPuntos));
-            lblPuntosCanjeados.setText("0"); // Se actualizará cuando haya historial de canjes
+            lblPuntosCanjeados.setText("0");
 
         } catch (Exception e) {
             lblTotalClientes.setText("0");
@@ -293,19 +305,15 @@ public class ClienteController {
         if (txtNombre.getText().isBlank()) {
             throw new IllegalArgumentException("El nombre es obligatorio");
         }
-
         if (txtApellido.getText().isBlank()) {
             throw new IllegalArgumentException("El apellido es obligatorio");
         }
-
         if (txtCorreo.getText().isBlank()) {
             throw new IllegalArgumentException("El correo es obligatorio");
         }
-
         if (txtTelefono.getText().isBlank()) {
             throw new IllegalArgumentException("El teléfono es obligatorio");
         }
-
         if (!txtCorreo.getText().contains("@")) {
             throw new IllegalArgumentException("El formato del correo es inválido");
         }

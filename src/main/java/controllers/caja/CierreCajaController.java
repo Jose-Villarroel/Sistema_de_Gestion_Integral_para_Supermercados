@@ -143,7 +143,7 @@ public class CierreCajaController {
         MainApp.navegarA(
                 "/infrastructure/ui/cajero/pos.fxml",
                 "MasterMarket - POS",
-                1365, 768
+                1100, 700
         );
     }
 

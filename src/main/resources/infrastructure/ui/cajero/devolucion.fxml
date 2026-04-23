@@ -18,82 +18,78 @@
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.cajero.DevolucionController"
-            style="-fx-background-color: linear-gradient(to bottom, #f7efe4, #fffdf9);">
+            stylesheets="@../base.css,@devolucion.css">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="14"
-              style="-fx-background-color: #5b2c3a; -fx-padding: 16 22;">
-            <Label text="MasterMarket POS"
-                   style="-fx-text-fill: white; -fx-font-size: 22; -fx-font-weight: bold;"/>
-            <Label text="Procesar Devolucion"
-                   style="-fx-text-fill: #e8d0d8; -fx-font-size: 13;"/>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="14">
+            <Label text="🛒 MasterMarket" styleClass="top-bar-brand"/>
+            <Label text="Procesar Devolución" styleClass="top-bar-context"/>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="Volver al POS"
                     onAction="#volverPOS"
-                    style="-fx-background-color: #8c4759; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+                    styleClass="btn-volver"/>
         </HBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true"
-                    hbarPolicy="NEVER"
-                    vbarPolicy="AS_NEEDED"
-                    style="-fx-background-color: transparent; -fx-background: transparent;">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <content>
-                <HBox spacing="18" style="-fx-padding: 18;" minHeight="-Infinity">
+                <HBox spacing="18" style="-fx-padding: 18; -fx-background-color: #F5F2EE;">
 
                     <!-- Panel izquierdo -->
                     <VBox spacing="14" HBox.hgrow="ALWAYS">
 
-                        <VBox spacing="10"
-                              style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
-                            <Label text="Buscar Venta"
-                                   style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
+                        <!-- Buscar venta -->
+                        <VBox styleClass="panel-card" spacing="10">
+                            <Label text="Buscar Venta" styleClass="panel-title"/>
                             <HBox spacing="10">
                                 <TextField fx:id="txtIdVenta"
                                            promptText="ID de la venta"
+                                           styleClass="text-field"
                                            HBox.hgrow="ALWAYS"/>
                                 <Button text="Buscar"
                                         onAction="#buscarVenta"
-                                        style="-fx-background-color: #d86f45; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                                        styleClass="btn-search"/>
                             </HBox>
                         </VBox>
 
-                        <VBox spacing="10"
-                              style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
+                        <!-- Productos a devolver -->
+                        <VBox styleClass="panel-card" spacing="10">
                             <Label text="Productos disponibles para devolver"
-                                   style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
-
+                                   styleClass="panel-title"/>
                             <HBox spacing="10" alignment="CENTER_LEFT">
-                                <Label text="Cantidad a devolver:"/>
+                                <Label text="Cantidad a devolver:"
+                                       style="-fx-text-fill: #3A3A3A; -fx-font-size: 12px;"/>
                                 <TextField fx:id="txtCantidadDevolver"
                                            promptText="Cant."
+                                           styleClass="text-field"
                                            prefWidth="70"/>
-
-                                <Label text="Motivo producto:"/>
+                                <Label text="Motivo:"
+                                       style="-fx-text-fill: #3A3A3A; -fx-font-size: 12px;"/>
                                 <TextField fx:id="txtMotivoProducto"
-                                           promptText="Motivo"
+                                           promptText="Motivo del producto"
+                                           styleClass="text-field"
                                            prefWidth="180"/>
-
-                                <Label text="Estado:"/>
+                                <Label text="Estado:"
+                                       style="-fx-text-fill: #3A3A3A; -fx-font-size: 12px;"/>
                                 <ComboBox fx:id="cmbEstadoProducto"
+                                          styleClass="combo-box"
                                           prefWidth="140"/>
-
-                                <Button text="Asignar Devolucion"
+                                <Button text="Asignar Devolución"
                                         onAction="#asignarCantidadDevolver"
-                                        style="-fx-background-color: #2e86ab; -fx-text-fill: white;"/>
+                                        styleClass="btn-assign"/>
                             </HBox>
-
-                            <TableView fx:id="tblDetalles" prefHeight="320">
+                            <TableView fx:id="tblDetalles" prefHeight="300"
+                                       styleClass="table-view">
                                 <columns>
-                                    <TableColumn fx:id="colCodigo" text="ID Producto"/>
-                                    <TableColumn fx:id="colProducto" text="Producto"/>
-                                    <TableColumn fx:id="colComprada" text="Cant. Comprada"/>
-                                    <TableColumn fx:id="colDevuelta" text="Ya Devuelta"/>
-                                    <TableColumn fx:id="colPrecio" text="Precio Pagado"/>
-                                    <TableColumn fx:id="colADevolver" text="A Devolver"/>
-                                    <TableColumn fx:id="colMotivo" text="Motivo"/>
-                                    <TableColumn fx:id="colEstado" text="Estado"/>
+                                    <TableColumn fx:id="colCodigo" text="ID" prefWidth="60"/>
+                                    <TableColumn fx:id="colProducto" text="Producto" prefWidth="160"/>
+                                    <TableColumn fx:id="colComprada" text="Comprada" prefWidth="85"/>
+                                    <TableColumn fx:id="colDevuelta" text="Devuelta" prefWidth="80"/>
+                                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="90"/>
+                                    <TableColumn fx:id="colADevolver" text="A Devolver" prefWidth="90"/>
+                                    <TableColumn fx:id="colMotivo" text="Motivo" prefWidth="120"/>
+                                    <TableColumn fx:id="colEstado" text="Estado" prefWidth="90"/>
                                 </columns>
                             </TableView>
                         </VBox>
@@ -102,56 +98,52 @@
                     <!-- Panel derecho -->
                     <VBox spacing="14" prefWidth="360">
 
-                        <VBox spacing="12"
-                              style="-fx-background-color: #fffaf2; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
-                            <Label text="Resumen de Devolucion"
-                                   style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
+                        <!-- Resumen -->
+                        <VBox styleClass="panel-summary" spacing="10">
+                            <Label text="Resumen de Devolución" styleClass="panel-title"/>
                             <GridPane hgap="10" vgap="10">
                                 <columnConstraints>
                                     <ColumnConstraints percentWidth="55"/>
                                     <ColumnConstraints percentWidth="45"/>
                                 </columnConstraints>
-
                                 <Label text="Total a reembolsar"
-                                       GridPane.rowIndex="0"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
+                                       styleClass="summary-total-label"
+                                       GridPane.rowIndex="0"/>
                                 <Label fx:id="lblTotalDevolver"
+                                       styleClass="summary-total-value"
                                        GridPane.columnIndex="1"
-                                       GridPane.rowIndex="0"
-                                       style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #d94841;"/>
+                                       GridPane.rowIndex="0"/>
                             </GridPane>
                         </VBox>
 
-                        <VBox spacing="12"
-                              style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 18; -fx-border-color: #eadfcd; -fx-border-radius: 16;">
-                            <Label text="Confirmacion"
-                                   style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
-
+                        <!-- Confirmación -->
+                        <VBox styleClass="panel-card" spacing="10">
+                            <Label text="Confirmación" styleClass="panel-title"/>
                             <TextField fx:id="txtMotivoGeneral"
-                                       promptText="Motivo general de la devolucion"/>
-
+                                       promptText="Motivo general de la devolución"
+                                       styleClass="text-field"/>
                             <ComboBox fx:id="cmbMetodoReembolso"
-                                      promptText="Metodo de reembolso"/>
-
+                                      promptText="Método de reembolso"
+                                      styleClass="combo-box"
+                                      maxWidth="Infinity"/>
                             <TextField fx:id="txtSupervisorUsuario"
-                                       promptText="Usuario supervisor (si aplica)"/>
-
+                                       promptText="Usuario supervisor (si aplica)"
+                                       styleClass="text-field"/>
                             <PasswordField fx:id="txtSupervisorPassword"
-                                           promptText="Clave supervisor (si aplica)"/>
-
-                            <Button text="Confirmar Devolucion"
+                                           promptText="Clave supervisor (si aplica)"
+                                           styleClass="text-field"/>
+                            <Button text="Confirmar Devolución"
                                     onAction="#procesarDevolucion"
                                     maxWidth="Infinity"
-                                    style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 14;"/>
+                                    styleClass="btn-confirm-devolucion"/>
                         </VBox>
 
-                        <VBox spacing="8"
-                              style="-fx-background-color: #fceceb; -fx-background-radius: 16; -fx-padding: 16; -fx-border-color: #f1b0b7; -fx-border-radius: 16;">
-                            <Label text="Estado de Devolucion"
-                                   style="-fx-font-weight: bold; -fx-text-fill: #5b2c3a;"/>
-                            <Label fx:id="lblMensaje"
-                                   wrapText="true"
-                                   style="-fx-text-fill: #a94442;"/>
+                        <!-- Estado -->
+                        <VBox styleClass="panel-status-error" spacing="8">
+                            <Label text="Estado de Devolución"
+                                   styleClass="panel-status-title"/>
+                            <Label fx:id="lblMensaje" wrapText="true"
+                                   styleClass="panel-status-msg"/>
                         </VBox>
 
                     </VBox>
