@@ -60,7 +60,7 @@ public class AdminController {
 
     private void cargarVista(String ruta) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ruta));
+            FXMLLoader loader = MainApp.crearLoader(ruta);
             Node vista = loader.load();
             contenidoCentral.getChildren().setAll(vista);
         } catch (Exception e) {

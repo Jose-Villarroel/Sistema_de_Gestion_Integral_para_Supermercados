@@ -6,8 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import repositories.DatabaseConnection;
-import repositories.H2UsuarioRepository;
 import services.autenticacion.AutenticarEmpleadoUseCase;
 import services.autenticacion.SesionUsuario;
 
@@ -19,10 +17,8 @@ public class LoginController {
 
     private final AutenticarEmpleadoUseCase autenticarUseCase;
 
-    public LoginController() {
-        DatabaseConnection db = new DatabaseConnection();
-        H2UsuarioRepository repo = new H2UsuarioRepository(db);
-        this.autenticarUseCase = new AutenticarEmpleadoUseCase(repo);
+    public LoginController(AutenticarEmpleadoUseCase autenticarUseCase) {
+        this.autenticarUseCase = autenticarUseCase;
     }
 
     @FXML

@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
 
     private static Stage stageActual;
+    private static final AppDependencies DEPENDENCIES = AppDependencies.getInstance();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -19,9 +20,7 @@ public class MainApp extends Application {
 
     public static void navegarA(String rutaFxml, String titulo, double ancho, double alto) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    MainApp.class.getResource(rutaFxml)
-            );
+            FXMLLoader loader = crearLoader(rutaFxml);
             Scene scene = new Scene(loader.load());
             stageActual.setTitle(titulo);
             stageActual.setScene(scene);
@@ -34,6 +33,12 @@ public class MainApp extends Application {
             System.err.println("Error al navegar a: " + rutaFxml);
             e.printStackTrace();
         }
+    }
+
+    public static FXMLLoader crearLoader(String rutaFxml) {
+        FXMLLoader loader = new FXMLLoader(MainApp.class.getResource(rutaFxml));
+        loader.setControllerFactory(DEPENDENCIES::createController);
+        return loader;
     }
 
     public static void main(String[] args) {

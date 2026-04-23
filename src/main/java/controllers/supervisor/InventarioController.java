@@ -15,7 +15,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import repositories.DatabaseConnection;
 import repositories.H2MovimientoInventarioRepository;
 import repositories.H2ProductoRepository;
 import services.inventario.ControlarInventarioUseCase;
@@ -51,18 +50,16 @@ public class InventarioController {
 
     private int empleadoId = 1;
 
+    public InventarioController(ControlarInventarioUseCase useCase,
+                                H2ProductoRepository productoRepository,
+                                H2MovimientoInventarioRepository movimientoRepository) {
+        this.useCase = useCase;
+        this.productoRepository = productoRepository;
+        this.movimientoRepository = movimientoRepository;
+    }
+
     @FXML
     public void initialize() {
-        DatabaseConnection db = new DatabaseConnection();
-
-        productoRepository = new H2ProductoRepository(db);
-        movimientoRepository = new H2MovimientoInventarioRepository(db);
-
-        useCase = new ControlarInventarioUseCase(
-                productoRepository,
-                movimientoRepository
-        );
-
         cmbTipo.setItems(FXCollections.observableArrayList(
                 "ENTRADA", "SALIDA", "AJUSTE"
         ));

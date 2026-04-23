@@ -6,8 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import repositories.DatabaseConnection;
-import repositories.H2ProductoRepository;
 import services.productos.ConsultarProductoUseCase;
 import services.productos.ListarProductosStockBajoUseCase;
 import services.productos.ModificarProductoUseCase;
@@ -52,15 +50,14 @@ public class ProductoController {
     private Producto productoSeleccionado;
     private final ObservableList<Producto> productosObservable;
 
-    public ProductoController() {
-        DatabaseConnection db = new DatabaseConnection();
-        H2ProductoRepository repo = new H2ProductoRepository(db);
-
-        this.registrarProductoUseCase = new RegistrarProductoUseCase(repo);
-        this.modificarProductoUseCase = new ModificarProductoUseCase(repo);
-        this.consultarProductoUseCase = new ConsultarProductoUseCase(repo);
-        this.listarStockBajoUseCase = new ListarProductosStockBajoUseCase(repo);
-
+    public ProductoController(RegistrarProductoUseCase registrarProductoUseCase,
+                              ModificarProductoUseCase modificarProductoUseCase,
+                              ConsultarProductoUseCase consultarProductoUseCase,
+                              ListarProductosStockBajoUseCase listarStockBajoUseCase) {
+        this.registrarProductoUseCase = registrarProductoUseCase;
+        this.modificarProductoUseCase = modificarProductoUseCase;
+        this.consultarProductoUseCase = consultarProductoUseCase;
+        this.listarStockBajoUseCase = listarStockBajoUseCase;
         this.productosObservable = FXCollections.observableArrayList();
     }
 
