@@ -89,8 +89,6 @@ CREATE TABLE Proveedor (
     fecha_registro DATE
 );
 
-
-
 CREATE TABLE Producto (
     id_producto INT PRIMARY KEY AUTO_INCREMENT,
     id_categoria INT,
@@ -143,8 +141,6 @@ CREATE TABLE Venta (
     estado_venta BOOLEAN,
     FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado)
 );
-
-
 
 CREATE TABLE Movimiento_inventario (
     id_movimiento INT PRIMARY KEY AUTO_INCREMENT,
@@ -238,8 +234,6 @@ CREATE TABLE Devoluciones (
     FOREIGN KEY (id_venta) REFERENCES Venta(id_venta)
 );
 
-
-
 CREATE TABLE Detalle_venta (
     id_detalle_venta INT PRIMARY KEY AUTO_INCREMENT,
     id_venta INT,
@@ -292,8 +286,6 @@ CREATE TABLE CuentaXMovimiento (
     FOREIGN KEY (id_cuenta_fidelizacion) REFERENCES Cuenta_fidelizacion(id_fidelizacion)
 );
 
-
-
 -- ROLES
 INSERT INTO Rol (id_rol, nombre_rol, descripcion) VALUES
 (1, 'ADMINISTRADOR', 'Control total del sistema'),
@@ -301,12 +293,15 @@ INSERT INTO Rol (id_rol, nombre_rol, descripcion) VALUES
 (3, 'SUPERVISOR_INVENTARIO', 'Gestiona inventario'),
 (4, 'GERENTE', 'Visualiza reportes');
 
+ALTER TABLE Rol ALTER COLUMN id_rol RESTART WITH 5;
 
 -- EMPLEADOS
 INSERT INTO Empleado (id_empleado, nombre, apellido, correo, telefono, estado_activo, fecha_registro) VALUES
 (1, 'Andres', 'Gonzales', 'Andre@mail.com', '3001111111', TRUE, CURRENT_DATE),
 (2, 'Laura', 'Gomez', 'laura@mail.com', '3002222222', TRUE, CURRENT_DATE),
 (3, 'Carlos', 'Ruiz', 'carlos@mail.com', '3003333333', TRUE, CURRENT_DATE);
+
+ALTER TABLE Empleado ALTER COLUMN id_empleado RESTART WITH 4;
 
 -- CLIENTES
 INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, estado_activo, fecha_registro) VALUES
@@ -321,18 +316,15 @@ INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, 
 (9, 'Natalia', 'Rojas', 'natalia@mail.com', '3013333333', 'Calle 100 # 50-20', TRUE, CURRENT_DATE),
 (10, 'Felipe', 'Morales', 'felipe@mail.com', '3014444444', 'Carrera 70 # 10-90', TRUE, CURRENT_DATE);
 
--- =========================
--- USUARIOS (password.hashCode())
--- admin = 92668751
--- 1234 = 1509442
--- inventario / contraseña 1234
--- cajero / contraseña 1234
--- =========================
+ALTER TABLE Cliente ALTER COLUMN id_cliente RESTART WITH 11;
+
+-- USUARIOS
 INSERT INTO Usuario (id_usuario, id_rol, id_empleado, username, password_hash, intentos_fallidos, bloqueado_hasta, ultimo_acceso, estado_usuario) VALUES
 (1, 1, 1, 'admin', '92668751', 0, NULL, CURRENT_DATE, TRUE),
 (2, 3, 2, 'inventario', '1509442', 0, NULL, CURRENT_DATE, TRUE),
 (3, 2, 3, 'cajero', '1509442', 0, NULL, CURRENT_DATE, TRUE);
 
+ALTER TABLE Usuario ALTER COLUMN id_usuario RESTART WITH 4;
 
 -- CATEGORIAS
 INSERT INTO Categoria (id_categoria, id_categoria_padre, nombre, descripcion, estado_activo) VALUES
@@ -340,9 +332,9 @@ INSERT INTO Categoria (id_categoria, id_categoria_padre, nombre, descripcion, es
 (2, NULL, 'Lacteos', 'Productos lacteos', TRUE),
 (3, NULL, 'Bebidas', 'Bebidas varias', TRUE);
 
+ALTER TABLE Categoria ALTER COLUMN id_categoria RESTART WITH 4;
 
 -- PRODUCTOS
-
 INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, precio_compra, precio_venta, stock_actual, stock_minimo, estado_activo, fecha_registro) VALUES
 (1, 1, 'Arroz', 'Arroz blanco 1kg', 'Diana', 3000, 4500, 20, 5, TRUE, CURRENT_DATE),
 (2, 1, 'Lentejas', 'Lentejas 500g', 'La Muñeca', 2000, 3200, 4, 5, TRUE, CURRENT_DATE),
@@ -359,7 +351,7 @@ INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, pre
 (13, 3, 'Cerveza', 'Cerveza lata 330ml', 'Heineken', 1800, 3000, 20, 8, TRUE, CURRENT_DATE),
 (14, 3, 'Te frio', 'Te frio limon 500ml', 'Nestea', 1500, 2800, 7, 5, TRUE, CURRENT_DATE);
 
-
+ALTER TABLE Producto ALTER COLUMN id_producto RESTART WITH 15;
 
 -- TIPOS DE MOVIMIENTO
 INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
@@ -367,10 +359,14 @@ INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
 (2, 'SALIDA', 'Salida de inventario'),
 (3, 'AJUSTE', 'Ajuste de inventario');
 
+ALTER TABLE Tipo_movimiento ALTER COLUMN id_tipo_movimiento RESTART WITH 4;
+
 -- TIPOS DE MOVIMIENTO DE PUNTOS
 INSERT INTO Tipo_movimiento_puntos (id_tipo_movimiento_puntos, descripcion) VALUES
 (1, 'ACUMULACION'),
 (2, 'CANJE');
+
+ALTER TABLE Tipo_movimiento_puntos ALTER COLUMN id_tipo_movimiento_puntos RESTART WITH 3;
 
 -- TIPOS DE PAGO
 INSERT INTO Tipo_pago (id_tipo_pago, descripcion) VALUES
@@ -378,6 +374,8 @@ INSERT INTO Tipo_pago (id_tipo_pago, descripcion) VALUES
 (2, 'TARJETA'),
 (3, 'TRANSFERENCIA'),
 (4, 'MIXTO');
+
+ALTER TABLE Tipo_pago ALTER COLUMN id_tipo_pago RESTART WITH 5;
 
 -- CUENTAS DE FIDELIZACION
 INSERT INTO Cuenta_fidelizacion (id_fidelizacion, id_cliente, numero_tarjeta, puntos_actuales, fecha_creacion, estado) VALUES
@@ -392,22 +390,15 @@ INSERT INTO Cuenta_fidelizacion (id_fidelizacion, id_cliente, numero_tarjeta, pu
 (9, 9, 1009, 80, CURRENT_DATE, TRUE),
 (10, 10, 1010, 0, CURRENT_DATE, TRUE);
 
+ALTER TABLE Cuenta_fidelizacion ALTER COLUMN id_fidelizacion RESTART WITH 11;
 
 -- MOVIMIENTOS DE INVENTARIO
 INSERT INTO Movimiento_inventario
 (id_movimiento, id_empleado, id_tipo_movimiento, id_producto, cantidad, stock_anterior, stock_nuevo, motivo, fecha_movimiento) VALUES
-
--- Entrada arroz
 (1, 1, 1, 1, 10, 10, 20, 'Compra proveedor', CURRENT_DATE),
-
--- Salida arroz
 (2, 2, 2, 1, 5, 20, 15, 'Venta', CURRENT_DATE),
-
--- Ajuste lentejas (stock bajo)
 (3, 2, 3, 2, 1, 5, 4, 'Conteo fisico', CURRENT_DATE),
-
--- Entrada leche
 (4, 1, 1, 3, 10, 5, 15, 'Compra proveedor', CURRENT_DATE),
-
--- Salida gaseosa
 (5, 3, 2, 4, 2, 10, 8, 'Venta', CURRENT_DATE);
+
+ALTER TABLE Movimiento_inventario ALTER COLUMN id_movimiento RESTART WITH 6;
