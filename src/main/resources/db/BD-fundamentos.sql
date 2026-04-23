@@ -1,3 +1,4 @@
+Sera? prueba con esta
 SET REFERENTIAL_INTEGRITY FALSE;
 
 DROP TABLE IF EXISTS CuentaXMovimiento;
@@ -311,7 +312,15 @@ INSERT INTO Empleado (id_empleado, nombre, apellido, correo, telefono, estado_ac
 -- CLIENTES
 INSERT INTO Cliente (id_cliente, nombre, apellido, correo, telefono, direccion, estado_activo, fecha_registro) VALUES
 (1, 'Mariana', 'Perez', 'mariana@mail.com', '3004444444', 'Calle 10 # 20-30', TRUE, CURRENT_DATE),
-(2, 'Santiago', 'Lopez', 'santiago@mail.com', '3005555555', 'Carrera 7 # 45-12', TRUE, CURRENT_DATE);
+(2, 'Santiago', 'Lopez', 'santiago@mail.com', '3005555555', 'Carrera 7 # 45-12', TRUE, CURRENT_DATE),
+(3, 'Camila', 'Ramirez', 'camila@mail.com', '3006666666', 'Calle 50 # 10-20', TRUE, CURRENT_DATE),
+(4, 'Juan', 'Martinez', 'juan@mail.com', '3007777777', 'Carrera 15 # 30-45', TRUE, CURRENT_DATE),
+(5, 'Valentina', 'Torres', 'valentina@mail.com', '3008888888', 'Calle 80 # 25-60', TRUE, CURRENT_DATE),
+(6, 'Daniel', 'Castro', 'daniel@mail.com', '3009999999', 'Carrera 20 # 40-10', TRUE, CURRENT_DATE),
+(7, 'Laura', 'Herrera', 'laura2@mail.com', '3011111111', 'Calle 12 # 18-22', TRUE, CURRENT_DATE),
+(8, 'Sebastian', 'Vargas', 'sebastian@mail.com', '3012222222', 'Carrera 9 # 60-33', TRUE, CURRENT_DATE),
+(9, 'Natalia', 'Rojas', 'natalia@mail.com', '3013333333', 'Calle 100 # 50-20', TRUE, CURRENT_DATE),
+(10, 'Felipe', 'Morales', 'felipe@mail.com', '3014444444', 'Carrera 70 # 10-90', TRUE, CURRENT_DATE);
 
 -- =========================
 -- USUARIOS (password.hashCode())
@@ -337,12 +346,21 @@ INSERT INTO Categoria (id_categoria, id_categoria_padre, nombre, descripcion, es
 
 INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, precio_compra, precio_venta, stock_actual, stock_minimo, estado_activo, fecha_registro) VALUES
 (1, 1, 'Arroz', 'Arroz blanco 1kg', 'Diana', 3000, 4500, 20, 5, TRUE, CURRENT_DATE),
-(2, 1, 'Lentejas', 'Lentejas 500g', 'La Muñeca', 2000, 3200, 4, 5, TRUE, CURRENT_DATE), -- stock bajo
+(2, 1, 'Lentejas', 'Lentejas 500g', 'La Muñeca', 2000, 3200, 4, 5, TRUE, CURRENT_DATE),
 (3, 2, 'Leche', 'Leche entera', 'Alpina', 2500, 3800, 15, 5, TRUE, CURRENT_DATE),
-(4, 3, 'Gaseosa', 'Coca Cola 1.5L', 'CocaCola', 4000, 6000, 8, 3, TRUE, CURRENT_DATE);
+(4, 3, 'Gaseosa', 'Coca Cola 1.5L', 'CocaCola', 4000, 6000, 8, 3, TRUE, CURRENT_DATE),
+(5, 1, 'Frijol', 'Frijol rojo 1kg', 'Diana', 3500, 5200, 18, 5, TRUE, CURRENT_DATE),
+(6, 1, 'Garbanzo', 'Garbanzo 500g', 'La Muñeca', 2800, 4200, 12, 5, TRUE, CURRENT_DATE),
+(7, 1, 'Maiz', 'Maiz trillado 1kg', 'Campo Real', 2000, 3200, 6, 5, TRUE, CURRENT_DATE),
+(8, 2, 'Queso', 'Queso campesino 500g', 'Colanta', 7000, 9500, 10, 3, TRUE, CURRENT_DATE),
+(9, 2, 'Yogurt', 'Yogurt fresa 1L', 'Alpina', 3000, 4800, 14, 5, TRUE, CURRENT_DATE),
+(10, 2, 'Mantequilla', 'Mantequilla 250g', 'Alqueria', 4000, 6200, 5, 3, TRUE, CURRENT_DATE),
+(11, 3, 'Agua', 'Agua 600ml', 'Cristal', 1000, 2000, 25, 10, TRUE, CURRENT_DATE),
+(12, 3, 'Jugo', 'Jugo de naranja 1L', 'Hit', 2500, 4200, 9, 5, TRUE, CURRENT_DATE),
+(13, 3, 'Cerveza', 'Cerveza lata 330ml', 'Heineken', 1800, 3000, 20, 8, TRUE, CURRENT_DATE),
+(14, 3, 'Te frio', 'Te frio limon 500ml', 'Nestea', 1500, 2800, 7, 5, TRUE, CURRENT_DATE);
 
--- FIX AUTO_INCREMENT PRODUCTO
-ALTER TABLE Producto ALTER COLUMN id_producto RESTART WITH 5;
+
 
 -- TIPOS DE MOVIMIENTO
 INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
@@ -365,7 +383,15 @@ INSERT INTO Tipo_pago (id_tipo_pago, descripcion) VALUES
 -- CUENTAS DE FIDELIZACION
 INSERT INTO Cuenta_fidelizacion (id_fidelizacion, id_cliente, numero_tarjeta, puntos_actuales, fecha_creacion, estado) VALUES
 (1, 1, 1001, 120, CURRENT_DATE, TRUE),
-(2, 2, 1002, 40, CURRENT_DATE, TRUE);
+(2, 2, 1002, 40, CURRENT_DATE, TRUE),
+(3, 3, 1003, 0, CURRENT_DATE, TRUE),
+(4, 4, 1004, 20, CURRENT_DATE, TRUE),
+(5, 5, 1005, 150, CURRENT_DATE, TRUE),
+(6, 6, 1006, 60, CURRENT_DATE, TRUE),
+(7, 7, 1007, 10, CURRENT_DATE, TRUE),
+(8, 8, 1008, 200, CURRENT_DATE, TRUE),
+(9, 9, 1009, 80, CURRENT_DATE, TRUE),
+(10, 10, 1010, 0, CURRENT_DATE, TRUE);
 
 
 -- MOVIMIENTOS DE INVENTARIO
