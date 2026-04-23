@@ -1,4 +1,3 @@
-Sera? prueba con esta
 SET REFERENTIAL_INTEGRITY FALSE;
 
 DROP TABLE IF EXISTS CuentaXMovimiento;
