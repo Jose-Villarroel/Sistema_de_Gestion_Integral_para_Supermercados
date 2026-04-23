@@ -3,35 +3,35 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
 
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="controllers.autenticacion.LoginController"
-           styleClass="root-pane"
-           stylesheets="@../base.css,@login.css">
+           alignment="CENTER"
+           style="-fx-background-color: #FFFFFF;"
+           stylesheets="@login.css">
 
-    <!-- Background split -->
-    <HBox>
-        <Pane styleClass="bg-left" HBox.hgrow="ALWAYS"/>
-        <Pane styleClass="bg-right" HBox.hgrow="ALWAYS"/>
-    </HBox>
+    <VBox alignment="CENTER"
+          spacing="22"
+          maxWidth="420"
+          translateY="10">
 
-    <!-- Center card -->
-    <VBox alignment="CENTER" styleClass="card" maxWidth="420" maxHeight="560">
+        <!-- LOGO -->
+        <VBox alignment="CENTER" spacing="12">
 
-        <!-- Logo / Icon area -->
-        <VBox alignment="CENTER" styleClass="logo-area">
-            <Label text="🛒" styleClass="logo-icon"/>
-            <Label text="MasterMarket" styleClass="brand-name"/>
-            <Label text="Sistema de Gestión" styleClass="brand-sub"/>
+            <ImageView fitWidth="280"
+                       preserveRatio="true">
+                <image>
+                    <Image url="file:src/main/resources/img/mastermarket_logo.png"/>
+                </image>
+            </ImageView>
+
+            <Label text="Sistema de Gestión"
+                   styleClass="brand-sub"/>
         </VBox>
 
-        <Pane styleClass="divider"/>
-
-        <!-- Form -->
-        <VBox styleClass="form-area" spacing="16">
+        <!-- FORMULARIO -->
+        <VBox spacing="16" maxWidth="360">
 
             <VBox spacing="6">
                 <Label text="Usuario" styleClass="field-label"/>
@@ -47,7 +47,10 @@
                                styleClass="text-field"/>
             </VBox>
 
-            <Label fx:id="lblError" styleClass="error-label" text="" wrapText="true"/>
+            <Label fx:id="lblError"
+                   text=""
+                   wrapText="true"
+                   styleClass="error-label"/>
 
             <Button text="INGRESAR AL SISTEMA"
                     onAction="#login"
@@ -55,9 +58,10 @@
                     maxWidth="Infinity"/>
         </VBox>
 
-        <!-- Footer -->
+        <!-- FOOTER -->
         <Label text="v1.0 · Pontificia Universidad Javeriana · 2026"
                styleClass="footer-label"/>
 
     </VBox>
+
 </StackPane>
