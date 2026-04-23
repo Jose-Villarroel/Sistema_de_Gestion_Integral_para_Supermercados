@@ -167,6 +167,7 @@ public class ProductoController {
                     txtMarca.getText().trim(),
                     Double.parseDouble(txtPrecioCompra.getText().trim()),
                     Double.parseDouble(txtPrecioVenta.getText().trim()),
+                    Integer.parseInt(txtStockActual.getText().trim()),
                     Integer.parseInt(txtStockMinimo.getText().trim()),
                     cmbCategoria.getValue(),
                     chkActivo.isSelected()

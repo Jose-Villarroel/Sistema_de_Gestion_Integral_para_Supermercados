@@ -15,14 +15,13 @@ public class ModificarProductoUseCase {
 
     public boolean ejecutar(int id, String nombre, String descripcion,
                             String marca, double precioCompra, double precioVenta,
-                            int stockMinimo, int categoriaId, boolean estadoActivo) {
+                            int stockActual, int stockMinimo, int categoriaId, boolean estadoActivo) {
 
         Producto producto = productoRepository.buscarPorId(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado con ID: " + id));
 
-        producto.actualizarDatos(nombre, descripcion, marca, precioCompra, precioVenta, stockMinimo, categoriaId, estadoActivo);
-
+        producto.actualizarDatos(nombre, descripcion, marca, precioCompra, precioVenta, stockActual, stockMinimo, categoriaId, estadoActivo);
         return productoRepository.actualizar(producto);
     }
 }

@@ -80,14 +80,16 @@ public class Producto {
 
     public void actualizarDatos(String nombre, String descripcion, String marca,
                                 double precioCompra, double precioVenta,
-                                int stockMinimo, int categoriaId, boolean activo) {
+                                int stockActual, int stockMinimo,
+                                int categoriaId, boolean activo) {
 
-        this.nombre = validarNombre(nombre);
+        this.nombre = nombre;
         this.descripcion = descripcion;
         this.marca = marca;
-        this.precioCompra = validarPrecioCompra(precioCompra);
-        this.precioVenta = validarPrecioVenta(precioVenta, precioCompra);
-        this.stockMinimo = validarStock(stockMinimo);
+        this.precioCompra = precioCompra;
+        this.precioVenta = precioVenta;
+        this.stockActual = stockActual;
+        this.stockMinimo = stockMinimo;
         this.categoriaId = categoriaId;
         this.activo = activo;
     }
