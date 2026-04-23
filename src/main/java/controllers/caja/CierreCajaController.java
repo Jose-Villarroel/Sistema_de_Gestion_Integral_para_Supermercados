@@ -6,9 +6,6 @@ import dtos.ResumenCierreCajaDTO;
 import entities.CierreCaja;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import repositories.CierreCajaRepository;
-import repositories.DatabaseConnection;
-import repositories.H2CierreCajaRepository;
 import services.autenticacion.SesionUsuario;
 import services.caja.GestionarCierreCajaUseCase;
 
@@ -31,9 +28,8 @@ public class CierreCajaController {
 
     private BigDecimal efectivoEsperadoActual = BigDecimal.ZERO;
 
-    public CierreCajaController() {
-        CierreCajaRepository repo = new H2CierreCajaRepository(new DatabaseConnection());
-        this.useCase = new GestionarCierreCajaUseCase(repo);
+    public CierreCajaController(GestionarCierreCajaUseCase useCase) {
+        this.useCase = useCase;
     }
 
     @FXML

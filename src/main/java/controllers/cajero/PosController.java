@@ -17,8 +17,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import repositories.DatabaseConnection;
-import repositories.H2ProductoRepository;
 import services.autenticacion.SesionUsuario;
 import services.ventas.ProcesarFinalizarVentaUseCase;
 import services.ventas.ProcesarFinalizarVentaUseCase.ClienteConCuenta;
@@ -79,9 +77,8 @@ public class PosController {
     private ClienteConCuenta clienteSeleccionado;
     private ResumenVenta resumenActual;
 
-    public PosController() {
-        DatabaseConnection db = new DatabaseConnection();
-        this.procesarVentaUseCase = new ProcesarFinalizarVentaUseCase(db, new H2ProductoRepository(db));
+    public PosController(ProcesarFinalizarVentaUseCase procesarVentaUseCase) {
+        this.procesarVentaUseCase = procesarVentaUseCase;
         this.usuarioActual = SesionUsuario.getUsuarioActual();
     }
 

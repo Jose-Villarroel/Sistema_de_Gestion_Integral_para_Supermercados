@@ -9,8 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import repositories.DatabaseConnection;
-import repositories.H2ClienteRepository;
 import repositories.H2CuentaFidelizacionRepository;
 import services.clientes.ConsultarClienteUseCase;
 import services.clientes.DesactivarClienteUseCase;
@@ -59,17 +57,18 @@ public class ClienteController {
     private Cliente clienteSeleccionado;
     private final ObservableList<Cliente> clientesObservable;
 
-    public ClienteController() {
-        DatabaseConnection db = new DatabaseConnection();
-        H2ClienteRepository clienteRepo = new H2ClienteRepository(db);
-        this.cuentaRepo = new H2CuentaFidelizacionRepository(db);
-
-        this.registrarClienteUseCase = new RegistrarClienteUseCase(clienteRepo, cuentaRepo);
-        this.consultarClienteUseCase = new ConsultarClienteUseCase(clienteRepo);
-        this.modificarClienteUseCase = new ModificarClienteUseCase(clienteRepo);
-        this.desactivarClienteUseCase = new DesactivarClienteUseCase(clienteRepo);
-        this.gestionarPuntosUseCase = new GestionarPuntosUseCase(cuentaRepo);
-
+    public ClienteController(H2CuentaFidelizacionRepository cuentaRepo,
+                             RegistrarClienteUseCase registrarClienteUseCase,
+                             ConsultarClienteUseCase consultarClienteUseCase,
+                             ModificarClienteUseCase modificarClienteUseCase,
+                             DesactivarClienteUseCase desactivarClienteUseCase,
+                             GestionarPuntosUseCase gestionarPuntosUseCase) {
+        this.cuentaRepo = cuentaRepo;
+        this.registrarClienteUseCase = registrarClienteUseCase;
+        this.consultarClienteUseCase = consultarClienteUseCase;
+        this.modificarClienteUseCase = modificarClienteUseCase;
+        this.desactivarClienteUseCase = desactivarClienteUseCase;
+        this.gestionarPuntosUseCase = gestionarPuntosUseCase;
         this.clientesObservable = FXCollections.observableArrayList();
     }
 

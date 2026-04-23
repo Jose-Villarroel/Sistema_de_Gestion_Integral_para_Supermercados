@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import repositories.DatabaseConnection;
 import services.autenticacion.SesionUsuario;
 import services.ventas.ProcesarDevolucionUseCase;
 import services.ventas.ProcesarDevolucionUseCase.DetalleVentaRetornable;
@@ -50,15 +49,13 @@ public class DevolucionController {
 
     private final ObservableList<DetalleDevolucionFx> detallesObList = FXCollections.observableArrayList();
 
-    private final DatabaseConnection databaseConnection;
     private final ProcesarDevolucionUseCase procesarDevolucionUseCase;
     private final Usuario usuarioActual;
 
     private int idVentaActual = -1;
 
-    public DevolucionController() {
-        this.databaseConnection = new DatabaseConnection();
-        this.procesarDevolucionUseCase = new ProcesarDevolucionUseCase(databaseConnection);
+    public DevolucionController(ProcesarDevolucionUseCase procesarDevolucionUseCase) {
+        this.procesarDevolucionUseCase = procesarDevolucionUseCase;
         this.usuarioActual = SesionUsuario.getUsuarioActual();
     }
 
