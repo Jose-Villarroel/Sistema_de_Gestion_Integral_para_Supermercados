@@ -51,7 +51,7 @@ public class LoginController {
                     MainApp.navegarA(
                             "/infrastructure/ui/admin/admin.fxml",
                             "MasterMarket - Administrador | " + nombreEmpleado,
-                            900, 650
+                            1100, 700
                     );
 
             case "CAJERO" ->
@@ -65,7 +65,7 @@ public class LoginController {
                     MainApp.navegarA(
                             "/infrastructure/ui/supervisor/inventario.fxml",
                             "MasterMarket - Inventario | " + nombreEmpleado,
-                            900, 650
+                            1100, 700
                     );
 
             case "GERENTE" ->

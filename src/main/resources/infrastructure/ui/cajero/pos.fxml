@@ -22,7 +22,7 @@
             stylesheets="@../base.css,@pos.css">
 
     <top>
-        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="14">
+        <HBox styleClass="top-bar" alignment="BOTTOM_LEFT" spacing="14">
             <Label text="🛒 MasterMarket" styleClass="top-bar-brand"/>
             <Label text="Punto de Venta" styleClass="top-bar-context"/>
             <Region HBox.hgrow="ALWAYS"/>
@@ -30,14 +30,17 @@
                 <Label text="Cajero" styleClass="top-bar-user-label"/>
                 <Label fx:id="lblCajero" styleClass="top-bar-user-name"/>
             </VBox>
-            <Button text="Devoluciones"
-                    onAction="#abrirDevoluciones"
-                    styleClass="btn-topbar"/>
+
             <VBox spacing="2">
                 <Label text="Turno" styleClass="top-bar-user-label"/>
                 <ComboBox fx:id="cmbTurno" promptText="Seleccione" prefWidth="130"
                           styleClass="combo-topbar"/>
             </VBox>
+
+            <Button text="Devoluciones"
+                    onAction="#abrirDevoluciones"
+                    styleClass="btn-topbar"/>
+
             <Button text="Cierre de Caja"
                     onAction="#abrirCierreCaja"
                     styleClass="btn-topbar"/>
