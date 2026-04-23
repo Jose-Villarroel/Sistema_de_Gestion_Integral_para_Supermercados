@@ -1,6 +1,6 @@
 package repositories;
 
-import aggregates.Empleado;
+import entities.Empleado;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package services.clientes;
 
-import aggregates.Cliente;
+import entities.Cliente;
 import entities.CuentaFidelizacion;
 import repositories.ClienteRepository;
 import repositories.CuentaFidelizacionRepository;

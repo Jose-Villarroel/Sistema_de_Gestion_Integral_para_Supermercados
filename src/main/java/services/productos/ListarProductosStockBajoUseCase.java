@@ -1,6 +1,6 @@
 package services.productos;
 
-import aggregates.Producto;
+import entities.Producto;
 import repositories.ProductoRepository;
 import java.util.List;
 

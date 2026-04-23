@@ -1,6 +1,6 @@
 package services.inventario;
 
-import aggregates.Producto;
+import entities.Producto;
 import entities.MovimientoInventario;
 import repositories.MovimientoInventarioRepository;
 import repositories.ProductoRepository;

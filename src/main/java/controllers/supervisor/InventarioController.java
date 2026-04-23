@@ -1,6 +1,6 @@
 package controllers.supervisor;
 
-import aggregates.Producto;
+import entities.Producto;
 import controllers.MainApp;
 import entities.MovimientoInventario;
 import javafx.beans.property.SimpleIntegerProperty;

@@ -1,6 +1,6 @@
 package repositories;
 
-import aggregates.Cliente;
+import entities.Cliente;
 
 import java.util.List;
 import java.util.Optional;

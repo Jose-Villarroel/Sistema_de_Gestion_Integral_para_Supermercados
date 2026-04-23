@@ -1,8 +1,8 @@
 package services.ventas;
 
-import aggregates.Cliente;
-import aggregates.Empleado;
-import aggregates.Producto;
+import entities.Cliente;
+import entities.Empleado;
+import entities.Producto;
 import repositories.DatabaseConnection;
 import repositories.ProductoRepository;
 

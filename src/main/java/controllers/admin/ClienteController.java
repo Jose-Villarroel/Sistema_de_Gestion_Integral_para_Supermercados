@@ -1,6 +1,6 @@
 package controllers.admin;
 
-import aggregates.Cliente;
+import entities.Cliente;
 import entities.CuentaFidelizacion;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;

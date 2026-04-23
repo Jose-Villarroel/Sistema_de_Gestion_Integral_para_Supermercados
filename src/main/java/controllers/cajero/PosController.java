@@ -1,6 +1,6 @@
 package controllers.cajero;
 
-import aggregates.Producto;
+import entities.Producto;
 import controllers.MainApp;
 import entities.Usuario;
 import javafx.beans.property.SimpleIntegerProperty;

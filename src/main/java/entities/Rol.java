@@ -1,4 +1,4 @@
-package valueobjects;
+package entities;
 
 //se cambio enum para que quede alineado con el diagrama entidad relacion
 

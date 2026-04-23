@@ -1,6 +1,6 @@
 package services.clientes;
 
-import aggregates.Cliente;
+import entities.Cliente;
 import repositories.ClienteRepository;
 
 import java.util.List;

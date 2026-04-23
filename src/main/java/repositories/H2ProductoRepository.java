@@ -1,6 +1,6 @@
 package repositories;
 
-import aggregates.Producto;
+import entities.Producto;
 
 import java.sql.*;
 import java.util.ArrayList;

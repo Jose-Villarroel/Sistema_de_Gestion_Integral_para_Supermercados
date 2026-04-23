@@ -1,6 +1,6 @@
 package services.productos;
 
-import aggregates.Producto;
+import entities.Producto;
 import repositories.ProductoRepository;
 
 //se realizaron cambios para que producto quedara con los datos que estan en la bd

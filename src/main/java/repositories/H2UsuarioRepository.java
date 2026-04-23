@@ -1,8 +1,8 @@
 package repositories;
 
-import aggregates.Empleado;
+import entities.Empleado;
 import entities.Usuario;
-import valueobjects.Rol;
+import entities.Rol;
 
 import java.sql.Connection;
 import java.sql.Date;

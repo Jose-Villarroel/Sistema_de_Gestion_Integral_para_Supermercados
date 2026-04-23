@@ -1,8 +1,5 @@
 package entities;
 
-import aggregates.Empleado;
-import valueobjects.Rol;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 

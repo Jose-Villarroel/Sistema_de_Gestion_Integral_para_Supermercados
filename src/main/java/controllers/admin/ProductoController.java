@@ -1,6 +1,6 @@
 package controllers.admin;
 
-import aggregates.Producto;
+import entities.Producto;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

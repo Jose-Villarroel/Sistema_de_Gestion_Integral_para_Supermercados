@@ -1,6 +1,6 @@
 package repositories;
 
-import aggregates.Cliente;
+import entities.Cliente;
 
 import java.sql.Connection;
 import java.sql.Date;

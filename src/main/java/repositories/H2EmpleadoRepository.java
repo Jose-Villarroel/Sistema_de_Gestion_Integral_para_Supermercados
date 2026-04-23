@@ -1,6 +1,6 @@
 package repositories;
 
-import aggregates.Empleado;
+import entities.Empleado;
 
 import java.sql.Connection;
 import java.sql.Date;

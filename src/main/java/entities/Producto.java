@@ -1,4 +1,4 @@
-package aggregates;
+package entities;
 
 import java.time.LocalDate;
 
