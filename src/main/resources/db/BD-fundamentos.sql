@@ -375,6 +375,7 @@ INSERT INTO Tipo_pago (id_tipo_pago, descripcion) VALUES
 (3, 'TRANSFERENCIA'),
 (4, 'MIXTO');
 
+
 ALTER TABLE Tipo_pago ALTER COLUMN id_tipo_pago RESTART WITH 5;
 
 -- CUENTAS DE FIDELIZACION
