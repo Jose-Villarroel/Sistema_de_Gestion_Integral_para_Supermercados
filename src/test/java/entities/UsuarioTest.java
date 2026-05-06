@@ -26,7 +26,15 @@ class UsuarioTest {
     }
 
     // Pruebas de passwordCoincide()
+    // Verifica que el sistema valide correctamente
+    // las contraseñas ingresadas por el usuario
 
+
+    /*
+     * CP-001: Verifica que cuando el usuario ingresa la contraseña correcta,
+     * el metodo passwordCoincide() retorna true. Este es el flujo principal
+     * del CU-001 (Gestionar autenticación del sistema).
+     */
     @Test
     @DisplayName("CP-001: Contraseña correcta debe coincidir")
     void passwordCorrecta_debeRetornarTrue() {
@@ -36,6 +44,12 @@ class UsuarioTest {
                 "La contraseña 'admin' debería coincidir con su propio hash");
     }
 
+    /*
+     * CP-002: Verifica que cuando el usuario ingresa una contraseña incorrecta,
+     * el metodo passwordCoincide() retorna false. Cubre la excepcion del paso 6
+     * del CU-001: "Si las credenciales son incorrectas, el sistema muestra
+     * Usuario o contraseña incorrectos".
+     */
     @Test
     @DisplayName("CP-002: Contraseña incorrecta no debe coincidir")
     void passwordIncorrecta_debeRetornarFalse() {
@@ -45,6 +59,11 @@ class UsuarioTest {
                 "Una contraseña incorrecta no debería coincidir");
     }
 
+    /*
+     * CP-003: Verifica que una contraseña vacia no coincida con una contraseña
+     * real registrada. Garantiza que el sistema no permita acceso con campos
+     * vacíos, complementando la validación del paso 4 del CU-001.
+     */
     @Test
     @DisplayName("CP-003: Contraseña vacía no debe coincidir con contraseña real")
     void passwordVacia_noDebeCoincidirConPasswordReal() {
@@ -55,7 +74,14 @@ class UsuarioTest {
     }
 
     // Pruebas de estaBloqueado()
+    // Verifica el comportamiento del bloqueo de cuenta
+    // tras superar los intentos fallidos permitidos.
 
+    /*
+     * CP-004: Verifica que un usuario recien creado sin historial de bloqueo
+     * no este bloqueado. Este es el estado normal de cualquier usuario activo
+     * en el sistema.
+     */
     @Test
     @DisplayName("CP-004: Usuario sin bloqueo no debe estar bloqueado")
     void usuarioSinBloqueo_noDebeEstarBloqueado() {
@@ -69,6 +95,12 @@ class UsuarioTest {
                 "Un usuario sin bloqueadoHasta no debe estar bloqueado");
     }
 
+    /*
+     * CP-005: Verifica que un usuario con bloqueo activo
+     * sea reconocido como bloqueado. Cubre la excepción del CU-001:
+     * "Si se superan 3 intentos fallidos, el sistema bloquea la cuenta por
+     * 15 minutos".
+     */
     @Test
     @DisplayName("CP-005: Usuario con bloqueo futuro debe estar bloqueado")
     void usuarioConBloqueoFuturo_debeEstarBloqueado() {
@@ -83,6 +115,11 @@ class UsuarioTest {
                 "Un usuario con bloqueo en el futuro debe estar bloqueado");
     }
 
+    /*
+     * CP-006: Verifica que un usuario cuyo tiempo de bloqueo ya expiro
+     * no sea reconocido como bloqueado. Garantiza que el desbloqueo automatico
+     * funcione correctamente una vez transcurridos los 15 minutos de penalizacion.
+     */
     @Test
     @DisplayName("CP-006: Usuario con bloqueo pasado no debe estar bloqueado")
     void usuarioConBloqueoPasado_noDebeEstarBloqueado() {
@@ -98,7 +135,15 @@ class UsuarioTest {
     }
 
     // Pruebas de incrementarIntentosFallidos()
+    // Verifica el manejo del contador de intentos
+    // fallidos de autenticación.
 
+    /*
+     * CP-007: Verifica que el contador de intentos fallidos se incremente
+     * correctamente cada vez que el usuario falla al iniciar sesion. Este
+     * contador es clave para activar el bloqueo automático de la cuenta
+     * tras 3 intentos fallidos.
+     */
     @Test
     @DisplayName("CP-007: Incrementar intentos fallidos debe aumentar el contador")
     void incrementarIntentosFallidos_debeAumentarContador() {
@@ -115,6 +160,12 @@ class UsuarioTest {
                 "Después de 2 incrementos, los intentos fallidos deben ser 2");
     }
 
+    /*
+     * CP-008: Verifica que el contador de intentos fallidos se reinicie a 0
+     * cuando el usuario inicia sesion correctamente. Esto garantiza que un
+     * usuario que falla varias veces pero luego acierta no quede con intentos
+     * acumulados que puedan bloquearlo en el futuro.
+     */
     @Test
     @DisplayName("CP-008: Reiniciar intentos fallidos debe dejar el contador en 0")
     void reiniciarIntentosFallidos_debeDejarContadorEnCero() {
