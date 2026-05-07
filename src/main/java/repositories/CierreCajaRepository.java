@@ -12,5 +12,7 @@ public interface CierreCajaRepository {
 
     ResumenCierreCajaDTO obtenerResumenTurno(LocalDate fecha, String turno) throws SQLException;
 
+    double obtenerEfectivoDisponible(int empleadoId, String turno, LocalDate fecha) throws SQLException;
+
     void guardar(CierreCaja cierreCaja) throws SQLException;
 }

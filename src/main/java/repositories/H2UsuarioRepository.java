@@ -1,5 +1,6 @@
 package repositories;
 
+import dtos.SupervisorAutorizacionDTO;
 import entities.Empleado;
 import entities.Usuario;
 import entities.Rol;
@@ -53,6 +54,36 @@ public class H2UsuarioRepository implements UsuarioRepository {
 
         return Optional.empty();
     }
+
+    @Override
+    public Optional<SupervisorAutorizacionDTO> buscarSupervisorActivoPorUsername(String username) {
+        String sql = """
+            SELECT u.password_hash, r.nombre_rol
+            FROM Usuario u
+            JOIN Rol r ON u.id_rol = r.id_rol
+            WHERE u.username = ? AND u.estado_usuario = TRUE
+        """;
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return Optional.of(new SupervisorAutorizacionDTO(
+                        rs.getString("password_hash"),
+                        rs.getString("nombre_rol")
+                ));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar supervisor", e);
+        }
+
+        return Optional.empty();
+    }
+
     @Override
     public Optional<Usuario> buscarPorId(int id) {
         String sql = """

@@ -1,5 +1,6 @@
 package repositories;
 
+import dtos.ClienteConCuentaDTO;
 import entities.Cliente;
 
 import java.sql.Connection;
@@ -35,6 +36,44 @@ public class H2ClienteRepository implements ClienteRepository {
 
         } catch (Exception e) {
             throw new RuntimeException("Error al buscar cliente por id", e);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ClienteConCuentaDTO> buscarClienteConCuentaPorCodigo(int codigo) {
+        String sql = """
+            SELECT c.id_cliente, c.nombre, c.apellido, c.correo, c.telefono, c.direccion,
+                   c.fecha_registro, c.estado_activo,
+                   cf.id_fidelizacion, cf.numero_tarjeta, cf.puntos_actuales
+            FROM Cliente c
+            LEFT JOIN Cuenta_fidelizacion cf ON c.id_cliente = cf.id_cliente AND cf.estado = TRUE
+            WHERE c.estado_activo = TRUE
+              AND (c.id_cliente = ? OR cf.numero_tarjeta = ?)
+            ORDER BY cf.id_fidelizacion DESC
+            LIMIT 1
+        """;
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, codigo);
+            stmt.setInt(2, codigo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Cliente cliente = mapearCliente(rs);
+                int idCuenta = rs.getInt("id_fidelizacion");
+                Integer cuentaId = rs.wasNull() ? null : idCuenta;
+                Integer numeroTarjeta = cuentaId == null ? null : rs.getInt("numero_tarjeta");
+                Integer puntos = cuentaId == null ? null : rs.getInt("puntos_actuales");
+
+                return Optional.of(new ClienteConCuentaDTO(cliente, cuentaId, numeroTarjeta, puntos));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar cliente con cuenta", e);
         }
 
         return Optional.empty();

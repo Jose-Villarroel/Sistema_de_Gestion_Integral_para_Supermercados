@@ -87,6 +87,26 @@ public class H2ProductoRepository implements ProductoRepository {
     }
 
     @Override
+    public int obtenerStockActual(int id) {
+        String sql = "SELECT stock_actual FROM Producto WHERE id_producto = ?";
+
+        try (Connection conn = dbConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("stock_actual");
+            }
+
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al consultar stock actual", e);
+        }
+    }
+
+    @Override
     public List<Producto> listarTodos() {
         return ejecutarLista("SELECT * FROM Producto ORDER BY nombre");
     }

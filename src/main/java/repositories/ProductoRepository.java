@@ -9,6 +9,7 @@ public interface ProductoRepository {
     Producto guardar(Producto producto);
 
     Optional<Producto> buscarPorId(int id);
+    int obtenerStockActual(int id);
     List<Producto> listarTodos();
     List<Producto> listarActivos();
     List<Producto> listarPorCategoria(int categoriaId);

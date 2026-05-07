@@ -1,8 +1,10 @@
 package services.ventas;
 
+import dtos.ClienteConCuentaDTO;
 import entities.Cliente;
 import entities.Empleado;
 import entities.Producto;
+import repositories.ClienteRepository;
 import repositories.DatabaseConnection;
 import repositories.ProductoRepository;
 
@@ -27,11 +29,14 @@ public class ProcesarFinalizarVentaUseCase {
     private static final Locale LOCALE_CO = Locale.of("es", "CO");
 
     private final DatabaseConnection databaseConnection;
+    private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
 
     public ProcesarFinalizarVentaUseCase(DatabaseConnection databaseConnection,
+                                         ClienteRepository clienteRepository,
                                          ProductoRepository productoRepository) {
         this.databaseConnection = databaseConnection;
+        this.clienteRepository = clienteRepository;
         this.productoRepository = productoRepository;
     }
 
@@ -48,50 +53,8 @@ public class ProcesarFinalizarVentaUseCase {
         }
 
         int codigo = parsearEntero(codigoCliente, "Customer not found");
-        String sql = """
-            SELECT c.id_cliente, c.nombre, c.apellido, c.correo, c.telefono, c.direccion,
-                   c.fecha_registro, c.estado_activo,
-                   cf.id_fidelizacion, cf.numero_tarjeta, cf.puntos_actuales,
-                   cf.fecha_creacion, cf.estado
-            FROM Cliente c
-            LEFT JOIN Cuenta_fidelizacion cf ON c.id_cliente = cf.id_cliente AND cf.estado = TRUE
-            WHERE c.estado_activo = TRUE
-              AND (c.id_cliente = ? OR cf.numero_tarjeta = ?)
-            ORDER BY cf.id_fidelizacion DESC
-            LIMIT 1
-        """;
-
-        try (Connection conn = databaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, codigo);
-            stmt.setInt(2, codigo);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                Cliente cliente = new Cliente(
-                        rs.getInt("id_cliente"),
-                        rs.getString("nombre"),
-                        rs.getString("apellido"),
-                        rs.getString("correo"),
-                        rs.getString("telefono"),
-                        rs.getString("direccion"),
-                        rs.getDate("fecha_registro").toLocalDate(),
-                        rs.getBoolean("estado_activo")
-                );
-
-                int idCuenta = rs.getInt("id_fidelizacion");
-                Integer cuentaId = rs.wasNull() ? null : idCuenta;
-                Integer numeroTarjeta = cuentaId == null ? null : rs.getInt("numero_tarjeta");
-                Integer puntos = cuentaId == null ? null : rs.getInt("puntos_actuales");
-
-                return Optional.of(new ClienteConCuenta(cliente, cuentaId, numeroTarjeta, puntos));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error al buscar cliente", e);
-        }
-
-        return Optional.empty();
+        return clienteRepository.buscarClienteConCuentaPorCodigo(codigo)
+                .map(this::mapearClienteConCuenta);
     }
 
     public ResumenVenta calcularResumen(List<ItemVenta> items,
@@ -283,7 +246,7 @@ public class ProcesarFinalizarVentaUseCase {
              PreparedStatement stmtMovimiento = conn.prepareStatement(sqlMovimiento)) {
 
             for (ItemVenta item : items) {
-                int stockActual = obtenerStockActual(conn, item.productoId());
+                int stockActual = productoRepository.obtenerStockActual(item.productoId());
                 if (stockActual < item.cantidad()) {
                     throw new IllegalArgumentException("Insufficient stock. Available: " + stockActual + " units");
                 }
@@ -293,7 +256,7 @@ public class ProcesarFinalizarVentaUseCase {
                 stmtStock.setInt(3, item.cantidad());
                 if (stmtStock.executeUpdate() == 0) {
                     throw new IllegalArgumentException("Insufficient stock. Available: "
-                            + obtenerStockActual(conn, item.productoId()) + " units");
+                            + productoRepository.obtenerStockActual(item.productoId()) + " units");
                 }
 
                 stmtMovimiento.setInt(1, empleadoId);
@@ -308,18 +271,6 @@ public class ProcesarFinalizarVentaUseCase {
             }
 
             stmtMovimiento.executeBatch();
-        }
-    }
-
-    private int obtenerStockActual(Connection conn, int productoId) throws SQLException {
-        try (PreparedStatement stmt = conn.prepareStatement(
-                "SELECT stock_actual FROM Producto WHERE id_producto = ?")) {
-            stmt.setInt(1, productoId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("stock_actual");
-            }
-            return 0;
         }
     }
 
@@ -549,6 +500,10 @@ public class ProcesarFinalizarVentaUseCase {
     }
 
     public record ClienteConCuenta(Cliente cliente, Integer cuentaId, Integer numeroTarjeta, Integer puntosActuales) {
+    }
+
+    private ClienteConCuenta mapearClienteConCuenta(ClienteConCuentaDTO dto) {
+        return new ClienteConCuenta(dto.cliente(), dto.cuentaId(), dto.numeroTarjeta(), dto.puntosActuales());
     }
 
     public record ItemVenta(int productoId, String nombreProducto, int cantidad,

@@ -1,5 +1,6 @@
 package repositories;
 
+import dtos.ClienteConCuentaDTO;
 import entities.Cliente;
 
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Optional;
 public interface ClienteRepository {
 
     Optional<Cliente> buscarPorId(int id);
+
+    Optional<ClienteConCuentaDTO> buscarClienteConCuentaPorCodigo(int codigo);
 
     List<Cliente> buscarPorNombre(String nombre);
 

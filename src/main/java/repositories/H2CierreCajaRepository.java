@@ -61,6 +61,31 @@ public class H2CierreCajaRepository implements CierreCajaRepository {
     }
 
     @Override
+    public double obtenerEfectivoDisponible(int empleadoId, String turno, LocalDate fecha) throws SQLException {
+        String sql = """
+            SELECT COALESCE(SUM(c.monto_final), 0) AS disponible
+            FROM Caja c
+            JOIN Venta v ON v.id_venta = c.id_venta
+            WHERE c.id_empleado = ?
+              AND v.turno = ?
+              AND v.fecha_venta = ?
+              AND c.estado = TRUE
+        """;
+
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, empleadoId);
+            stmt.setString(2, turno);
+            stmt.setDate(3, Date.valueOf(fecha));
+
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getDouble("disponible");
+        }
+    }
+
+    @Override
     public void guardar(CierreCaja cierreCaja) throws SQLException {
         String sql = """
                 INSERT INTO CIERRE_CAJA
