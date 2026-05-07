@@ -14,7 +14,7 @@ import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
+/*
  * Pruebas de integración del servicio AutenticarEmpleadoUseCase.
  * 
  * Cubre el CU-001: Gestionar autenticación del sistema.
@@ -48,9 +48,8 @@ class AutenticarEmpleadoUseCaseTest {
      * es nulo. Cubre la primera validación de entrada del CU-001.
      */
     @Test
-    @DisplayName("CP-001: Username nulo debe lanzar IllegalArgumentException")
+    @DisplayName("CP-001: Username nulo")
     void usernameNulo_debeLanzarExcepcion() {
-        // Actuar y Verificar
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> useCase.ejecutar(null, "admin")
@@ -60,12 +59,11 @@ class AutenticarEmpleadoUseCaseTest {
 
     /*
      * CP-002: Verifica que el sistema lanza excepción cuando el username
-     * está vacío. Cubre la validación de campos vacíos del paso 4 del CU-001.
+     * está vacío. Cubre la validación de campos vacíos.
      */
     @Test
-    @DisplayName("CP-002: Username vacío debe lanzar IllegalArgumentException")
+    @DisplayName("CP-002: Username vacío")
     void usernameVacio_debeLanzarExcepcion() {
-        // Actuar y Verificar
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> useCase.ejecutar("   ", "admin")
@@ -75,12 +73,11 @@ class AutenticarEmpleadoUseCaseTest {
 
     /*
      * CP-003: Verifica que el sistema lanza excepción cuando la contraseña
-     * es nula. Cubre la segunda validación de entrada del CU-001.
+     * es nula.
      */
     @Test
-    @DisplayName("CP-003: Password nulo debe lanzar IllegalArgumentException")
+    @DisplayName("CP-003: Password nulo")
     void passwordNulo_debeLanzarExcepcion() {
-        // Actuar y Verificar
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> useCase.ejecutar("admin", null)
@@ -90,12 +87,11 @@ class AutenticarEmpleadoUseCaseTest {
 
     /*
      * CP-004: Verifica que el sistema lanza excepción cuando la contraseña
-     * está vacía. Cubre la validación de campos vacíos del paso 4 del CU-001.
+     * está vacía.
      */
     @Test
-    @DisplayName("CP-004: Password vacío debe lanzar IllegalArgumentException")
+    @DisplayName("CP-004: Password vacío")
     void passwordVacio_debeLanzarExcepcion() {
-        // Actuar y Verificar
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> useCase.ejecutar("admin", "")
@@ -108,9 +104,8 @@ class AutenticarEmpleadoUseCaseTest {
      * tiene menos de 4 caracteres. Cubre la validación de longitud mínima.
      */
     @Test
-    @DisplayName("CP-005: Password menor a 4 caracteres debe lanzar IllegalArgumentException")
+    @DisplayName("CP-005: Password menor a 4 caracteres")
     void passwordMenorA4Caracteres_debeLanzarExcepcion() {
-        // Actuar y Verificar
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
                 () -> useCase.ejecutar("admin", "abc")
@@ -120,14 +115,11 @@ class AutenticarEmpleadoUseCaseTest {
 
     /*
      * CP-006: Verifica que el sistema lanza excepción cuando el usuario
-     * no existe en la BD. Cubre la excepción del paso 6 del CU-001:
-     * "Si las credenciales son incorrectas, el sistema muestra
-     * Usuario o contraseña incorrectos".
+     * no existe en la BD.
      */
     @Test
-    @DisplayName("CP-006: Usuario inexistente debe lanzar RuntimeException")
+    @DisplayName("CP-006: Usuario inexistente")
     void usuarioInexistente_debeLanzarExcepcion() {
-        // Actuar y Verificar
         RuntimeException ex = assertThrows(
                 RuntimeException.class,
                 () -> useCase.ejecutar("usuarioQueNoExiste", "admin1234")
@@ -142,9 +134,9 @@ class AutenticarEmpleadoUseCaseTest {
      * Se desactiva el usuario 'cajero' directamente en la BD antes de la prueba.
      */
     @Test
-    @DisplayName("CP-007: Usuario desactivado debe lanzar RuntimeException")
+    @DisplayName("CP-007: Usuario desactivado")
     void usuarioDesactivado_debeLanzarExcepcion() throws Exception {
-        // Preparar: desactivar el usuario 'cajero' en la BD
+        // Desactivar el usuario 'cajero' en la BD
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "UPDATE Usuario SET estado_usuario = FALSE WHERE username = 'cajero'")) {
@@ -169,7 +161,7 @@ class AutenticarEmpleadoUseCaseTest {
     @Test
     @DisplayName("CP-008: Usuario bloqueado debe lanzar RuntimeException")
     void usuarioBloqueado_debeLanzarExcepcion() throws Exception {
-        // Preparar: bloquear el usuario 'inventario' por 15 minutos
+        // Bloquear el usuario 'inventario' por 15 minutos
         LocalTime bloqueoFuturo = LocalTime.now().plusMinutes(15);
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
@@ -188,13 +180,11 @@ class AutenticarEmpleadoUseCaseTest {
 
     /*
      * CP-009: Verifica que el sistema lanza excepción cuando la contraseña
-     * ingresada no coincide con el hash almacenado. Cubre la excepción del
-     * paso 6 del CU-001 para el caso de contraseña incorrecta.
+     * ingresada no coincide con el hash almacenado. 
      */
     @Test
     @DisplayName("CP-009: Contraseña incorrecta debe lanzar RuntimeException")
     void passwordIncorrecta_debeLanzarExcepcion() {
-        // Actuar y Verificar
         RuntimeException ex = assertThrows(
                 RuntimeException.class,
                 () -> useCase.ejecutar("admin", "passwordMalEscrita")
@@ -206,15 +196,13 @@ class AutenticarEmpleadoUseCaseTest {
      * CP-010: Verifica el flujo exitoso de autenticación. El usuario 'admin'
      * con contraseña 'admin' debe autenticarse correctamente y retornar
      * el objeto Usuario con sus datos completos.
-     * Cubre el flujo principal del CU-001 pasos 1-10.
+     * Cubre el flujo principal del CU-001
      */
     @Test
     @DisplayName("CP-010: Credenciales correctas deben retornar el Usuario autenticado")
     void credencialesCorrectas_debeRetornarUsuario() {
-        // Actuar
         Usuario resultado = useCase.ejecutar("admin", "admin");
 
-        // Verificar
         assertNotNull(resultado, "El usuario retornado no debe ser nulo");
         assertEquals("admin", resultado.getUsername(),
                 "El username debe coincidir con el ingresado");
