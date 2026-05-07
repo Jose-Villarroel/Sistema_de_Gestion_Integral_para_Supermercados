@@ -57,7 +57,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-002: Debe retornar Optional vacío si el cliente no existe")
     void porId_clienteInexistente_retornaOptionalVacio() {
-        // Actuar
+
         Optional<Cliente> resultado = consultarClienteUseCase.porId(999);
 
         // Verificar
@@ -71,7 +71,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-003: Debe retornar clientes cuando el nombre es válido")
     void porNombre_nombreValido_retornaClientes() {
-        // Actuar
+
         List<Cliente> resultado = consultarClienteUseCase.porNombre("Juan");
 
         // Verificar
@@ -90,7 +90,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-004: Debe lanzar excepción cuando el nombre es null")
     void porNombre_nombreNull_lanzaExcepcion() {
-        // Actuar y verificar
+        //verificar
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> consultarClienteUseCase.porNombre(null)
@@ -109,7 +109,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-005: Debe lanzar excepción cuando el nombre está vacío")
     void porNombre_nombreVacio_lanzaExcepcion() {
-        // Actuar y verificar
+        // verificar
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> consultarClienteUseCase.porNombre("")
@@ -128,7 +128,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-006: Debe lanzar excepción cuando el nombre solo tiene espacios")
     void porNombre_nombreConEspacios_lanzaExcepcion() {
-        // Actuar y verificar
+        //verificar
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> consultarClienteUseCase.porNombre("   ")
@@ -147,7 +147,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-007: Debe listar todos los clientes registrados")
     void listarTodos_retornaTodosLosClientes() {
-        // Actuar
+
         List<Cliente> resultado = consultarClienteUseCase.listarTodos();
 
         // Verificar
@@ -164,7 +164,7 @@ class ConsultarClienteUseCaseTest {
     @Test
     @DisplayName("CP-008: Debe listar solo los clientes activos")
     void listarActivos_retornaSoloClientesActivos() {
-        // Actuar
+
         List<Cliente> resultado = consultarClienteUseCase.listarActivos();
 
         // Verificar
