@@ -249,7 +249,7 @@ public class ProcesarDevolucionUseCase {
         }
     }
 
-    private int guardarDevolucion(
+    public int guardarDevolucion(
             Connection conn,
             SolicitudDevolucion solicitud,
             double totalDevuelto,
