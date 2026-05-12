@@ -1,0 +1,44 @@
+name: Proceso Integración Continua
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - name: Instalar Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+
+      - name: Descargar software del repositorio
+        uses: actions/checkout@v4
+
+      # Compilar y empaquetar
+      - name: Compilar y empaquetar
+        run: mvn --batch-mode -DskipTests package
+
+      # Ejecutar pruebas automatizadas
+      - name: Ejecutar pruebas automatizadas
+        run: mvn --batch-mode test
+
+      # Generar reporte de resultados de pruebas
+      - name:  Generar reporte de resultados de pruebas
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure()
+        with:
+          report_paths: '**/target/surefire-reports/TEST-*.xml'
+
+      # Generar un reporte de cobertura de pruebas
+      - name: Generar un reporte de cobertura de pruebas
+        uses: PavanMudigonda/jacoco-reporter@v4.8
+        with:
+          coverage_results_path: 'target/site/jacoco/jacoco.xml'
+          coverage_report_title: 'Services test coverage'
+          coverage_report_name: 'Services coverage'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
