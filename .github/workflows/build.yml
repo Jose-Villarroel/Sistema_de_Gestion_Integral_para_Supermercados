@@ -3,6 +3,8 @@ name: Proceso Integración Continua
 on:
   workflow_dispatch:
   push:
+    branches:
+      - feature/pruebas-git-develop
 
 jobs:
   build:
