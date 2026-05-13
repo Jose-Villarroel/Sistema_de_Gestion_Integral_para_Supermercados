@@ -353,6 +353,16 @@ INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, pre
 
 ALTER TABLE Producto ALTER COLUMN id_producto RESTART WITH 15;
 
+-- PROVEEDORES
+INSERT INTO Proveedor (id_proveedor, nombre, correo, telefono, direccion, estado_activo, fecha_registro) VALUES
+(1, 'Distribuidora Diana SA', 'ventas@diana.com', '6011111111', 'Carrera 50 # 80-20', TRUE, CURRENT_DATE),
+(2, 'Alpina Productos Alimenticios', 'compras@alpina.com', '6012222222', 'Calle 100 # 15-30', TRUE, CURRENT_DATE),
+(3, 'Coca Cola FEMSA', 'contacto@cocacola.com', '6013333333', 'Avenida 68 # 25-10', TRUE, CURRENT_DATE),
+(4, 'Cristal Aguas', 'pedidos@cristal.com', '6014444444', 'Carrera 30 # 50-60', TRUE, CURRENT_DATE),
+(5, 'Proveedor Inactivo SA', 'inactivo@mail.com', '6015555555', 'Calle 1 # 1-1', FALSE, CURRENT_DATE);
+
+ALTER TABLE Proveedor ALTER COLUMN id_proveedor RESTART WITH 6;
+
 -- TIPOS DE MOVIMIENTO
 INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
 (1, 'ENTRADA', 'Entrada de inventario'),
