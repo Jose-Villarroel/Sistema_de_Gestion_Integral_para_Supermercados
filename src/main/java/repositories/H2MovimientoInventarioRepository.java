@@ -14,18 +14,16 @@ public class H2MovimientoInventarioRepository implements MovimientoInventarioRep
     public H2MovimientoInventarioRepository(DatabaseConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
-
     @Override
-    public void guardar(MovimientoInventario movimiento) {
+    public void guardar(Connection conn, MovimientoInventario movimiento) throws SQLException {
+        String sql = """
+        INSERT INTO Movimiento_inventario
+        (id_empleado, id_tipo_movimiento, id_producto, cantidad,
+         stock_anterior, stock_nuevo, motivo, fecha_movimiento)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """;
 
-        String sql = "INSERT INTO Movimiento_inventario " +
-                "(id_empleado, id_tipo_movimiento, id_producto, cantidad, " +
-                "stock_anterior, stock_nuevo, motivo, fecha_movimiento) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, movimiento.getIdEmpleado());
             stmt.setInt(2, movimiento.getIdTipoMovimiento());
             stmt.setInt(3, movimiento.getIdProducto());
@@ -36,9 +34,14 @@ public class H2MovimientoInventarioRepository implements MovimientoInventarioRep
             stmt.setDate(8, Date.valueOf(movimiento.getFechaMovimiento()));
 
             stmt.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+    }
+    @Override
+    public void guardar(MovimientoInventario movimiento) {
+        try (Connection conn = dbConnection.getConnection()) {
+            guardar(conn, movimiento);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al guardar movimiento de inventario", e);
         }
     }
 
