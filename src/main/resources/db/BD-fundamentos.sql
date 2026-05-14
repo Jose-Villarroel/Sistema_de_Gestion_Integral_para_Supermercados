@@ -429,3 +429,29 @@ INSERT INTO Detalle_orden_compra (id_detalle_orden, id_orden_compra, id_producto
 (3, 3, 4, 10, 4000.00, 40000.00);
 
 ALTER TABLE Detalle_orden_compra ALTER COLUMN id_detalle_orden RESTART WITH 4;
+
+-- VENTAS DE PRUEBA (para reportes CU-012)
+INSERT INTO Venta (id_venta, id_empleado, fecha_venta, turno, metodo_pago, subtotal, descuento_total, impuesto_total, total_final, estado_venta) VALUES
+(1, 3, DATEADD('DAY', -10, CURRENT_DATE), 'MANANA', 'EFECTIVO', 50000.00, 0, 9500.00, 59500.00, TRUE),
+(2, 3, DATEADD('DAY', -10, CURRENT_DATE), 'TARDE', 'TARJETA', 80000.00, 4000, 14440.00, 90440.00, TRUE),
+(3, 3, DATEADD('DAY', -5, CURRENT_DATE), 'MANANA', 'EFECTIVO', 30000.00, 0, 5700.00, 35700.00, TRUE),
+(4, 3, DATEADD('DAY', -5, CURRENT_DATE), 'NOCHE', 'TRANSFERENCIA', 120000.00, 0, 22800.00, 142800.00, TRUE),
+(5, 3, CURRENT_DATE, 'MANANA', 'EFECTIVO', 25000.00, 0, 4750.00, 29750.00, TRUE),
+(6, 3, CURRENT_DATE, 'TARDE', 'TARJETA', 60000.00, 0, 11400.00, 71400.00, TRUE);
+
+ALTER TABLE Venta ALTER COLUMN id_venta RESTART WITH 7;
+
+-- DETALLES DE VENTA (para dashboard CU-013)
+INSERT INTO Detalle_venta (id_detalle_venta, id_venta, id_producto, cantidad, precio_unitario, descuento, subtotal) VALUES
+(1, 1, 1, 5, 4500.00, 0, 22500.00),
+(2, 1, 3, 3, 3800.00, 0, 11400.00),
+(3, 2, 4, 4, 6000.00, 0, 24000.00),
+(4, 2, 1, 10, 4500.00, 0, 45000.00),
+(5, 3, 1, 4, 4500.00, 0, 18000.00),
+(6, 4, 3, 6, 3800.00, 0, 22800.00),
+(7, 4, 8, 5, 9500.00, 0, 47500.00),
+(8, 5, 11, 3, 2000.00, 0, 6000.00),
+(9, 6, 4, 2, 6000.00, 0, 12000.00),
+(10, 6, 1, 8, 4500.00, 0, 36000.00);
+
+ALTER TABLE Detalle_venta ALTER COLUMN id_detalle_venta RESTART WITH 11;
