@@ -413,3 +413,19 @@ INSERT INTO Movimiento_inventario
 (5, 3, 2, 4, 2, 10, 8, 'Venta', CURRENT_DATE);
 
 ALTER TABLE Movimiento_inventario ALTER COLUMN id_movimiento RESTART WITH 6;
+
+-- ORDENES DE COMPRA
+INSERT INTO Orden_compra (id_orden_compra, id_proveedor, id_empleado, fecha_creacion, fecha_entrega, total, estado) VALUES
+(1, 1, 1, CURRENT_DATE, CURRENT_DATE, 60000.00, TRUE),
+(2, 2, 1, CURRENT_DATE, CURRENT_DATE, 25000.00, TRUE),
+(3, 3, 2, CURRENT_DATE, CURRENT_DATE, 40000.00, FALSE);
+
+ALTER TABLE Orden_compra ALTER COLUMN id_orden_compra RESTART WITH 4;
+
+-- DETALLES DE ORDENES DE COMPRA
+INSERT INTO Detalle_orden_compra (id_detalle_orden, id_orden_compra, id_producto, cantidad, costo_unitario, subtotal) VALUES
+(1, 1, 1, 20, 3000.00, 60000.00),
+(2, 2, 3, 10, 2500.00, 25000.00),
+(3, 3, 4, 10, 4000.00, 40000.00);
+
+ALTER TABLE Detalle_orden_compra ALTER COLUMN id_detalle_orden RESTART WITH 4;
