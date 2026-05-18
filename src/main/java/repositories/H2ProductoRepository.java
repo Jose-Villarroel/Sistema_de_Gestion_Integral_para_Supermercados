@@ -257,6 +257,22 @@ public class H2ProductoRepository implements ProductoRepository {
     }
 
     @Override
+    public boolean descontarStock(Connection conn, int productoId, int cantidad) throws SQLException {
+        String sql = """
+            UPDATE Producto
+            SET stock_actual = stock_actual - ?
+            WHERE id_producto = ? AND stock_actual >= ? AND estado_activo = TRUE
+        """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, cantidad);
+            stmt.setInt(2, productoId);
+            stmt.setInt(3, cantidad);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    @Override
     public void aumentarStock(Connection conn, int productoId, int cantidad) throws SQLException {
         String sql = "UPDATE Producto SET stock_actual = stock_actual + ? WHERE id_producto = ?";
 
