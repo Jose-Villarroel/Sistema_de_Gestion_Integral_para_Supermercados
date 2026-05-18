@@ -1,6 +1,9 @@
 package repositories;
 
 import entities.Usuario;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +22,10 @@ public interface UsuarioRepository {
     boolean desactivar(int id);
 
     boolean existeUsername(String username);
+
+    void validarSupervisor(
+            Connection conn,
+            String username,
+            String password
+    ) throws SQLException;
 }

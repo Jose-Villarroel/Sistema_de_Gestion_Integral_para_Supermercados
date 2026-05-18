@@ -8,12 +8,18 @@ import controllers.cajero.DevolucionController;
 import controllers.cajero.PosController;
 import controllers.supervisor.InventarioController;
 import repositories.DatabaseConnection;
+import repositories.DetalleVentaRepository;
 import repositories.H2CierreCajaRepository;
+import repositories.H2DetalleVentaRepository;
 import repositories.H2ClienteRepository;
 import repositories.H2CuentaFidelizacionRepository;
 import repositories.H2MovimientoInventarioRepository;
+import repositories.H2PagoVentaRepository;
 import repositories.H2ProductoRepository;
 import repositories.H2UsuarioRepository;
+import repositories.H2VentaRepository;
+import repositories.PagoVentaRepository;
+import repositories.VentaRepository;
 import services.autenticacion.AutenticarEmpleadoUseCase;
 import services.caja.GestionarCierreCajaUseCase;
 import services.clientes.ConsultarClienteUseCase;
@@ -28,6 +34,10 @@ import services.productos.ModificarProductoUseCase;
 import services.productos.RegistrarProductoUseCase;
 import services.ventas.ProcesarDevolucionUseCase;
 import services.ventas.ProcesarFinalizarVentaUseCase;
+import repositories.H2DevolucionRepository;
+import repositories.H2DetalleDevolucionRepository;
+import repositories.H2CajaRepository;
+
 
 public final class AppDependencies {
 
@@ -40,6 +50,9 @@ public final class AppDependencies {
     private final H2ProductoRepository productoRepository;
     private final H2MovimientoInventarioRepository movimientoInventarioRepository;
     private final H2CierreCajaRepository cierreCajaRepository;
+    private final VentaRepository ventaRepository;
+    private final DetalleVentaRepository detalleVentaRepository;
+    private final PagoVentaRepository pagoVentaRepository;
 
     private final AutenticarEmpleadoUseCase autenticarEmpleadoUseCase;
     private final RegistrarClienteUseCase registrarClienteUseCase;
@@ -56,6 +69,12 @@ public final class AppDependencies {
     private final GestionarCierreCajaUseCase gestionarCierreCajaUseCase;
     private final ControlarInventarioUseCase controlarInventarioUseCase;
 
+
+    private final H2DevolucionRepository devolucionRepository;
+    private final H2DetalleDevolucionRepository detalleDevolucionRepository;
+    private final H2CajaRepository cajaRepository;
+
+
     private AppDependencies() {
         this.databaseConnection = new DatabaseConnection();
 
@@ -65,6 +84,12 @@ public final class AppDependencies {
         this.productoRepository = new H2ProductoRepository(databaseConnection);
         this.movimientoInventarioRepository = new H2MovimientoInventarioRepository(databaseConnection);
         this.cierreCajaRepository = new H2CierreCajaRepository(databaseConnection);
+        this.ventaRepository = new H2VentaRepository();
+        this.detalleVentaRepository = new H2DetalleVentaRepository();
+        this.pagoVentaRepository = new H2PagoVentaRepository();
+        this.devolucionRepository = new H2DevolucionRepository();
+        this.detalleDevolucionRepository = new H2DetalleDevolucionRepository();
+        this.cajaRepository = new H2CajaRepository();
 
         this.autenticarEmpleadoUseCase = new AutenticarEmpleadoUseCase(usuarioRepository);
         this.registrarClienteUseCase = new RegistrarClienteUseCase(clienteRepository, cuentaFidelizacionRepository);
@@ -78,8 +103,27 @@ public final class AppDependencies {
         this.consultarProductoUseCase = new ConsultarProductoUseCase(productoRepository);
         this.listarProductosStockBajoUseCase = new ListarProductosStockBajoUseCase(productoRepository);
 
-        this.procesarFinalizarVentaUseCase = new ProcesarFinalizarVentaUseCase(databaseConnection, productoRepository);
-        this.procesarDevolucionUseCase = new ProcesarDevolucionUseCase(databaseConnection);
+        this.procesarFinalizarVentaUseCase = new ProcesarFinalizarVentaUseCase(
+                databaseConnection,
+                clienteRepository,
+                cuentaFidelizacionRepository,
+                productoRepository,
+                ventaRepository,
+                detalleVentaRepository,
+                pagoVentaRepository,
+                movimientoInventarioRepository,
+                cajaRepository
+        );
+        this.procesarDevolucionUseCase = new ProcesarDevolucionUseCase(
+                databaseConnection,
+                devolucionRepository,
+                detalleDevolucionRepository,
+                productoRepository,
+                movimientoInventarioRepository,
+                cajaRepository,
+                usuarioRepository,
+                cuentaFidelizacionRepository
+        );
         this.gestionarCierreCajaUseCase = new GestionarCierreCajaUseCase(cierreCajaRepository);
         this.controlarInventarioUseCase = new ControlarInventarioUseCase(productoRepository, movimientoInventarioRepository);
     }

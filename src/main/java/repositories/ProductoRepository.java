@@ -1,6 +1,9 @@
 package repositories;
 
+import java.sql.Connection;
 import entities.Producto;
+
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +22,10 @@ public interface ProductoRepository {
     boolean desactivar(int id);
 
     boolean existeNombre(String nombre);
+
+    int obtenerStockActual(Connection conn, int productoId) throws SQLException;
+
+    boolean descontarStock(Connection conn, int productoId, int cantidad) throws SQLException;
+
+    void aumentarStock(Connection conn, int productoId, int cantidad) throws SQLException;
 }

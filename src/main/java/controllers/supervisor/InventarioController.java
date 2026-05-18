@@ -15,8 +15,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import repositories.H2MovimientoInventarioRepository;
-import repositories.H2ProductoRepository;
+import repositories.MovimientoInventarioRepository;
+import repositories.ProductoRepository;
 import services.inventario.ControlarInventarioUseCase;
 
 import java.time.format.DateTimeFormatter;
@@ -44,15 +44,15 @@ public class InventarioController {
 
     @FXML private TableColumn<MovimientoInventario, Integer> colStockNuevo;
 
-    private ControlarInventarioUseCase useCase;
-    private H2ProductoRepository productoRepository;
-    private H2MovimientoInventarioRepository movimientoRepository;
+    private final ControlarInventarioUseCase useCase;
+    private final ProductoRepository productoRepository;
+    private final MovimientoInventarioRepository movimientoRepository;
 
     private int empleadoId = 1;
 
     public InventarioController(ControlarInventarioUseCase useCase,
-                                H2ProductoRepository productoRepository,
-                                H2MovimientoInventarioRepository movimientoRepository) {
+                                ProductoRepository productoRepository,
+                                MovimientoInventarioRepository movimientoRepository) {
         this.useCase = useCase;
         this.productoRepository = productoRepository;
         this.movimientoRepository = movimientoRepository;
