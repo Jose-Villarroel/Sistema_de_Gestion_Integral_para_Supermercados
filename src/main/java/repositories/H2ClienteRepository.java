@@ -41,44 +41,6 @@ public class H2ClienteRepository implements ClienteRepository {
     }
 
     @Override
-    public Optional<Cliente> buscarPorIdOTarjeta(String identificador) {
-        String sql = """
-            SELECT c.id_cliente, c.nombre, c.apellido, c.correo, c.telefono, c.direccion,
-                   c.fecha_registro, c.estado_activo,
-                   cf.id_fidelizacion, cf.numero_tarjeta, cf.puntos_actuales,
-                   cf.fecha_creacion, cf.estado
-            FROM Cliente c
-            LEFT JOIN Cuenta_fidelizacion cf
-                ON c.id_cliente = cf.id_cliente
-                AND cf.estado = TRUE
-            WHERE c.estado_activo = TRUE
-              AND (c.id_cliente = ? OR cf.numero_tarjeta = ?)
-            ORDER BY cf.id_fidelizacion DESC
-            LIMIT 1
-        """;
-
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            int codigo = Integer.parseInt(identificador == null ? "" : identificador.trim());
-            stmt.setInt(1, codigo);
-            stmt.setInt(2, codigo);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapearCliente(rs));
-            }
-
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar cliente por id o tarjeta", e);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
     public List<Cliente> buscarPorNombre(String nombre) {
         List<Cliente> clientes = new ArrayList<>();
         String sql = "SELECT * FROM Cliente WHERE LOWER(nombre) LIKE ? OR LOWER(apellido) LIKE ? ORDER BY nombre, apellido";

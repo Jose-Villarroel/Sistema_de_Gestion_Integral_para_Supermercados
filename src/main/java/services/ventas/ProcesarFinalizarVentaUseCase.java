@@ -1,25 +1,20 @@
 package services.ventas;
 
 import entities.Cliente;
-import entities.CuentaFidelizacion;
 import entities.Empleado;
-import entities.MovimientoInventario;
 import entities.Producto;
-import repositories.CajaRepository;
-import repositories.ClienteRepository;
 import repositories.DatabaseConnection;
-import repositories.CuentaFidelizacionRepository;
-import repositories.DetalleVentaRepository;
-import repositories.MovimientoInventarioRepository;
-import repositories.PagoVentaRepository;
 import repositories.ProductoRepository;
-import repositories.VentaRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,33 +27,12 @@ public class ProcesarFinalizarVentaUseCase {
     private static final Locale LOCALE_CO = Locale.of("es", "CO");
 
     private final DatabaseConnection databaseConnection;
-    private final ClienteRepository clienteRepository;
-    private final CuentaFidelizacionRepository cuentaFidelizacionRepository;
     private final ProductoRepository productoRepository;
-    private final VentaRepository ventaRepository;
-    private final DetalleVentaRepository detalleVentaRepository;
-    private final PagoVentaRepository pagoVentaRepository;
-    private final MovimientoInventarioRepository movimientoInventarioRepository;
-    private final CajaRepository cajaRepository;
 
     public ProcesarFinalizarVentaUseCase(DatabaseConnection databaseConnection,
-                                         ClienteRepository clienteRepository,
-                                         CuentaFidelizacionRepository cuentaFidelizacionRepository,
-                                         ProductoRepository productoRepository,
-                                         VentaRepository ventaRepository,
-                                         DetalleVentaRepository detalleVentaRepository,
-                                         PagoVentaRepository pagoVentaRepository,
-                                         MovimientoInventarioRepository movimientoInventarioRepository,
-                                         CajaRepository cajaRepository) {
+                                         ProductoRepository productoRepository) {
         this.databaseConnection = databaseConnection;
-        this.clienteRepository = clienteRepository;
-        this.cuentaFidelizacionRepository = cuentaFidelizacionRepository;
         this.productoRepository = productoRepository;
-        this.ventaRepository = ventaRepository;
-        this.detalleVentaRepository = detalleVentaRepository;
-        this.pagoVentaRepository = pagoVentaRepository;
-        this.movimientoInventarioRepository = movimientoInventarioRepository;
-        this.cajaRepository = cajaRepository;
     }
 
     public Producto buscarProductoPorId(String codigoEscaneado) {
@@ -73,26 +47,51 @@ public class ProcesarFinalizarVentaUseCase {
             return Optional.empty();
         }
 
-        parsearEntero(codigoCliente, "Customer not found");
-        Cliente cliente = clienteRepository
-                .buscarPorIdOTarjeta(codigoCliente)
-                .orElse(null);
+        int codigo = parsearEntero(codigoCliente, "Customer not found");
+        String sql = """
+            SELECT c.id_cliente, c.nombre, c.apellido, c.correo, c.telefono, c.direccion,
+                   c.fecha_registro, c.estado_activo,
+                   cf.id_fidelizacion, cf.numero_tarjeta, cf.puntos_actuales,
+                   cf.fecha_creacion, cf.estado
+            FROM Cliente c
+            LEFT JOIN Cuenta_fidelizacion cf ON c.id_cliente = cf.id_cliente AND cf.estado = TRUE
+            WHERE c.estado_activo = TRUE
+              AND (c.id_cliente = ? OR cf.numero_tarjeta = ?)
+            ORDER BY cf.id_fidelizacion DESC
+            LIMIT 1
+        """;
 
-        if (cliente == null) {
-            return Optional.empty();
+        try (Connection conn = databaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, codigo);
+            stmt.setInt(2, codigo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Cliente cliente = new Cliente(
+                        rs.getInt("id_cliente"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("correo"),
+                        rs.getString("telefono"),
+                        rs.getString("direccion"),
+                        rs.getDate("fecha_registro").toLocalDate(),
+                        rs.getBoolean("estado_activo")
+                );
+
+                int idCuenta = rs.getInt("id_fidelizacion");
+                Integer cuentaId = rs.wasNull() ? null : idCuenta;
+                Integer numeroTarjeta = cuentaId == null ? null : rs.getInt("numero_tarjeta");
+                Integer puntos = cuentaId == null ? null : rs.getInt("puntos_actuales");
+
+                return Optional.of(new ClienteConCuenta(cliente, cuentaId, numeroTarjeta, puntos));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al buscar cliente", e);
         }
 
-        CuentaFidelizacion cuenta = cuentaFidelizacionRepository
-                .buscarPorCliente(cliente.getId())
-                .filter(CuentaFidelizacion::isActiva)
-                .orElse(null);
-
-        return Optional.of(new ClienteConCuenta(
-                cliente,
-                cuenta != null ? cuenta.getId() : null,
-                cuenta != null ? cuenta.getNumeroTarjeta() : null,
-                cuenta != null ? cuenta.getPuntosActuales() : null
-        ));
+        return Optional.empty();
     }
 
     public ResumenVenta calcularResumen(List<ItemVenta> items,
@@ -192,80 +191,135 @@ public class ProcesarFinalizarVentaUseCase {
     }
 
     private int guardarVenta(Connection conn, SolicitudVenta solicitud, ResumenVenta resumen) throws SQLException {
-        return ventaRepository.guardar(
-                conn,
-                solicitud.empleado().getId(),
-                LocalDate.now(),
-                solicitud.turno(),
-                solicitud.metodoPago().name(),
-                resumen.subtotal(),
-                resumen.descuentoTotal(),
-                resumen.impuestos(),
-                resumen.total()
-        );
+        String sql = """
+            INSERT INTO Venta
+            (id_empleado, fecha_venta, turno, metodo_pago, subtotal, descuento_total,
+             impuesto_total, total_final, estado_venta)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, solicitud.empleado().getId());
+            stmt.setDate(2, Date.valueOf(LocalDate.now()));
+            stmt.setString(3, solicitud.turno());
+            stmt.setString(4, solicitud.metodoPago().name());
+            stmt.setDouble(5, resumen.subtotal());
+            stmt.setInt(6, (int) Math.round(resumen.descuentoTotal()));
+            stmt.setDouble(7, resumen.impuestos());
+            stmt.setDouble(8, resumen.total());
+            stmt.setBoolean(9, true);
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            throw new SQLException("No fue posible registrar la venta");
+        }
     }
 
     private void guardarDetalles(Connection conn, int ventaId, List<ItemVenta> items) throws SQLException {
-        List<DetalleVentaRepository.DetalleVentaItem> detalles = items.stream()
-                .map(item -> new DetalleVentaRepository.DetalleVentaItem(
-                        item.productoId(),
-                        item.cantidad(),
-                        item.precioUnitario(),
-                        item.subtotal()
-                ))
-                .toList();
+        String sql = """
+            INSERT INTO Detalle_venta
+            (id_venta, id_producto, cantidad, precio_unitario, descuento, subtotal)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
 
-        detalleVentaRepository.guardarDetalles(conn, ventaId, detalles);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (ItemVenta item : items) {
+                stmt.setInt(1, ventaId);
+                stmt.setInt(2, item.productoId());
+                stmt.setInt(3, item.cantidad());
+                stmt.setDouble(4, item.precioUnitario());
+                stmt.setInt(5, 0);
+                stmt.setDouble(6, item.subtotal());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        }
     }
 
     private void guardarPago(Connection conn, int ventaId, MetodoPago metodoPago, double total,
                              PagoProcesado pago) throws SQLException {
-        if (metodoPago == MetodoPago.MIXTO) {
-            pagoVentaRepository.guardarPago(conn, ventaId, 1, redondear(pago.montoEfectivo()), LocalDate.now());
-            pagoVentaRepository.guardarPago(
-                    conn,
-                    ventaId,
-                    2,
-                    redondear(total - pago.montoEfectivo()),
-                    LocalDate.now()
-            );
-            return;
-        }
+        String sql = "INSERT INTO Pago_venta (id_venta, id_tipo_pago, monto, fecha_pago) VALUES (?, ?, ?, ?)";
 
-        pagoVentaRepository.guardarPago(
-                conn,
-                ventaId,
-                obtenerTipoPagoId(metodoPago),
-                redondear(total),
-                LocalDate.now()
-        );
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if (metodoPago == MetodoPago.MIXTO) {
+                agregarPagoBatch(stmt, ventaId, 1, pago.montoEfectivo());
+                agregarPagoBatch(stmt, ventaId, 2, total - pago.montoEfectivo());
+                stmt.executeBatch();
+                return;
+            }
+
+            agregarPagoBatch(stmt, ventaId, obtenerTipoPagoId(metodoPago), total);
+            stmt.executeBatch();
+        }
+    }
+
+    private void agregarPagoBatch(PreparedStatement stmt, int ventaId, int tipoPago, double monto)
+            throws SQLException {
+        stmt.setInt(1, ventaId);
+        stmt.setInt(2, tipoPago);
+        stmt.setDouble(3, redondear(monto));
+        stmt.setDate(4, Date.valueOf(LocalDate.now()));
+        stmt.addBatch();
     }
 
     private void actualizarInventario(Connection conn, List<ItemVenta> items, int empleadoId, int ventaId)
             throws SQLException {
-        for (ItemVenta item : items) {
-            int stockActual = productoRepository.obtenerStockActual(conn, item.productoId());
-            if (stockActual < item.cantidad()) {
-                throw new IllegalArgumentException("Insufficient stock. Available: " + stockActual + " units");
+        String sqlStock = """
+            UPDATE Producto
+            SET stock_actual = stock_actual - ?
+            WHERE id_producto = ? AND stock_actual >= ? AND estado_activo = TRUE
+        """;
+        String sqlMovimiento = """
+            INSERT INTO Movimiento_inventario
+            (id_empleado, id_tipo_movimiento, id_producto, cantidad, stock_anterior,
+             stock_nuevo, motivo, fecha_movimiento)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement stmtStock = conn.prepareStatement(sqlStock);
+             PreparedStatement stmtMovimiento = conn.prepareStatement(sqlMovimiento)) {
+
+            for (ItemVenta item : items) {
+                int stockActual = obtenerStockActual(conn, item.productoId());
+                if (stockActual < item.cantidad()) {
+                    throw new IllegalArgumentException("Insufficient stock. Available: " + stockActual + " units");
+                }
+
+                stmtStock.setInt(1, item.cantidad());
+                stmtStock.setInt(2, item.productoId());
+                stmtStock.setInt(3, item.cantidad());
+                if (stmtStock.executeUpdate() == 0) {
+                    throw new IllegalArgumentException("Insufficient stock. Available: "
+                            + obtenerStockActual(conn, item.productoId()) + " units");
+                }
+
+                stmtMovimiento.setInt(1, empleadoId);
+                stmtMovimiento.setInt(2, 2);
+                stmtMovimiento.setInt(3, item.productoId());
+                stmtMovimiento.setInt(4, item.cantidad());
+                stmtMovimiento.setInt(5, stockActual);
+                stmtMovimiento.setInt(6, stockActual - item.cantidad());
+                stmtMovimiento.setString(7, "Venta " + ventaId);
+                stmtMovimiento.setDate(8, Date.valueOf(LocalDate.now()));
+                stmtMovimiento.addBatch();
             }
 
-            if (!productoRepository.descontarStock(conn, item.productoId(), item.cantidad())) {
-                throw new IllegalArgumentException("Insufficient stock. Available: "
-                        + productoRepository.obtenerStockActual(conn, item.productoId()) + " units");
-            }
+            stmtMovimiento.executeBatch();
+        }
+    }
 
-            MovimientoInventario movimiento = new MovimientoInventario(
-                    0,
-                    empleadoId,
-                    2,
-                    item.productoId(),
-                    item.cantidad(),
-                    stockActual,
-                    stockActual - item.cantidad(),
-                    "Venta " + ventaId,
-                    LocalDate.now()
-            );
-            movimientoInventarioRepository.guardar(conn, movimiento);
+    private int obtenerStockActual(Connection conn, int productoId) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(
+                "SELECT stock_actual FROM Producto WHERE id_producto = ?")) {
+            stmt.setInt(1, productoId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("stock_actual");
+            }
+            return 0;
         }
     }
 
@@ -275,7 +329,22 @@ public class ProcesarFinalizarVentaUseCase {
             return;
         }
 
-        cajaRepository.registrarIngresoVenta(conn, empleadoId, ventaId, montoEfectivo);
+        String sql = """
+            INSERT INTO Caja
+            (id_empleado, id_venta, fecha_apertura, fecha_cierre, monto_inicial, monto_final, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, empleadoId);
+            stmt.setInt(2, ventaId);
+            stmt.setDate(3, Date.valueOf(LocalDate.now()));
+            stmt.setDate(4, Date.valueOf(LocalDate.now()));
+            stmt.setDouble(5, 0);
+            stmt.setDouble(6, montoEfectivo);
+            stmt.setBoolean(7, true);
+            stmt.executeUpdate();
+        }
     }
 
     private void acreditarPuntos(Connection conn, ClienteConCuenta cliente, int ventaId, int puntos) throws SQLException {
@@ -283,7 +352,43 @@ public class ProcesarFinalizarVentaUseCase {
             return;
         }
 
-        cuentaFidelizacionRepository.acreditarPuntos(conn, cliente.cuentaId(), ventaId, puntos);
+        String sqlCuenta = """
+            UPDATE Cuenta_fidelizacion
+            SET puntos_actuales = puntos_actuales + ?
+            WHERE id_fidelizacion = ?
+        """;
+        String sqlMovimiento = """
+            INSERT INTO Movimiento_puntos
+            (id_tipo_movimiento_puntos, id_venta, puntos, fecha_movimiento)
+            VALUES (?, ?, ?, ?)
+        """;
+        String sqlRelacion = """
+            INSERT INTO CuentaXMovimiento
+            (id_movimiento, id_cuenta_fidelizacion)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement stmtCuenta = conn.prepareStatement(sqlCuenta);
+             PreparedStatement stmtMovimiento = conn.prepareStatement(sqlMovimiento, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement stmtRelacion = conn.prepareStatement(sqlRelacion)) {
+
+            stmtCuenta.setInt(1, puntos);
+            stmtCuenta.setInt(2, cliente.cuentaId());
+            stmtCuenta.executeUpdate();
+
+            stmtMovimiento.setInt(1, 1);
+            stmtMovimiento.setInt(2, ventaId);
+            stmtMovimiento.setInt(3, puntos);
+            stmtMovimiento.setDate(4, Date.valueOf(LocalDate.now()));
+            stmtMovimiento.executeUpdate();
+
+            ResultSet rs = stmtMovimiento.getGeneratedKeys();
+            if (rs.next()) {
+                stmtRelacion.setInt(1, rs.getInt(1));
+                stmtRelacion.setInt(2, cliente.cuentaId());
+                stmtRelacion.executeUpdate();
+            }
+        }
     }
 
     private PagoProcesado procesarPago(MetodoPago metodoPago, double total, double montoRecibido, String referenciaPago) {

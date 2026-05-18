@@ -240,46 +240,4 @@ public class H2ProductoRepository implements ProductoRepository {
                 rs.getDate("fecha_registro").toLocalDate()
         );
     }
-    @Override
-    public int obtenerStockActual(Connection conn, int productoId) throws SQLException {
-        String sql = "SELECT stock_actual FROM Producto WHERE id_producto = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, productoId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt("stock_actual");
-            }
-
-            throw new SQLException("Producto no encontrado");
-        }
-    }
-
-    @Override
-    public boolean descontarStock(Connection conn, int productoId, int cantidad) throws SQLException {
-        String sql = """
-            UPDATE Producto
-            SET stock_actual = stock_actual - ?
-            WHERE id_producto = ? AND stock_actual >= ? AND estado_activo = TRUE
-        """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, cantidad);
-            stmt.setInt(2, productoId);
-            stmt.setInt(3, cantidad);
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-    @Override
-    public void aumentarStock(Connection conn, int productoId, int cantidad) throws SQLException {
-        String sql = "UPDATE Producto SET stock_actual = stock_actual + ? WHERE id_producto = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, cantidad);
-            stmt.setInt(2, productoId);
-            stmt.executeUpdate();
-        }
-    }
 }

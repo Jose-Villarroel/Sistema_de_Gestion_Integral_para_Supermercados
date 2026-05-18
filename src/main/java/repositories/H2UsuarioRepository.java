@@ -4,7 +4,12 @@ import entities.Empleado;
 import entities.Usuario;
 import entities.Rol;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -274,45 +279,5 @@ public class H2UsuarioRepository implements UsuarioRepository {
                         : null,
                 rs.getBoolean("estado_usuario")
         );
-    }
-
-    @Override
-    public void validarSupervisor(
-            Connection conn,
-            String username,
-            String password
-    ) throws SQLException {
-
-        if (username == null || username.isBlank() || password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Se requiere autorización del supervisor.");
-        }
-
-        String sql = """
-        SELECT u.password_hash, r.nombre_rol
-        FROM Usuario u
-        JOIN Rol r ON u.id_rol = r.id_rol
-        WHERE u.username = ? AND u.estado_usuario = TRUE
-    """;
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (!rs.next()) {
-                throw new IllegalArgumentException("Supervisor no encontrado.");
-            }
-
-            String hashBd = rs.getString("password_hash");
-            String rol = rs.getString("nombre_rol");
-
-            if (!"SUPERVISOR_INVENTARIO".equalsIgnoreCase(rol)) {
-                throw new IllegalArgumentException("El usuario ingresado no tiene rol de supervisor.");
-            }
-
-            if (!hashBd.equals(String.valueOf(password.hashCode()))) {
-                throw new IllegalArgumentException("Credenciales de supervisor inválidas.");
-            }
-        }
     }
 }

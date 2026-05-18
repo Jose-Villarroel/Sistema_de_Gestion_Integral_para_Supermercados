@@ -2,8 +2,6 @@ package repositories;
 
 import entities.CuentaFidelizacion;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +18,4 @@ public interface CuentaFidelizacionRepository {
     boolean actualizarPuntos(int idCuenta, int nuevosPuntos);
 
     boolean desactivar(int id);
-
-    void acreditarPuntos(Connection conn, int idCuenta, int idVenta, int puntos) throws SQLException;
-
-    void descontarPuntosSiAplica(Connection conn, int idVenta) throws SQLException;
 }

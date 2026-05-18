@@ -1,51 +1,48 @@
 package repositories;
 
-import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseConnection {
+
     private static final String URL = "jdbc:h2:file:./supermercado_db;AUTO_SERVER=TRUE";
     private static final String USER = "sa";
     private static final String PASS = "";
+
     private static Connection connection;
 
-    /**
-     * Retorna una conexion compartida envuelta en un proxy que ignora
-     * las llamadas a close(). De esta forma, los try-with-resources de
-     * los repositorios no cierran la conexion subyacente y los cambios
-     * persisten entre operaciones consecutivas (necesario para FKs).
-     *
-     * La conexion real solo se cierra al terminar el proceso de la JVM.
-     */
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             System.out.println("Conectando a H2...");
-            Connection realConnection = DriverManager.getConnection(URL, USER, PASS);
-            connection = wrapNoClose(realConnection);
+            connection = DriverManager.getConnection(URL, USER, PASS);
+            asegurarEsquemaCierreCaja(connection);
         }
         return connection;
     }
 
-    /**
-     * Envuelve una Connection en un proxy dinamico que intercepta close()
-     * y lo convierte en un no-op. El resto de metodos se delegan al
-     * objeto real.
-     */
-    private static Connection wrapNoClose(Connection real) {
-        return (Connection) Proxy.newProxyInstance(
-                Connection.class.getClassLoader(),
-                new Class<?>[]{Connection.class},
-                (proxy, method, args) -> {
-                    if ("close".equals(method.getName())) {
-                        return null;
-                    }
-                    if ("isClosed".equals(method.getName())) {
-                        return real.isClosed();
-                    }
-                    return method.invoke(real, args);
-                }
-        );
+    private void asegurarEsquemaCierreCaja(Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("ALTER TABLE Venta ADD COLUMN IF NOT EXISTS turno VARCHAR(20)");
+            stmt.execute("ALTER TABLE Venta ADD COLUMN IF NOT EXISTS metodo_pago VARCHAR(30)");
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS CIERRE_CAJA (
+                        id_cierre INT PRIMARY KEY AUTO_INCREMENT,
+                        numero_cierre VARCHAR(50) UNIQUE,
+                        fecha_cierre DATE,
+                        turno VARCHAR(20),
+                        id_empleado INT,
+                        efectivo_esperado DECIMAL(10,2),
+                        efectivo_contado DECIMAL(10,2),
+                        diferencia DECIMAL(10,2),
+                        estado_cierre VARCHAR(30),
+                        total_transacciones INT,
+                        observacion VARCHAR(500),
+                        FOREIGN KEY (id_empleado) REFERENCES Empleado(id_empleado),
+                        UNIQUE (fecha_cierre, turno)
+                    )
+                    """);
+        }
     }
 }

@@ -41,30 +41,6 @@ public class H2EmpleadoRepository implements EmpleadoRepository {
     }
 
     @Override
-    public List<Empleado> buscarPorNombre(String nombre) {
-        List<Empleado> empleados = new ArrayList<>();
-        String sql = "SELECT * FROM Empleado WHERE LOWER(nombre) LIKE ? OR LOWER(apellido) LIKE ? ORDER BY nombre, apellido";
-
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            String parametro = "%" + nombre.toLowerCase() + "%";
-            stmt.setString(1, parametro);
-            stmt.setString(2, parametro);
-
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                empleados.add(mapearEmpleado(rs));
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar empleado por nombre", e);
-        }
-
-        return empleados;
-    }
-
-    @Override
     public List<Empleado> listarTodos() {
         List<Empleado> empleados = new ArrayList<>();
         String sql = "SELECT * FROM Empleado ORDER BY nombre, apellido";
@@ -79,26 +55,6 @@ public class H2EmpleadoRepository implements EmpleadoRepository {
 
         } catch (Exception e) {
             throw new RuntimeException("Error al listar empleados", e);
-        }
-
-        return empleados;
-    }
-
-    @Override
-    public List<Empleado> listarActivos() {
-        List<Empleado> empleados = new ArrayList<>();
-        String sql = "SELECT * FROM Empleado WHERE estado_activo = TRUE ORDER BY nombre, apellido";
-
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                empleados.add(mapearEmpleado(rs));
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error al listar empleados activos", e);
         }
 
         return empleados;
@@ -148,7 +104,7 @@ public class H2EmpleadoRepository implements EmpleadoRepository {
     public boolean actualizar(Empleado empleado) {
         String sql = """
             UPDATE Empleado
-            SET nombre = ?, apellido = ?, correo = ?, telefono = ?, estado_activo = ?
+            SET nombre = ?, apellido = ?, correo = ?, telefono = ?, estado_activo = ?, fecha_registro = ?
             WHERE id_empleado = ?
         """;
 
@@ -160,7 +116,8 @@ public class H2EmpleadoRepository implements EmpleadoRepository {
             stmt.setString(3, empleado.getCorreo());
             stmt.setString(4, empleado.getTelefono());
             stmt.setBoolean(5, empleado.isActivo());
-            stmt.setInt(6, empleado.getId());
+            stmt.setDate(6, Date.valueOf(empleado.getFechaRegistro()));
+            stmt.setInt(7, empleado.getId());
 
             return stmt.executeUpdate() > 0;
 

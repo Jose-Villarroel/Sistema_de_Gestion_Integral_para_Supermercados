@@ -353,16 +353,6 @@ INSERT INTO Producto (id_producto, id_categoria, nombre, descripcion, marca, pre
 
 ALTER TABLE Producto ALTER COLUMN id_producto RESTART WITH 15;
 
--- PROVEEDORES
-INSERT INTO Proveedor (id_proveedor, nombre, correo, telefono, direccion, estado_activo, fecha_registro) VALUES
-(1, 'Distribuidora Diana SA', 'ventas@diana.com', '6011111111', 'Carrera 50 # 80-20', TRUE, CURRENT_DATE),
-(2, 'Alpina Productos Alimenticios', 'compras@alpina.com', '6012222222', 'Calle 100 # 15-30', TRUE, CURRENT_DATE),
-(3, 'Coca Cola FEMSA', 'contacto@cocacola.com', '6013333333', 'Avenida 68 # 25-10', TRUE, CURRENT_DATE),
-(4, 'Cristal Aguas', 'pedidos@cristal.com', '6014444444', 'Carrera 30 # 50-60', TRUE, CURRENT_DATE),
-(5, 'Proveedor Inactivo SA', 'inactivo@mail.com', '6015555555', 'Calle 1 # 1-1', FALSE, CURRENT_DATE);
-
-ALTER TABLE Proveedor ALTER COLUMN id_proveedor RESTART WITH 6;
-
 -- TIPOS DE MOVIMIENTO
 INSERT INTO Tipo_movimiento (id_tipo_movimiento, nombre, descripcion) VALUES
 (1, 'ENTRADA', 'Entrada de inventario'),
@@ -413,30 +403,3 @@ INSERT INTO Movimiento_inventario
 (5, 3, 2, 4, 2, 10, 8, 'Venta', CURRENT_DATE);
 
 ALTER TABLE Movimiento_inventario ALTER COLUMN id_movimiento RESTART WITH 6;
-
--- ORDENES DE COMPRA
-INSERT INTO Orden_compra (id_orden_compra, id_proveedor, id_empleado, fecha_creacion, fecha_entrega, total, estado) VALUES
-(1, 1, 1, CURRENT_DATE, CURRENT_DATE, 60000.00, TRUE),
-(2, 2, 1, CURRENT_DATE, CURRENT_DATE, 25000.00, TRUE),
-(3, 3, 2, CURRENT_DATE, CURRENT_DATE, 40000.00, FALSE);
-
-ALTER TABLE Orden_compra ALTER COLUMN id_orden_compra RESTART WITH 4;
-
--- DETALLES DE ORDENES DE COMPRA
-INSERT INTO Detalle_orden_compra (id_detalle_orden, id_orden_compra, id_producto, cantidad, costo_unitario, subtotal) VALUES
-(1, 1, 1, 20, 3000.00, 60000.00),
-(2, 2, 3, 10, 2500.00, 25000.00),
-(3, 3, 4, 10, 4000.00, 40000.00);
-
-ALTER TABLE Detalle_orden_compra ALTER COLUMN id_detalle_orden RESTART WITH 4;
-
--- VENTAS DE PRUEBA (para reportes CU-012)
-INSERT INTO Venta (id_venta, id_empleado, fecha_venta, turno, metodo_pago, subtotal, descuento_total, impuesto_total, total_final, estado_venta) VALUES
-(1, 3, DATEADD('DAY', -10, CURRENT_DATE), 'MANANA', 'EFECTIVO', 50000.00, 0, 9500.00, 59500.00, TRUE),
-(2, 3, DATEADD('DAY', -10, CURRENT_DATE), 'TARDE', 'TARJETA', 80000.00, 4000, 14440.00, 90440.00, TRUE),
-(3, 3, DATEADD('DAY', -5, CURRENT_DATE), 'MANANA', 'EFECTIVO', 30000.00, 0, 5700.00, 35700.00, TRUE),
-(4, 3, DATEADD('DAY', -5, CURRENT_DATE), 'NOCHE', 'TRANSFERENCIA', 120000.00, 0, 22800.00, 142800.00, TRUE),
-(5, 3, CURRENT_DATE, 'MANANA', 'EFECTIVO', 25000.00, 0, 4750.00, 29750.00, TRUE),
-(6, 3, CURRENT_DATE, 'TARDE', 'TARJETA', 60000.00, 0, 11400.00, 71400.00, TRUE);
-
-ALTER TABLE Venta ALTER COLUMN id_venta RESTART WITH 7;
