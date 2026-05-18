@@ -21,5 +21,7 @@ public interface CuentaFidelizacionRepository {
 
     boolean desactivar(int id);
 
+    void acreditarPuntos(Connection conn, int idCuenta, int idVenta, int puntos) throws SQLException;
+
     void descontarPuntosSiAplica(Connection conn, int idVenta) throws SQLException;
 }

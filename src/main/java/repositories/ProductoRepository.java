@@ -25,5 +25,7 @@ public interface ProductoRepository {
 
     int obtenerStockActual(Connection conn, int productoId) throws SQLException;
 
+    boolean descontarStock(Connection conn, int productoId, int cantidad) throws SQLException;
+
     void aumentarStock(Connection conn, int productoId, int cantidad) throws SQLException;
 }

@@ -158,6 +158,47 @@ public class H2CuentaFidelizacionRepository implements CuentaFidelizacionReposit
     }
 
     @Override
+    public void acreditarPuntos(Connection conn, int idCuenta, int idVenta, int puntos) throws SQLException {
+        String sqlCuenta = """
+            UPDATE Cuenta_fidelizacion
+            SET puntos_actuales = puntos_actuales + ?
+            WHERE id_fidelizacion = ?
+        """;
+        String sqlMovimiento = """
+            INSERT INTO Movimiento_puntos
+            (id_tipo_movimiento_puntos, id_venta, puntos, fecha_movimiento)
+            VALUES (?, ?, ?, ?)
+        """;
+        String sqlRelacion = """
+            INSERT INTO CuentaXMovimiento
+            (id_movimiento, id_cuenta_fidelizacion)
+            VALUES (?, ?)
+        """;
+
+        try (PreparedStatement stmtCuenta = conn.prepareStatement(sqlCuenta);
+             PreparedStatement stmtMovimiento = conn.prepareStatement(sqlMovimiento, Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement stmtRelacion = conn.prepareStatement(sqlRelacion)) {
+
+            stmtCuenta.setInt(1, puntos);
+            stmtCuenta.setInt(2, idCuenta);
+            stmtCuenta.executeUpdate();
+
+            stmtMovimiento.setInt(1, 1);
+            stmtMovimiento.setInt(2, idVenta);
+            stmtMovimiento.setInt(3, puntos);
+            stmtMovimiento.setDate(4, Date.valueOf(java.time.LocalDate.now()));
+            stmtMovimiento.executeUpdate();
+
+            ResultSet rs = stmtMovimiento.getGeneratedKeys();
+            if (rs.next()) {
+                stmtRelacion.setInt(1, rs.getInt(1));
+                stmtRelacion.setInt(2, idCuenta);
+                stmtRelacion.executeUpdate();
+            }
+        }
+    }
+
+    @Override
     public void descontarPuntosSiAplica(Connection conn, int idVenta) throws SQLException {
         String sqlBuscar = """
             SELECT cxm.id_cuenta_fidelizacion, mp.puntos

@@ -21,4 +21,11 @@ public interface CajaRepository {
             MetodoReembolso metodo,
             double montoDevuelto
     ) throws SQLException;
+
+    void registrarIngresoVenta(
+            Connection conn,
+            int empleadoId,
+            int ventaId,
+            double montoEfectivo
+    ) throws SQLException;
 }

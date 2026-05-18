@@ -9,6 +9,8 @@ public interface ClienteRepository {
 
     Optional<Cliente> buscarPorId(int id);
 
+    Optional<Cliente> buscarPorIdOTarjeta(String identificador);
+
     List<Cliente> buscarPorNombre(String nombre);
 
     List<Cliente> listarTodos();

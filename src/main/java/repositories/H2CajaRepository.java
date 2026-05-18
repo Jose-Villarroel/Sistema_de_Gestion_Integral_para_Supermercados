@@ -74,4 +74,29 @@ public class H2CajaRepository implements CajaRepository {
             stmt.executeUpdate();
         }
     }
+
+    @Override
+    public void registrarIngresoVenta(
+            Connection conn,
+            int empleadoId,
+            int ventaId,
+            double montoEfectivo
+    ) throws SQLException {
+        String sql = """
+            INSERT INTO Caja
+            (id_empleado, id_venta, fecha_apertura, fecha_cierre, monto_inicial, monto_final, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, empleadoId);
+            stmt.setInt(2, ventaId);
+            stmt.setDate(3, Date.valueOf(LocalDate.now()));
+            stmt.setDate(4, Date.valueOf(LocalDate.now()));
+            stmt.setDouble(5, 0);
+            stmt.setDouble(6, montoEfectivo);
+            stmt.setBoolean(7, true);
+            stmt.executeUpdate();
+        }
+    }
 }
