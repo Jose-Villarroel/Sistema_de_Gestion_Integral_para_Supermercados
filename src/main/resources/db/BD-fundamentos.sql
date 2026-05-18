@@ -455,3 +455,4 @@ INSERT INTO Detalle_venta (id_detalle_venta, id_venta, id_producto, cantidad, pr
 (10, 6, 1, 8, 4500.00, 0, 36000.00);
 
 ALTER TABLE Detalle_venta ALTER COLUMN id_detalle_venta RESTART WITH 11;
+ALTER TABLE Venta ALTER COLUMN id_venta RESTART WITH 7;

@@ -2,11 +2,7 @@ package repositories;
 
 import entities.CuentaFidelizacion;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -159,5 +155,44 @@ public class H2CuentaFidelizacionRepository implements CuentaFidelizacionReposit
                 rs.getDate("fecha_creacion").toLocalDate(),
                 rs.getBoolean("estado")
         );
+    }
+
+    @Override
+    public void descontarPuntosSiAplica(Connection conn, int idVenta) throws SQLException {
+        String sqlBuscar = """
+            SELECT cxm.id_cuenta_fidelizacion, mp.puntos
+            FROM Movimiento_puntos mp
+            JOIN CuentaXMovimiento cxm ON cxm.id_movimiento = mp.id_movimiento
+            WHERE mp.id_venta = ?
+              AND mp.id_tipo_movimiento_puntos = 1
+        """;
+
+        String sqlActualizar = """
+            UPDATE Cuenta_fidelizacion
+            SET puntos_actuales = CASE
+                WHEN puntos_actuales >= ? THEN puntos_actuales - ?
+                ELSE 0
+            END
+            WHERE id_fidelizacion = ?
+        """;
+
+        try (PreparedStatement stmtBuscar = conn.prepareStatement(sqlBuscar)) {
+            stmtBuscar.setInt(1, idVenta);
+
+            ResultSet rs = stmtBuscar.executeQuery();
+
+            while (rs.next()) {
+                int idCuenta = rs.getInt("id_cuenta_fidelizacion");
+                int puntos = rs.getInt("puntos");
+
+                try (PreparedStatement stmtActualizar = conn.prepareStatement(sqlActualizar)) {
+                    stmtActualizar.setInt(1, puntos);
+                    stmtActualizar.setInt(2, puntos);
+                    stmtActualizar.setInt(3, idCuenta);
+
+                    stmtActualizar.executeUpdate();
+                }
+            }
+        }
     }
 }
