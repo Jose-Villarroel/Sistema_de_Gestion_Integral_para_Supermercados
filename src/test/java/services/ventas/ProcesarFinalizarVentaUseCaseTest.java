@@ -4,10 +4,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import repositories.CajaRepository;
+import repositories.ClienteRepository;
+import repositories.CuentaFidelizacionRepository;
 import repositories.DatabaseConnection;
 import repositories.DatabaseInitializer;
+import repositories.DetalleVentaRepository;
+import repositories.H2CajaRepository;
+import repositories.H2ClienteRepository;
+import repositories.H2CuentaFidelizacionRepository;
+import repositories.H2DetalleVentaRepository;
+import repositories.H2MovimientoInventarioRepository;
+import repositories.H2PagoVentaRepository;
 import repositories.H2ProductoRepository;
+import repositories.H2VentaRepository;
+import repositories.MovimientoInventarioRepository;
+import repositories.PagoVentaRepository;
 import repositories.ProductoRepository;
+import repositories.VentaRepository;
 import services.ventas.ProcesarFinalizarVentaUseCase.ClienteConCuenta;
 
 import java.util.Optional;
@@ -33,8 +47,27 @@ class ProcesarFinalizarVentaUseCaseTest {
         DatabaseInitializer initializer = new DatabaseInitializer(dbConnection);
         initializer.init();
 
+        ClienteRepository clienteRepository = new H2ClienteRepository(dbConnection);
+        CuentaFidelizacionRepository cuentaRepository =
+                new H2CuentaFidelizacionRepository(dbConnection);
         ProductoRepository productoRepository = new H2ProductoRepository(dbConnection);
-        useCase = new ProcesarFinalizarVentaUseCase(dbConnection, productoRepository);
+        VentaRepository ventaRepository = new H2VentaRepository();
+        DetalleVentaRepository detalleRepository = new H2DetalleVentaRepository();
+        PagoVentaRepository pagoRepository = new H2PagoVentaRepository();
+        MovimientoInventarioRepository movimientoRepository =
+                new H2MovimientoInventarioRepository(dbConnection);
+        CajaRepository cajaRepository = new H2CajaRepository();
+
+        useCase = new ProcesarFinalizarVentaUseCase(
+                dbConnection,
+                clienteRepository,
+                cuentaRepository,
+                productoRepository,
+                ventaRepository,
+                detalleRepository,
+                pagoRepository,
+                movimientoRepository,
+                cajaRepository);
     }
 
     // ===========================================================
