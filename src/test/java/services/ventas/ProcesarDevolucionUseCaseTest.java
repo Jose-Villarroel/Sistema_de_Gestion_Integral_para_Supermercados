@@ -588,4 +588,64 @@ class ProcesarDevolucionUseCaseTest {
             }
         }
     }
+    // ===========================================================
+    // procesarDevolucion - venta vieja con supervisor valido
+    // ===========================================================
+    @Nested
+    @DisplayName("procesarDevolucion - autorizacion supervisor")
+    class ProcesarDevolucionSupervisor {
+
+        /*
+         * CP-021: Venta con mas de 30 dias, pero con supervisor VALIDO.
+         * Cubre la rama de validarPeriodoDevolucion donde el supervisor
+         * autoriza correctamente y la devolucion procede.
+         * Supervisor seed: usuario 'inventario', password '1234',
+         * rol SUPERVISOR_INVENTARIO.
+         */
+        @Test
+        @DisplayName("CP-021: Venta vieja con supervisor valido procesa la devolucion")
+        void ventaVieja_supervisorValido_procesaDevolucion() throws Exception {
+            // Insertar venta de hace 45 dias
+            int idVentaVieja = insertarVentaConFecha(
+                    LocalDate.now().minusDays(45), "MANANA", 3);
+            insertarDetalleVenta(idVentaVieja, 5, 3, 5200.0, 15600.0);
+
+            var solicitud = new SolicitudDevolucion(
+                    idVentaVieja, 1, "Devolucion tardia autorizada",
+                    MetodoReembolso.NOTA_CREDITO,
+                    "inventario", "1234",
+                    List.of(new ItemDevolucion(5, 1, "motivo",
+                            EstadoProductoDevolucion.CERRADO))
+            );
+
+            var resultado = useCase.procesarDevolucion(solicitud);
+
+            assertNotNull(resultado,
+                    "Con supervisor valido la devolucion debe procesarse aunque la venta sea vieja");
+            assertEquals(5200.0, resultado.totalDevuelto());
+        }
+
+        /*
+         * CP-022: Producto ABIERTO con supervisor VALIDO.
+         * Cubre la rama requiereSupervisor=true con validacion exitosa.
+         */
+        @Test
+        @DisplayName("CP-022: Producto ABIERTO con supervisor valido procesa la devolucion")
+        void productoAbierto_supervisorValido_procesaDevolucion() throws Exception {
+            insertarDetalleVenta(5, 5, 3, 5200.0, 15600.0);
+
+            var solicitud = new SolicitudDevolucion(
+                    5, 1, "Producto abierto autorizado",
+                    MetodoReembolso.NOTA_CREDITO,
+                    "inventario", "1234",
+                    List.of(new ItemDevolucion(5, 1, "motivo",
+                            EstadoProductoDevolucion.ABIERTO))
+            );
+
+            var resultado = useCase.procesarDevolucion(solicitud);
+
+            assertNotNull(resultado,
+                    "Con supervisor valido, un producto ABIERTO debe poder devolverse");
+        }
+    }
 }
