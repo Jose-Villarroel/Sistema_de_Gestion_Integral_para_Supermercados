@@ -15,6 +15,7 @@ public class AdminController {
     @FXML private Button btnProductos;
     @FXML private Button btnInventario;
     @FXML private Button btnClientes;
+    @FXML private Button btnProveedores;
     @FXML private Button btnReportes;
 
     private Button botonActivo;
@@ -41,6 +42,12 @@ public class AdminController {
     public void mostrarClientes() {
         cargarVista("/infrastructure/ui/admin/cliente.fxml");
         marcarActivo(btnClientes);
+    }
+
+    @FXML
+    public void mostrarProveedores() {
+        cargarVista("/infrastructure/ui/admin/proveedores.fxml");
+        marcarActivo(btnProveedores);
     }
 
     @FXML

@@ -23,31 +23,30 @@
         <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
             <content>
                 <VBox styleClass="sidebar" spacing="2">
-
-            <Button fx:id="btnEmpleados" text="👤  Empleados"
-                    onAction="#mostrarEmpleados"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-btn"/>
-
-            <Button fx:id="btnProductos" text="📦  Catálogo"
-                    onAction="#mostrarProductos"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-btn"/>
-
-            <Button fx:id="btnInventario" text="📊  Inventario"
-                    onAction="#mostrarInventario"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-btn"/>
-
-            <Button fx:id="btnClientes" text="👥  Clientes"
-                    onAction="#mostrarClientes"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-btn"/>
-
-            <Button fx:id="btnReportes" text="📋  Reportes"
-                    onAction="#mostrarReportes"
-                    maxWidth="Infinity"
-                    styleClass="sidebar-btn"/>
+                    <Button fx:id="btnEmpleados" text="👤  Empleados"
+                            onAction="#mostrarEmpleados"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+                    <Button fx:id="btnProductos" text="📦  Catálogo"
+                            onAction="#mostrarProductos"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+                    <Button fx:id="btnInventario" text="📊  Inventario"
+                            onAction="#mostrarInventario"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+                    <Button fx:id="btnClientes" text="👥  Clientes"
+                            onAction="#mostrarClientes"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+                    <Button fx:id="btnProveedores" text="🚚  Proveedores"
+                            onAction="#mostrarProveedores"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+                    <Button fx:id="btnReportes" text="📋  Reportes"
+                            onAction="#mostrarReportes"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
                 </VBox>
             </content>
         </ScrollPane>
