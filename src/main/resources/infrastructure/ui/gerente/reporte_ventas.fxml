@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.gerente.ReporteVentasController"
+            stylesheets="@../base.css,@reporte_ventas.css">
+
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Generar reportes de ventas" styleClass="header-title"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox spacing="15" styleClass="main-container">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox spacing="15">
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                            <Label text="Total vendido" styleClass="card-label"/>
+                            <Label fx:id="lblTotalVendido" text="$0.00" styleClass="card-value-accent"/>
+                        </VBox>
+
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                            <Label text="Transacciones" styleClass="card-label"/>
+                            <Label fx:id="lblTransacciones" text="0" styleClass="card-value"/>
+                        </VBox>
+
+                        <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                            <Label text="Ticket promedio" styleClass="card-label"/>
+                            <Label fx:id="lblTicketPromedio" text="$0.00" styleClass="card-value-muted"/>
+                        </VBox>
+                    </HBox>
+
+                    <SplitPane dividerPositions="0.35" VBox.vgrow="ALWAYS">
+
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox styleClass="form-panel" spacing="12">
+                                    <padding>
+                                        <Insets top="20" right="20" bottom="20" left="20"/>
+                                    </padding>
+
+                                    <Label text="Configuración del reporte" styleClass="section-title"/>
+
+                                    <VBox spacing="5">
+                                        <Label text="Tipo de reporte *" styleClass="field-label"/>
+                                        <ComboBox fx:id="cmbTipoReporte"
+                                                  maxWidth="Infinity"
+                                                  styleClass="combo-box"/>
+                                    </VBox>
+
+                                    <VBox spacing="5">
+                                        <Label text="Fecha desde *" styleClass="field-label"/>
+                                        <DatePicker fx:id="dpFechaDesde"
+                                                    maxWidth="Infinity"
+                                                    styleClass="date-picker"/>
+                                    </VBox>
+
+                                    <VBox spacing="5">
+                                        <Label text="Fecha hasta *" styleClass="field-label"/>
+                                        <DatePicker fx:id="dpFechaHasta"
+                                                    maxWidth="Infinity"
+                                                    styleClass="date-picker"/>
+                                    </VBox>
+
+                                    <HBox spacing="10" alignment="CENTER">
+                                        <Button text="Generar reporte"
+                                                onAction="#generarReporte"
+                                                styleClass="btn-primary"
+                                                prefWidth="150"/>
+
+                                        <Button text="Limpiar"
+                                                onAction="#limpiarFiltros"
+                                                styleClass="btn-secondary"
+                                                prefWidth="100"/>
+                                    </HBox>
+
+                                    <Button text="Exportar a PDF"
+                                            onAction="#exportarPDF"
+                                            styleClass="btn-export"
+                                            maxWidth="Infinity"/>
+
+                                    <Label fx:id="lblMensaje"
+                                           text=""
+                                           wrapText="true"
+                                           styleClass="message-label"/>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                        <VBox styleClass="table-panel" spacing="14">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+
+                            <Label text="Resultado del reporte" styleClass="section-title"/>
+
+                            <HBox spacing="15">
+                                <VBox styleClass="small-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Total descuentos" styleClass="card-label"/>
+                                    <Label fx:id="lblDescuentos" text="$0.00" styleClass="small-card-value"/>
+                                </VBox>
+
+                                <VBox styleClass="small-card" HBox.hgrow="ALWAYS">
+                                    <Label text="Total impuestos" styleClass="card-label"/>
+                                    <Label fx:id="lblImpuestos" text="$0.00" styleClass="small-card-value"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="8" VBox.vgrow="ALWAYS">
+                                <Label text="Ventas por método de pago" styleClass="field-label"/>
+                                <TextArea fx:id="txtDetalleMetodosPago"
+                                          editable="false"
+                                          wrapText="true"
+                                          prefHeight="240"
+                                          styleClass="text-area"/>
+                            </VBox>
+
+                            <VBox styleClass="chart-placeholder" spacing="8" alignment="CENTER">
+                                <Label text="📈" styleClass="chart-icon"/>
+                                <Label text="Gráfico de tendencias de ventas" styleClass="chart-title"/>
+                                <Label text="Espacio reservado para una gráfica en una siguiente iteración"
+                                       styleClass="chart-subtitle"/>
+                            </VBox>
+                        </VBox>
+
+                    </SplitPane>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
