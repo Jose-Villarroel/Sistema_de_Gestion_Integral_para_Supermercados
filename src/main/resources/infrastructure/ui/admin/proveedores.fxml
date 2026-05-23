@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.admin.ProveedorController"
+            stylesheets="@../base.css,@proveedores.css">
+
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Administrar proveedores" styleClass="header-title"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15" styleClass="main-container">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Tarjetas de resumen -->
+            <HBox spacing="15">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Total proveedores" styleClass="card-label"/>
+                    <Label fx:id="lblTotalProveedores" text="0" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Proveedores activos" styleClass="card-label"/>
+                    <Label fx:id="lblProveedoresActivos" text="0" styleClass="card-value-accent"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Proveedores inactivos" styleClass="card-label"/>
+                    <Label fx:id="lblProveedoresInactivos" text="0" styleClass="card-value-muted"/>
+                </VBox>
+            </HBox>
+
+            <!-- Contenido principal -->
+            <SplitPane dividerPositions="0.35" VBox.vgrow="ALWAYS">
+
+                <!-- Panel formulario -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            style="-fx-background-color: #ecf0f1; -fx-border-color: transparent;">
+                    <content>
+                        <VBox styleClass="form-panel" spacing="12">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+
+                            <Label text="Datos del proveedor" styleClass="section-title"/>
+
+                            <VBox spacing="5">
+                                <Label text="Nombre *" styleClass="field-label"/>
+                                <TextField fx:id="txtNombre"
+                                           promptText="Nombre del proveedor"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Correo" styleClass="field-label"/>
+                                <TextField fx:id="txtCorreo"
+                                           promptText="correo@ejemplo.com"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Teléfono" styleClass="field-label"/>
+                                <TextField fx:id="txtTelefono"
+                                           promptText="3001234567"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Dirección" styleClass="field-label"/>
+                                <TextField fx:id="txtDireccion"
+                                           promptText="Dirección (opcional)"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Button text="Registrar proveedor"
+                                        onAction="#registrarProveedor"
+                                        styleClass="btn-primary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Modificar proveedor"
+                                        onAction="#modificarProveedor"
+                                        styleClass="btn-secondary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Desactivar proveedor"
+                                        onAction="#desactivarProveedor"
+                                        styleClass="btn-danger"
+                                        maxWidth="Infinity"/>
+                                <Button text="Limpiar formulario"
+                                        onAction="#limpiarFormulario"
+                                        styleClass="btn-clear"
+                                        maxWidth="Infinity"/>
+                            </VBox>
+
+                            <Label text="* Campos obligatorios" styleClass="required-label"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <!-- Panel tabla -->
+                <VBox styleClass="table-panel" spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <TextField fx:id="txtBuscar"
+                                   promptText="Buscar por nombre..."
+                                   styleClass="search-field"
+                                   HBox.hgrow="ALWAYS"/>
+                        <Button text="Buscar"
+                                onAction="#buscarProveedor"
+                                styleClass="btn-search"/>
+                    </HBox>
+
+                    <TableView fx:id="tableProveedores"
+                               styleClass="table-view"
+                               VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId"        text="CÓDIGO"    prefWidth="65"/>
+                            <TableColumn fx:id="colNombre"    text="NOMBRE"    prefWidth="140"/>
+                            <TableColumn fx:id="colCorreo"    text="CORREO"    prefWidth="150"/>
+                            <TableColumn fx:id="colTelefono"  text="TELÉFONO"  prefWidth="100"/>
+                            <TableColumn fx:id="colDireccion" text="DIRECCIÓN" prefWidth="140"/>
+                            <TableColumn fx:id="colFecha"     text="REGISTRO"  prefWidth="90"/>
+                            <TableColumn fx:id="colActivo"    text="ESTADO"    prefWidth="70"/>
+                        </columns>
+                    </TableView>
+
+                    <Label text="Seleccione un proveedor de la tabla para modificarlo"
+                           styleClass="help-label"/>
+                </VBox>
+
+            </SplitPane>
+        </VBox>
+    </center>
+
+</BorderPane>

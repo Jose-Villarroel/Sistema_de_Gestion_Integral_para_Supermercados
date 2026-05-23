@@ -3,6 +3,7 @@ package controllers;
 import controllers.admin.ClienteController;
 import controllers.admin.EmpleadoController;
 import controllers.admin.ProductoController;
+import controllers.admin.ProveedorController;
 import controllers.autenticacion.LoginController;
 import controllers.caja.CierreCajaController;
 import controllers.cajero.DevolucionController;
@@ -19,6 +20,7 @@ import repositories.H2EmpleadoRepository;
 import repositories.H2MovimientoInventarioRepository;
 import repositories.H2PagoVentaRepository;
 import repositories.H2ProductoRepository;
+import repositories.H2ProveedorRepository;
 import repositories.H2UsuarioRepository;
 import repositories.H2VentaRepository;
 import repositories.PagoVentaRepository;
@@ -39,6 +41,10 @@ import services.productos.ConsultarProductoUseCase;
 import services.productos.ListarProductosStockBajoUseCase;
 import services.productos.ModificarProductoUseCase;
 import services.productos.RegistrarProductoUseCase;
+import services.proveedores.ConsultarProveedorUseCase;
+import services.proveedores.DesactivarProveedorUseCase;
+import services.proveedores.ModificarProveedorUseCase;
+import services.proveedores.RegistrarProveedorUseCase;
 import services.ventas.ProcesarDevolucionUseCase;
 import services.ventas.ProcesarFinalizarVentaUseCase;
 import repositories.H2DevolucionRepository;
@@ -67,6 +73,7 @@ public final class AppDependencies {
     private final H2DetalleDevolucionRepository detalleDevolucionRepository;
     private final H2CajaRepository cajaRepository;
     private final H2EmpleadoRepository empleadoRepository;
+    private final H2ProveedorRepository proveedorRepository;
 
     // ── Casos de uso ───────────────────────────────────────────
     private final AutenticarEmpleadoUseCase autenticarEmpleadoUseCase;
@@ -81,6 +88,11 @@ public final class AppDependencies {
     private final ConsultarEmpleadoUseCase consultarEmpleadoUseCase;
     private final ModificarEmpleadoUseCase modificarEmpleadoUseCase;
     private final DesactivarEmpleadoUseCase desactivarEmpleadoUseCase;
+
+    private final RegistrarProveedorUseCase registrarProveedorUseCase;
+    private final ConsultarProveedorUseCase consultarProveedorUseCase;
+    private final ModificarProveedorUseCase modificarProveedorUseCase;
+    private final DesactivarProveedorUseCase desactivarProveedorUseCase;
 
     private final RegistrarProductoUseCase registrarProductoUseCase;
     private final ModificarProductoUseCase modificarProductoUseCase;
@@ -109,6 +121,7 @@ public final class AppDependencies {
         this.detalleDevolucionRepository    = new H2DetalleDevolucionRepository();
         this.cajaRepository                 = new H2CajaRepository();
         this.empleadoRepository             = new H2EmpleadoRepository(databaseConnection);
+        this.proveedorRepository            = new H2ProveedorRepository(databaseConnection);
 
         // Casos de uso — autenticación
         this.autenticarEmpleadoUseCase = new AutenticarEmpleadoUseCase(usuarioRepository);
@@ -125,6 +138,12 @@ public final class AppDependencies {
         this.consultarEmpleadoUseCase  = new ConsultarEmpleadoUseCase(empleadoRepository);
         this.modificarEmpleadoUseCase  = new ModificarEmpleadoUseCase(empleadoRepository);
         this.desactivarEmpleadoUseCase = new DesactivarEmpleadoUseCase(empleadoRepository);
+
+        // Casos de uso — proveedores
+        this.registrarProveedorUseCase  = new RegistrarProveedorUseCase(proveedorRepository);
+        this.consultarProveedorUseCase  = new ConsultarProveedorUseCase(proveedorRepository);
+        this.modificarProveedorUseCase  = new ModificarProveedorUseCase(proveedorRepository);
+        this.desactivarProveedorUseCase = new DesactivarProveedorUseCase(proveedorRepository);
 
         // Casos de uso — productos
         this.registrarProductoUseCase        = new RegistrarProductoUseCase(productoRepository);
@@ -174,6 +193,15 @@ public final class AppDependencies {
                     consultarEmpleadoUseCase,
                     modificarEmpleadoUseCase,
                     desactivarEmpleadoUseCase
+            );
+        }
+
+        if (controllerType == ProveedorController.class) {
+            return new ProveedorController(
+                    registrarProveedorUseCase,
+                    consultarProveedorUseCase,
+                    modificarProveedorUseCase,
+                    desactivarProveedorUseCase
             );
         }
 
