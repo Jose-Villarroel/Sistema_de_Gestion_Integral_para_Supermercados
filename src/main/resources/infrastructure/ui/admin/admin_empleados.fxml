@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.admin.EmpleadoController"
+            stylesheets="@../base.css,@empleados.css">
+
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Administrar empleados" styleClass="header-title"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15" styleClass="main-container">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Tarjetas de resumen -->
+            <HBox spacing="15">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Total empleados" styleClass="card-label"/>
+                    <Label fx:id="lblTotalEmpleados" text="0" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Empleados activos" styleClass="card-label"/>
+                    <Label fx:id="lblEmpleadosActivos" text="0" styleClass="card-value-accent"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Empleados inactivos" styleClass="card-label"/>
+                    <Label fx:id="lblEmpleadosInactivos" text="0" styleClass="card-value-muted"/>
+                </VBox>
+            </HBox>
+
+            <!-- Contenido principal -->
+            <SplitPane dividerPositions="0.35" VBox.vgrow="ALWAYS">
+
+                <!-- Panel formulario con scroll -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            style="-fx-background-color: #ecf0f1; -fx-border-color: transparent;">
+                    <content>
+                        <VBox styleClass="form-panel" spacing="12">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+
+                            <Label text="Datos del empleado" styleClass="section-title"/>
+
+                            <VBox spacing="5">
+                                <Label text="Nombre *" styleClass="field-label"/>
+                                <TextField fx:id="txtNombre"
+                                           promptText="Nombre"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Apellido *" styleClass="field-label"/>
+                                <TextField fx:id="txtApellido"
+                                           promptText="Apellido"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Correo *" styleClass="field-label"/>
+                                <TextField fx:id="txtCorreo"
+                                           promptText="correo@ejemplo.com"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="5">
+                                <Label text="Teléfono *" styleClass="field-label"/>
+                                <TextField fx:id="txtTelefono"
+                                           promptText="3001234567"
+                                           styleClass="text-field"/>
+                            </VBox>
+
+                            <VBox spacing="8">
+                                <Button text="Registrar empleado"
+                                        onAction="#registrarEmpleado"
+                                        styleClass="btn-primary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Modificar empleado"
+                                        onAction="#modificarEmpleado"
+                                        styleClass="btn-secondary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Desactivar empleado"
+                                        onAction="#desactivarEmpleado"
+                                        styleClass="btn-danger"
+                                        maxWidth="Infinity"/>
+                                <Button text="Limpiar formulario"
+                                        onAction="#limpiarFormulario"
+                                        styleClass="btn-clear"
+                                        maxWidth="Infinity"/>
+                            </VBox>
+
+                            <Label text="* Campos obligatorios" styleClass="required-label"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <!-- Panel tabla -->
+                <VBox styleClass="table-panel" spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <!-- Buscador con botón -->
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <TextField fx:id="txtBuscar"
+                                   promptText="Buscar por nombre o apellido..."
+                                   styleClass="search-field"
+                                   HBox.hgrow="ALWAYS"/>
+                        <Button text="Buscar"
+                                onAction="#buscarEmpleado"
+                                styleClass="btn-search"/>
+                    </HBox>
+
+                    <TableView fx:id="tableEmpleados"
+                               styleClass="table-view"
+                               VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId"       text="CÓDIGO"   prefWidth="70"/>
+                            <TableColumn fx:id="colNombre"   text="NOMBRE"   prefWidth="130"/>
+                            <TableColumn fx:id="colApellido" text="APELLIDO" prefWidth="130"/>
+                            <TableColumn fx:id="colCorreo"   text="CORREO"   prefWidth="160"/>
+                            <TableColumn fx:id="colTelefono" text="TELÉFONO" prefWidth="105"/>
+                            <TableColumn fx:id="colFecha"    text="REGISTRO" prefWidth="95"/>
+                            <TableColumn fx:id="colActivo"   text="ESTADO"   prefWidth="75"/>
+                        </columns>
+                    </TableView>
+
+                    <Label text="Seleccione un empleado de la tabla para modificarlo"
+                           styleClass="help-label"/>
+                </VBox>
+
+            </SplitPane>
+        </VBox>
+    </center>
+
+</BorderPane>
