@@ -333,12 +333,7 @@ public class ProcesarFinalizarVentaUseCase {
     }
 
     private int obtenerTipoPagoId(MetodoPago metodoPago) {
-        return switch (metodoPago) {
-            case EFECTIVO -> 1;
-            case TARJETA -> 2;
-            case TRANSFERENCIA -> 3;
-            case MIXTO -> 4;
-        };
+        return metodoPago.ordinal() + 1;
     }
 
     private double calcularIncrementoCaja(MetodoPago metodoPago, double total, PagoProcesado pago) {
@@ -459,13 +454,13 @@ public class ProcesarFinalizarVentaUseCase {
         }
 
         public double calcular(double base) {
-            if (tipo == null || tipo == TipoDescuento.NINGUNO || valor <= 0) {
+            if (tipo == null || valor <= 0) {
                 return 0;
             }
             return switch (tipo) {
                 case PORCENTAJE -> redondear(Math.min(base * (valor / 100), base));
                 case VALOR_FIJO -> redondear(Math.min(valor, base));
-                default -> 0;
+                case NINGUNO -> 0;
             };
         }
     }
