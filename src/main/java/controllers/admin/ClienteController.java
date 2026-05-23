@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import repositories.H2CuentaFidelizacionRepository;
+import repositories.CuentaFidelizacionRepository;
 import services.clientes.ConsultarClienteUseCase;
 import services.clientes.DesactivarClienteUseCase;
 import services.clientes.GestionarPuntosUseCase;
@@ -22,32 +22,49 @@ import java.util.Optional;
 public class ClienteController {
 
     // Campos del formulario
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtApellido;
-    @FXML private TextField txtCorreo;
-    @FXML private TextField txtTelefono;
-    @FXML private TextField txtDireccion;
+    @FXML
+    private TextField txtNombre;
+    @FXML
+    private TextField txtApellido;
+    @FXML
+    private TextField txtCorreo;
+    @FXML
+    private TextField txtTelefono;
+    @FXML
+    private TextField txtDireccion;
 
     // Tabla de clientes
-    @FXML private TableView<Cliente> tableClientes;
-    @FXML private TableColumn<Cliente, Integer> colId;
-    @FXML private TableColumn<Cliente, String> colNombre;
-    @FXML private TableColumn<Cliente, String> colCorreo;
-    @FXML private TableColumn<Cliente, String> colTelefono;
-    @FXML private TableColumn<Cliente, String> colTarjeta;
-    @FXML private TableColumn<Cliente, Integer> colPuntos;
-    @FXML private TableColumn<Cliente, String> colActivo;
+    @FXML
+    private TableView<Cliente> tableClientes;
+    @FXML
+    private TableColumn<Cliente, Integer> colId;
+    @FXML
+    private TableColumn<Cliente, String> colNombre;
+    @FXML
+    private TableColumn<Cliente, String> colCorreo;
+    @FXML
+    private TableColumn<Cliente, String> colTelefono;
+    @FXML
+    private TableColumn<Cliente, String> colTarjeta;
+    @FXML
+    private TableColumn<Cliente, Integer> colPuntos;
+    @FXML
+    private TableColumn<Cliente, String> colActivo;
 
     // Campo de búsqueda
-    @FXML private TextField txtBuscar;
+    @FXML
+    private TextField txtBuscar;
 
     // Labels de resumen
-    @FXML private Label lblTotalClientes;
-    @FXML private Label lblPuntosAcumulados;
-    @FXML private Label lblPuntosCanjeados;
+    @FXML
+    private Label lblTotalClientes;
+    @FXML
+    private Label lblPuntosAcumulados;
+    @FXML
+    private Label lblPuntosCanjeados;
 
     // Repositorios y casos de uso
-    private final H2CuentaFidelizacionRepository cuentaRepo;
+    private final CuentaFidelizacionRepository cuentaRepo;
     private final RegistrarClienteUseCase registrarClienteUseCase;
     private final ConsultarClienteUseCase consultarClienteUseCase;
     private final ModificarClienteUseCase modificarClienteUseCase;
@@ -57,12 +74,12 @@ public class ClienteController {
     private Cliente clienteSeleccionado;
     private final ObservableList<Cliente> clientesObservable;
 
-    public ClienteController(H2CuentaFidelizacionRepository cuentaRepo,
-                             RegistrarClienteUseCase registrarClienteUseCase,
-                             ConsultarClienteUseCase consultarClienteUseCase,
-                             ModificarClienteUseCase modificarClienteUseCase,
-                             DesactivarClienteUseCase desactivarClienteUseCase,
-                             GestionarPuntosUseCase gestionarPuntosUseCase) {
+    public ClienteController(CuentaFidelizacionRepository cuentaRepo,
+            RegistrarClienteUseCase registrarClienteUseCase,
+            ConsultarClienteUseCase consultarClienteUseCase,
+            ModificarClienteUseCase modificarClienteUseCase,
+            DesactivarClienteUseCase desactivarClienteUseCase,
+            GestionarPuntosUseCase gestionarPuntosUseCase) {
         this.cuentaRepo = cuentaRepo;
         this.registrarClienteUseCase = registrarClienteUseCase;
         this.consultarClienteUseCase = consultarClienteUseCase;
@@ -85,9 +102,8 @@ public class ClienteController {
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
-        colActivo.setCellValueFactory(cellData ->
-            new SimpleStringProperty(cellData.getValue().isActivo() ? "Activo" : "Inactivo")
-        );
+        colActivo.setCellValueFactory(
+                cellData -> new SimpleStringProperty(cellData.getValue().isActivo() ? "Activo" : "Inactivo"));
 
         // Columna tarjeta: consulta la cuenta real de fidelización
         colTarjeta.setCellValueFactory(cellData -> {
@@ -121,8 +137,7 @@ public class ClienteController {
                         clienteSeleccionado = newSelection;
                         cargarDatosFormulario(newSelection);
                     }
-                }
-        );
+                });
     }
 
     @FXML
@@ -135,8 +150,7 @@ public class ClienteController {
                     txtApellido.getText().trim(),
                     txtCorreo.getText().trim(),
                     txtTelefono.getText().trim(),
-                    txtDireccion.getText().trim()
-            );
+                    txtDireccion.getText().trim());
 
             // Obtener número de tarjeta generado automáticamente
             String numeroTarjeta = cuentaRepo.buscarPorCliente(cliente.getId())
@@ -145,9 +159,8 @@ public class ClienteController {
 
             mostrarMensaje(
                     "Cliente registrado exitosamente.\n" +
-                    "Código: " + cliente.getId() + "\n" +
-                    "Tarjeta: " + numeroTarjeta
-            );
+                            "Código: " + cliente.getId() + "\n" +
+                            "Tarjeta: " + numeroTarjeta);
 
             limpiarFormulario();
             cargarClientes();
@@ -176,8 +189,7 @@ public class ClienteController {
                     txtApellido.getText().trim(),
                     txtCorreo.getText().trim(),
                     txtTelefono.getText().trim(),
-                    txtDireccion.getText().trim()
-            );
+                    txtDireccion.getText().trim());
 
             if (actualizado) {
                 mostrarMensaje("Cliente actualizado exitosamente");

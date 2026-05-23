@@ -6,18 +6,32 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Button;
+import services.productos.ListarProductosStockBajoUseCase;
 
 public class AdminController {
 
-    @FXML private StackPane contenidoCentral;
+    private final ListarProductosStockBajoUseCase listarProductosStockBajoUseCase;
 
-    @FXML private Button btnEmpleados;
-    @FXML private Button btnProductos;
-    @FXML private Button btnInventario;
-    @FXML private Button btnClientes;
-    @FXML private Button btnProveedores;
-    @FXML private Button btnReportes;
-    @FXML private Button btnOrdenes;
+    public AdminController(ListarProductosStockBajoUseCase listarProductosStockBajoUseCase) {
+        this.listarProductosStockBajoUseCase = listarProductosStockBajoUseCase;
+    }
+
+    @FXML
+    private StackPane contenidoCentral;
+    @FXML
+    private Button btnEmpleados;
+    @FXML
+    private Button btnProductos;
+    @FXML
+    private Button btnInventario;
+    @FXML
+    private Button btnClientes;
+    @FXML
+    private Button btnProveedores;
+    @FXML
+    private Button btnReportes;
+    @FXML
+    private Button btnOrdenes;
 
     private Button botonActivo;
 
@@ -58,18 +72,17 @@ public class AdminController {
     }
 
     @FXML
+    public void mostrarOrdenes() {
+        cargarVista("/infrastructure/ui/admin/ordenes.fxml");
+        marcarActivo(btnOrdenes);
+    }
+
+    @FXML
     public void cerrarSesion() {
         MainApp.navegarA(
                 "/infrastructure/ui/autenticacion/login.fxml",
                 "MasterMarket - Login",
-                420, 550
-        );
-    }
-
-    @FXML
-    public void mostrarOrdenes() {
-        cargarVista("/infrastructure/ui/admin/ordenes.fxml");
-        marcarActivo(btnOrdenes);
+                420, 550);
     }
 
     private void cargarVista(String ruta) {
@@ -78,7 +91,7 @@ public class AdminController {
             Node vista = loader.load();
             contenidoCentral.getChildren().setAll(vista);
         } catch (Exception e) {
-            System.err.println("Error al cargar vista: " + ruta + " — " + e.getMessage());
+            System.err.println("Error al cargar vista: " + ruta + " - " + e.getMessage());
         }
     }
 
@@ -86,11 +99,9 @@ public class AdminController {
         if (botonActivo != null) {
             botonActivo.getStyleClass().remove("sidebar-btn-active");
         }
-
         if (!boton.getStyleClass().contains("sidebar-btn-active")) {
             boton.getStyleClass().add("sidebar-btn-active");
         }
-
         botonActivo = boton;
     }
 }

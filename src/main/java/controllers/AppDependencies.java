@@ -5,6 +5,7 @@ import controllers.autenticacion.LoginController;
 import controllers.caja.CierreCajaController;
 import controllers.cajero.DevolucionController;
 import controllers.cajero.PosController;
+import controllers.gerente.DashboardController;
 import controllers.supervisor.InventarioController;
 import repositories.*;
 import services.autenticacion.AutenticarEmpleadoUseCase;
@@ -15,6 +16,7 @@ import services.inventario.ControlarInventarioUseCase;
 import services.ordenes.*;
 import services.productos.*;
 import services.proveedores.*;
+import services.reportes.GenerarReporteVentasUseCase;
 import services.ventas.*;
 
 public final class AppDependencies {
@@ -38,6 +40,7 @@ public final class AppDependencies {
     private final H2EmpleadoRepository empleadoRepository;
     private final H2ProveedorRepository proveedorRepository;
     private final H2OrdenCompraRepository ordenCompraRepository;
+    private final ReporteVentasRepository reporteVentasRepository;
 
     private final AutenticarEmpleadoUseCase autenticarEmpleadoUseCase;
 
@@ -70,6 +73,7 @@ public final class AppDependencies {
     private final ProcesarDevolucionUseCase procesarDevolucionUseCase;
     private final GestionarCierreCajaUseCase gestionarCierreCajaUseCase;
     private final ControlarInventarioUseCase controlarInventarioUseCase;
+    private final GenerarReporteVentasUseCase generarReporteVentasUseCase;
 
     private AppDependencies() {
         databaseConnection = new DatabaseConnection();
@@ -89,6 +93,7 @@ public final class AppDependencies {
         empleadoRepository = new H2EmpleadoRepository(databaseConnection);
         proveedorRepository = new H2ProveedorRepository(databaseConnection);
         ordenCompraRepository = new H2OrdenCompraRepository(databaseConnection);
+        reporteVentasRepository = new H2ReporteVentasRepository(databaseConnection);
 
         autenticarEmpleadoUseCase = new AutenticarEmpleadoUseCase(usuarioRepository);
 
@@ -126,8 +131,7 @@ public final class AppDependencies {
                 detalleVentaRepository,
                 pagoVentaRepository,
                 movimientoInventarioRepository,
-                cajaRepository
-        );
+                cajaRepository);
 
         procesarDevolucionUseCase = new ProcesarDevolucionUseCase(
                 databaseConnection,
@@ -137,11 +141,11 @@ public final class AppDependencies {
                 movimientoInventarioRepository,
                 cajaRepository,
                 usuarioRepository,
-                cuentaFidelizacionRepository
-        );
+                cuentaFidelizacionRepository);
 
         gestionarCierreCajaUseCase = new GestionarCierreCajaUseCase(cierreCajaRepository);
         controlarInventarioUseCase = new ControlarInventarioUseCase(productoRepository, movimientoInventarioRepository);
+        generarReporteVentasUseCase = new GenerarReporteVentasUseCase(reporteVentasRepository);
     }
 
     public static AppDependencies getInstance() {
@@ -159,8 +163,7 @@ public final class AppDependencies {
                     registrarEmpleadoUseCase,
                     consultarEmpleadoUseCase,
                     modificarEmpleadoUseCase,
-                    desactivarEmpleadoUseCase
-            );
+                    desactivarEmpleadoUseCase);
         }
 
         if (controllerType == ProveedorController.class) {
@@ -168,8 +171,7 @@ public final class AppDependencies {
                     registrarProveedorUseCase,
                     consultarProveedorUseCase,
                     modificarProveedorUseCase,
-                    desactivarProveedorUseCase
-            );
+                    desactivarProveedorUseCase);
         }
 
         if (controllerType == OrdenCompraController.class) {
@@ -178,8 +180,7 @@ public final class AppDependencies {
                     consultarOrdenCompraUseCase,
                     cancelarOrdenCompraUseCase,
                     consultarProveedorUseCase,
-                    consultarProductoUseCase
-            );
+                    consultarProductoUseCase);
         }
 
         if (controllerType == ClienteController.class) {
@@ -189,8 +190,7 @@ public final class AppDependencies {
                     consultarClienteUseCase,
                     modificarClienteUseCase,
                     desactivarClienteUseCase,
-                    gestionarPuntosUseCase
-            );
+                    gestionarPuntosUseCase);
         }
 
         if (controllerType == ProductoController.class) {
@@ -198,8 +198,7 @@ public final class AppDependencies {
                     registrarProductoUseCase,
                     modificarProductoUseCase,
                     consultarProductoUseCase,
-                    listarProductosStockBajoUseCase
-            );
+                    listarProductosStockBajoUseCase);
         }
 
         if (controllerType == PosController.class) {
@@ -215,19 +214,19 @@ public final class AppDependencies {
         }
 
         if (controllerType == InventarioController.class) {
-            return new InventarioController(
-                    controlarInventarioUseCase,
-                    productoRepository,
-                    movimientoInventarioRepository
-            );
+            return new InventarioController(controlarInventarioUseCase, productoRepository,
+                    movimientoInventarioRepository);
         }
 
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "No se pudo crear el controlador: " + controllerType.getName(), e
-            );
+        if (controllerType == AdminController.class) {
+            return new AdminController(listarProductosStockBajoUseCase);
         }
+
+        if (controllerType == DashboardController.class) {
+            return new DashboardController(generarReporteVentasUseCase);
+        }
+
+        throw new IllegalArgumentException(
+                "Controlador no registrado en el contenedor de dependencias: " + controllerType.getName());
     }
 }
