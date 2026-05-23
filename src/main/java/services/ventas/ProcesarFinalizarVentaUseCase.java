@@ -465,7 +465,7 @@ public class ProcesarFinalizarVentaUseCase {
             return switch (tipo) {
                 case PORCENTAJE -> redondear(Math.min(base * (valor / 100), base));
                 case VALOR_FIJO -> redondear(Math.min(valor, base));
-                case NINGUNO -> 0;
+                default -> 0;
             };
         }
     }

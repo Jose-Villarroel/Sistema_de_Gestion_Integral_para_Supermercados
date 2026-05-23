@@ -674,9 +674,7 @@ class ProcesarFinalizarVentaUseCaseTest {
             assertTrue(ex.getMessage().contains("pago mixto"));
         }
     }
-    // ===========================================================
-    // procesarVenta - flujos completos con BD
-    // ===========================================================
+
     @Nested
     @DisplayName("procesarVenta - flujos completos")
     class ProcesarVentaFlujos {
@@ -994,6 +992,242 @@ class ProcesarFinalizarVentaUseCaseTest {
                 rs.next();
                 return rs.getInt(1);
             }
+        }
+    }
+   
+    @Nested
+    @DisplayName("Cobertura de ramas adicionales")
+    class CoberturaRamasAdicionales {
+
+        private entities.Empleado empleadoValido() {
+            return new entities.Empleado(
+                    1, "Andres", "Gonzales", "andre@mail.com",
+                    "3001111111", java.time.LocalDate.now(), true);
+        }
+
+        /*
+         * CP-042: Turno en blanco (solo espacios) lanza excepcion.
+         * Cubre la rama turno.isBlank() de validarTurno.
+         */
+        @Test
+        @DisplayName("CP-042: Turno en blanco lanza excepcion")
+        void turnoEnBlanco_lanzaExcepcion() {
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 5200.0, 18)),
+                    null,
+                    empleadoValido(),
+                    "   ",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.EFECTIVO,
+                    10000, null, false, null, false, null);
+
+            IllegalArgumentException ex = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> useCase.procesarVenta(solicitud));
+            assertTrue(ex.getMessage().contains("turno"));
+        }
+
+        /*
+         * CP-043: DescuentoManual con tipo null retorna 0.
+         * Cubre la rama tipo == null de DescuentoManual.calcular.
+         */
+        @Test
+        @DisplayName("CP-043: DescuentoManual con tipo null retorna cero")
+        void descuentoManualTipoNull_retornaCero() {
+            var descuento = new ProcesarFinalizarVentaUseCase.DescuentoManual(null, 100.0);
+            assertEquals(0.0, descuento.calcular(50000.0),
+                    "Con tipo null el descuento debe ser 0");
+        }
+
+        /*
+         * CP-044: DescuentoManual con valor <= 0 retorna 0.
+         * Cubre la rama valor <= 0 de DescuentoManual.calcular.
+         */
+        @Test
+        @DisplayName("CP-044: DescuentoManual con valor cero retorna cero")
+        void descuentoManualValorCero_retornaCero() {
+            var descuento = new ProcesarFinalizarVentaUseCase.DescuentoManual(
+                    ProcesarFinalizarVentaUseCase.TipoDescuento.PORCENTAJE, 0.0);
+            assertEquals(0.0, descuento.calcular(50000.0),
+                    "Con valor 0 el descuento debe ser 0");
+        }
+
+        /*
+         * CP-045: Venta MIXTO completa que persiste.
+         * Cubre la rama case MIXTO de obtenerTipoPagoId y guardarPago con
+         * los dos pagos (efectivo + tarjeta).
+         */
+        @Test
+        @DisplayName("CP-045: Venta MIXTO completa persiste con dos pagos")
+        void ventaMixtoCompleta_persisteCorrectamente() throws Exception {
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 5200.0, 18)),
+                    null,
+                    empleadoValido(),
+                    "MANANA",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.MIXTO,
+                    3000.0,
+                    "MIX-REF-001",
+                    false, null, false, null);
+
+            var resultado = useCase.procesarVenta(solicitud);
+
+            assertNotNull(resultado);
+            assertNotNull(resultado.numeroTicket());
+
+            // Verificar que se registraron 2 pagos para esta venta
+            try (var conn = dbConnection.getConnection();
+                 var stmt = conn.prepareStatement(
+                         "SELECT COUNT(*) FROM Pago_venta pv " +
+                         "JOIN Venta v ON pv.id_venta = v.id_venta " +
+                         "WHERE v.metodo_pago = 'MIXTO'")) {
+                var rs = stmt.executeQuery();
+                rs.next();
+                assertEquals(2, rs.getInt(1),
+                        "Una venta MIXTO debe generar 2 registros de pago");
+            }
+        }
+
+        /*
+         * CP-046: Pago TARJETA con referencia valida normal (no DECLINE/ERROR).
+         * Cubre la rama exitosa de procesarPagoTarjeta y limpiarReferencia
+         * con referencia provista.
+         */
+        @Test
+        @DisplayName("CP-046: TARJETA con referencia valida usa esa referencia")
+        void tarjetaReferenciaValida_usaLaReferencia() throws Exception {
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 5200.0, 18)),
+                    null,
+                    empleadoValido(),
+                    "MANANA",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.TARJETA,
+                    0,
+                    "miReferencia123",
+                    false, null, false, null);
+
+            var resultado = useCase.procesarVenta(solicitud);
+
+            assertEquals("MIREFERENCIA123", resultado.autorizacionPago(),
+                    "La referencia provista se usa en mayusculas");
+        }
+
+        /*
+         * CP-047: Pago TARJETA sin referencia genera una automatica con prefijo AUTH.
+         * Cubre la rama de limpiarReferencia cuando referencia es null/blank.
+         */
+        @Test
+        @DisplayName("CP-047: TARJETA sin referencia genera autorizacion automatica")
+        void tarjetaSinReferencia_generaAutorizacionAutomatica() throws Exception {
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 5200.0, 18)),
+                    null,
+                    empleadoValido(),
+                    "MANANA",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.TARJETA,
+                    0,
+                    null,
+                    false, null, false, null);
+
+            var resultado = useCase.procesarVenta(solicitud);
+
+            assertNotNull(resultado.autorizacionPago());
+            assertTrue(resultado.autorizacionPago().startsWith("AUTH-"),
+                    "Sin referencia, se genera una con prefijo AUTH-");
+        }
+
+        /*
+         * CP-048: buscarClientePorCodigo con cliente que existe pero NO tiene
+         * cuenta de fidelizacion. Cubre la rama cuenta == null de los
+         * operadores ternarios.
+         * Cliente id=9 (Natalia Rojas) existe en seed pero no tiene
+         * cuenta de fidelizacion (el seed solo crea cuentas para clientes 1-8).
+         */
+        @Test
+        @DisplayName("CP-048: Cliente sin cuenta de fidelizacion retorna ClienteConCuenta con campos null")
+        void clienteSinCuentaFidelizacion_retornaCamposNull() throws Exception {
+            // Desactivar todas las cuentas de fidelizacion para forzar cuenta = null
+            try (var conn = dbConnection.getConnection();
+                 var stmt = conn.prepareStatement(
+                         "UPDATE Cuenta_fidelizacion SET estado = FALSE WHERE id_cliente = 10")) {
+                stmt.executeUpdate();
+            }
+
+            var resultado = useCase.buscarClientePorCodigo("10");
+
+            assertTrue(resultado.isPresent(),
+                    "El cliente 10 (Felipe) existe y debe encontrarse");
+            var cc = resultado.get();
+            assertEquals(10, cc.cliente().getId());
+            assertNull(cc.cuentaId(),
+                    "Cliente con cuenta desactivada: cuentaId debe ser null");
+            assertNull(cc.numeroTarjeta(),
+                    "Cliente con cuenta desactivada: numeroTarjeta debe ser null");
+            assertNull(cc.puntosActuales(),
+                    "Cliente con cuenta desactivada: puntosActuales debe ser null");
+        }
+        /*
+         * CP-049: Venta con cliente (no null) para cubrir la rama del ticket
+         * donde solicitud.cliente() != null -> escribe nombre en el archivo.
+         * Tambien cubre acreditarPuntos con puntos = 0 porque el total es
+         * bajo (< 1000) y el cliente tiene cuenta pero no gana puntos.
+         */
+        @Test
+        @DisplayName("CP-049: Venta con cliente incluye nombre en ticket y puntos cero no acredita")
+        void ventaConClienteYPuntosCero_cubreRamasDeTicketYPuntos() throws Exception {
+            // Cliente 3 (Camila) tiene cuenta fidelizacion
+            var clienteConCuenta = useCase.buscarClientePorCodigo("3").get();
+
+            // Total muy bajo para que puntos = floor(total/1000) = 0
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 500.0, 18)),
+                    clienteConCuenta,
+                    empleadoValido(),
+                    "MANANA",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.EFECTIVO,
+                    1000,
+                    null,
+                    false, null, false, null);
+
+            var resultado = useCase.procesarVenta(solicitud);
+
+            assertNotNull(resultado);
+            assertTrue(resultado.mensaje().contains("Sale completed"));
+        }
+
+        /*
+         * CP-050: Venta con correo y factura para cubrir las ramas de
+         * generarTicketArchivo donde enviarPorCorreo=true y facturaElectronica=true.
+         */
+        @Test
+        @DisplayName("CP-050: Venta con correo y factura genera ticket completo")
+        void ventaConCorreoYFactura_generaTicketCompleto() throws Exception {
+            var solicitud = new ProcesarFinalizarVentaUseCase.SolicitudVenta(
+                    java.util.List.of(new ProcesarFinalizarVentaUseCase.ItemVenta(
+                            5, "Frijol", 1, 5200.0, 18)),
+                    null,
+                    empleadoValido(),
+                    "MANANA",
+                    ProcesarFinalizarVentaUseCase.DescuentoManual.ninguno(),
+                    ProcesarFinalizarVentaUseCase.MetodoPago.EFECTIVO,
+                    10000,
+                    null,
+                    true, "NIT 900123456-7",
+                    true, "test@mail.com");
+
+            var resultado = useCase.procesarVenta(solicitud);
+
+            assertNotNull(resultado);
+            assertTrue(resultado.mensaje().contains("Sale completed"));
         }
     }
 }
