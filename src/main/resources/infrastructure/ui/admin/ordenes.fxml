@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.admin.OrdenCompraController"
+            stylesheets="@../base.css,@ordenes.css">
+
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Gestionar órdenes de compra" styleClass="header-title"/>
+            </HBox>
+            <Separator/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="15" styleClass="main-container">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Tarjetas de resumen -->
+            <HBox spacing="15">
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Total órdenes" styleClass="card-label"/>
+                    <Label fx:id="lblTotalOrdenes" text="0" styleClass="card-value"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label text="Órdenes activas" styleClass="card-label"/>
+                    <Label fx:id="lblOrdenesActivas" text="0" styleClass="card-value-accent"/>
+                </VBox>
+                <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                    <Label fx:id="lblTotalLabel" text="Total: $0.00" styleClass="card-value-muted"/>
+                </VBox>
+            </HBox>
+
+            <!-- Contenido principal -->
+            <SplitPane dividerPositions="0.38" VBox.vgrow="ALWAYS">
+
+                <!-- Panel izquierdo: formulario nueva orden -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                            style="-fx-background-color: #ecf0f1; -fx-border-color: transparent;">
+                    <content>
+                        <VBox styleClass="form-panel" spacing="12">
+                            <padding>
+                                <Insets top="20" right="20" bottom="20" left="20"/>
+                            </padding>
+
+                            <Label text="Nueva orden de compra" styleClass="section-title"/>
+
+                            <!-- Proveedor -->
+                            <VBox spacing="5">
+                                <Label text="Proveedor *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbProveedor"
+                                          promptText="Seleccionar proveedor"
+                                          maxWidth="Infinity"
+                                          styleClass="combo-field"/>
+                            </VBox>
+
+                            <!-- Fecha entrega -->
+                            <VBox spacing="5">
+                                <Label text="Fecha de entrega" styleClass="field-label"/>
+                                <DatePicker fx:id="dpFechaEntrega"
+                                            promptText="dd/mm/aaaa"
+                                            maxWidth="Infinity"
+                                            styleClass="date-field"/>
+                            </VBox>
+
+                            <Separator/>
+
+                            <Label text="Agregar productos" styleClass="section-title"/>
+
+                            <!-- Producto -->
+                            <VBox spacing="5">
+                                <Label text="Producto *" styleClass="field-label"/>
+                                <ComboBox fx:id="cmbProducto"
+                                          promptText="Seleccionar producto"
+                                          maxWidth="Infinity"
+                                          styleClass="combo-field"/>
+                            </VBox>
+
+                            <!-- Cantidad y costo en fila -->
+                            <HBox spacing="10">
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label text="Cantidad *" styleClass="field-label"/>
+                                    <TextField fx:id="txtCantidad"
+                                               promptText="0"
+                                               styleClass="text-field"/>
+                                </VBox>
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label text="Costo unitario *" styleClass="field-label"/>
+                                    <TextField fx:id="txtCostoUnitario"
+                                               promptText="0.00"
+                                               styleClass="text-field"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox spacing="8">
+                                <Button text="+ Agregar"
+                                        onAction="#agregarProducto"
+                                        styleClass="btn-add"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="Infinity"/>
+                                <Button text="- Quitar"
+                                        onAction="#quitarProducto"
+                                        styleClass="btn-danger"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="Infinity"/>
+                            </HBox>
+
+                            <!-- Tabla de detalles -->
+                            <TableView fx:id="tableDetalles"
+                                       styleClass="table-view"
+                                       prefHeight="160">
+                                <columns>
+                                    <TableColumn fx:id="colDetProducto" text="PROD. ID" prefWidth="70"/>
+                                    <TableColumn fx:id="colDetCantidad" text="CANT."    prefWidth="55"/>
+                                    <TableColumn fx:id="colDetCosto"    text="COSTO"    prefWidth="85"/>
+                                    <TableColumn fx:id="colDetSubtotal" text="SUBTOTAL" prefWidth="90"/>
+                                </columns>
+                                <placeholder><Label text="Sin productos agregados"/></placeholder>
+                            </TableView>
+
+                            <Separator/>
+
+                            <VBox spacing="8">
+                                <Button text="Crear orden"
+                                        onAction="#crearOrden"
+                                        styleClass="btn-primary"
+                                        maxWidth="Infinity"/>
+                                <Button text="Limpiar formulario"
+                                        onAction="#limpiarFormulario"
+                                        styleClass="btn-clear"
+                                        maxWidth="Infinity"/>
+                            </VBox>
+
+                            <Label text="* Campos obligatorios" styleClass="required-label"/>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+                <!-- Panel derecho: tabla de órdenes -->
+                <VBox styleClass="table-panel" spacing="10">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20"/>
+                    </padding>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Órdenes de compra" styleClass="section-title" HBox.hgrow="ALWAYS"/>
+                        <Button text="Cancelar orden"
+                                onAction="#cancelarOrden"
+                                styleClass="btn-danger"/>
+                    </HBox>
+
+                    <TableView fx:id="tableOrdenes"
+                               styleClass="table-view"
+                               VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colId"            text="CÓDIGO"    prefWidth="65"/>
+                            <TableColumn fx:id="colProveedor"     text="PROVEEDOR" prefWidth="150"/>
+                            <TableColumn fx:id="colFechaCreacion" text="CREACIÓN"  prefWidth="90"/>
+                            <TableColumn fx:id="colFechaEntrega"  text="ENTREGA"   prefWidth="90"/>
+                            <TableColumn fx:id="colTotal"         text="TOTAL"     prefWidth="100"/>
+                            <TableColumn fx:id="colEstado"        text="ESTADO"    prefWidth="80"/>
+                        </columns>
+                        <placeholder><Label text="No hay órdenes registradas"/></placeholder>
+                    </TableView>
+
+                    <Label text="Seleccione una orden activa para cancelarla"
+                           styleClass="help-label"/>
+                </VBox>
+
+            </SplitPane>
+        </VBox>
+    </center>
+
+</BorderPane>
