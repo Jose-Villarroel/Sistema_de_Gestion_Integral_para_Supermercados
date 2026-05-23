@@ -17,6 +17,7 @@ public class AdminController {
     @FXML private Button btnClientes;
     @FXML private Button btnProveedores;
     @FXML private Button btnReportes;
+    @FXML private Button btnOrdenes;
 
     private Button botonActivo;
 
@@ -63,6 +64,12 @@ public class AdminController {
                 "MasterMarket - Login",
                 420, 550
         );
+    }
+
+    @FXML
+    public void mostrarOrdenes() {
+        cargarVista("/infrastructure/ui/admin/ordenes.fxml");
+        marcarActivo(btnOrdenes);
     }
 
     private void cargarVista(String ruta) {

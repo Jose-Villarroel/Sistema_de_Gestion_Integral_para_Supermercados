@@ -2,6 +2,7 @@ package controllers;
 
 import controllers.admin.ClienteController;
 import controllers.admin.EmpleadoController;
+import controllers.admin.OrdenCompraController;
 import controllers.admin.ProductoController;
 import controllers.admin.ProveedorController;
 import controllers.autenticacion.LoginController;
@@ -13,11 +14,13 @@ import controllers.supervisor.InventarioController;
 import repositories.DatabaseConnection;
 import repositories.DetalleVentaRepository;
 import repositories.H2CierreCajaRepository;
+import repositories.H2DetalleDevolucionRepository;
 import repositories.H2DetalleVentaRepository;
 import repositories.H2ClienteRepository;
 import repositories.H2CuentaFidelizacionRepository;
 import repositories.H2EmpleadoRepository;
 import repositories.H2MovimientoInventarioRepository;
+import repositories.H2OrdenCompraRepository;
 import repositories.H2PagoVentaRepository;
 import repositories.H2ProductoRepository;
 import repositories.H2ProveedorRepository;
@@ -37,6 +40,9 @@ import services.empleados.DesactivarEmpleadoUseCase;
 import services.empleados.ModificarEmpleadoUseCase;
 import services.empleados.RegistrarEmpleadoUseCase;
 import services.inventario.ControlarInventarioUseCase;
+import services.ordenes.CancelarOrdenCompraUseCase;
+import services.ordenes.ConsultarOrdenCompraUseCase;
+import services.ordenes.CrearOrdenCompraUseCase;
 import services.productos.ConsultarProductoUseCase;
 import services.productos.ListarProductosStockBajoUseCase;
 import services.productos.ModificarProductoUseCase;
@@ -48,7 +54,6 @@ import services.proveedores.RegistrarProveedorUseCase;
 import services.ventas.ProcesarDevolucionUseCase;
 import services.ventas.ProcesarFinalizarVentaUseCase;
 import repositories.H2DevolucionRepository;
-import repositories.H2DetalleDevolucionRepository;
 import repositories.H2CajaRepository;
 
 
@@ -74,6 +79,10 @@ public final class AppDependencies {
     private final H2CajaRepository cajaRepository;
     private final H2EmpleadoRepository empleadoRepository;
     private final H2ProveedorRepository proveedorRepository;
+<<<<<<< Updated upstream
+=======
+    private final H2OrdenCompraRepository ordenCompraRepository;
+>>>>>>> Stashed changes
 
     // ── Casos de uso ───────────────────────────────────────────
     private final AutenticarEmpleadoUseCase autenticarEmpleadoUseCase;
@@ -94,6 +103,13 @@ public final class AppDependencies {
     private final ModificarProveedorUseCase modificarProveedorUseCase;
     private final DesactivarProveedorUseCase desactivarProveedorUseCase;
 
+<<<<<<< Updated upstream
+=======
+    private final CrearOrdenCompraUseCase crearOrdenCompraUseCase;
+    private final ConsultarOrdenCompraUseCase consultarOrdenCompraUseCase;
+    private final CancelarOrdenCompraUseCase cancelarOrdenCompraUseCase;
+
+>>>>>>> Stashed changes
     private final RegistrarProductoUseCase registrarProductoUseCase;
     private final ModificarProductoUseCase modificarProductoUseCase;
     private final ConsultarProductoUseCase consultarProductoUseCase;
@@ -122,6 +138,10 @@ public final class AppDependencies {
         this.cajaRepository                 = new H2CajaRepository();
         this.empleadoRepository             = new H2EmpleadoRepository(databaseConnection);
         this.proveedorRepository            = new H2ProveedorRepository(databaseConnection);
+<<<<<<< Updated upstream
+=======
+        this.ordenCompraRepository          = new H2OrdenCompraRepository(databaseConnection);
+>>>>>>> Stashed changes
 
         // Casos de uso — autenticación
         this.autenticarEmpleadoUseCase = new AutenticarEmpleadoUseCase(usuarioRepository);
@@ -145,6 +165,14 @@ public final class AppDependencies {
         this.modificarProveedorUseCase  = new ModificarProveedorUseCase(proveedorRepository);
         this.desactivarProveedorUseCase = new DesactivarProveedorUseCase(proveedorRepository);
 
+<<<<<<< Updated upstream
+=======
+        // Casos de uso — órdenes de compra
+        this.crearOrdenCompraUseCase    = new CrearOrdenCompraUseCase(ordenCompraRepository);
+        this.consultarOrdenCompraUseCase = new ConsultarOrdenCompraUseCase(ordenCompraRepository);
+        this.cancelarOrdenCompraUseCase  = new CancelarOrdenCompraUseCase(ordenCompraRepository);
+
+>>>>>>> Stashed changes
         // Casos de uso — productos
         this.registrarProductoUseCase        = new RegistrarProductoUseCase(productoRepository);
         this.modificarProductoUseCase        = new ModificarProductoUseCase(productoRepository);
@@ -205,6 +233,19 @@ public final class AppDependencies {
             );
         }
 
+<<<<<<< Updated upstream
+=======
+        if (controllerType == OrdenCompraController.class) {
+            return new OrdenCompraController(
+                    crearOrdenCompraUseCase,
+                    consultarOrdenCompraUseCase,
+                    cancelarOrdenCompraUseCase,
+                    consultarProveedorUseCase,
+                    consultarProductoUseCase
+            );
+        }
+
+>>>>>>> Stashed changes
         if (controllerType == ClienteController.class) {
             return new ClienteController(
                     cuentaFidelizacionRepository,

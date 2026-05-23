@@ -43,6 +43,13 @@
                             onAction="#mostrarProveedores"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
+<<<<<<< Updated upstream
+=======
+                    <Button fx:id="btnOrdenes" text="🛒  Órdenes"
+                            onAction="#mostrarOrdenes"
+                            maxWidth="Infinity"
+                            styleClass="sidebar-btn"/>
+>>>>>>> Stashed changes
                     <Button fx:id="btnReportes" text="📋  Reportes"
                             onAction="#mostrarReportes"
                             maxWidth="Infinity"
