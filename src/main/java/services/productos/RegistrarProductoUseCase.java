@@ -18,14 +18,6 @@ public class RegistrarProductoUseCase {
                              int stockActual, int stockMinimo,
                              int categoriaId, boolean estadoActivo) {
 
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre del producto es obligatorio");
-        }
-
-        if (productoRepository.existeNombre(nombre)) {
-            throw new IllegalArgumentException("Ya existe un producto con el nombre: " + nombre);
-        }
-
         Producto producto = new Producto(
                 0,
                 categoriaId,
@@ -39,6 +31,10 @@ public class RegistrarProductoUseCase {
                 estadoActivo,
                 LocalDate.now()
         );
+
+        if (productoRepository.existeNombre(producto.getNombre())) {
+            throw new IllegalArgumentException("Ya existe un producto con el nombre: " + producto.getNombre());
+        }
 
         return productoRepository.guardar(producto);
     }

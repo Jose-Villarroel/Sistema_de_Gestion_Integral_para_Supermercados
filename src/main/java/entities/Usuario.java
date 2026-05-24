@@ -16,12 +16,12 @@ public class Usuario {
     private boolean estadoUsuario;
 
     // Constructor para CREAR usuario
-    public Usuario(int id, String username, String passwordPlano,
-                   Rol rol, Empleado empleado, boolean estadoUsuario) {
+    public Usuario(int id, String username, String passwordHash,
+            Rol rol, Empleado empleado, boolean estadoUsuario) {
 
         this.id = id;
         this.username = username;
-        this.passwordHash = generarHash(passwordPlano);
+        this.passwordHash = passwordHash;
         this.rol = rol;
         this.empleado = empleado;
         this.estadoUsuario = estadoUsuario;
@@ -29,9 +29,9 @@ public class Usuario {
 
     // Constructor para LEER usuario de BD
     public Usuario(int id, String username, String passwordHash,
-                   Rol rol, Empleado empleado,
-                   int intentosFallidos, LocalTime bloqueadoHasta,
-                   LocalDate ultimoAcceso, boolean estadoUsuario) {
+            Rol rol, Empleado empleado,
+            int intentosFallidos, LocalTime bloqueadoHasta,
+            LocalDate ultimoAcceso, boolean estadoUsuario) {
 
         this.id = id;
         this.username = username;
@@ -42,27 +42,6 @@ public class Usuario {
         this.bloqueadoHasta = bloqueadoHasta;
         this.ultimoAcceso = ultimoAcceso;
         this.estadoUsuario = estadoUsuario;
-    }
-
-    private String generarHash(String password) {
-        return String.valueOf(password.hashCode());
-    }
-
-    public boolean passwordCoincide(String passwordPlano) {
-        return this.passwordHash.equals(generarHash(passwordPlano));
-    }
-
-    public boolean estaBloqueado() {
-        if (bloqueadoHasta == null) return false;
-        return LocalTime.now().isBefore(bloqueadoHasta);
-    }
-
-    public void incrementarIntentosFallidos() {
-        this.intentosFallidos++;
-    }
-
-    public void reiniciarIntentosFallidos() {
-        this.intentosFallidos = 0;
     }
 
     public int getId() {

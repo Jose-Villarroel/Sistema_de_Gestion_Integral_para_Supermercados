@@ -15,14 +15,14 @@ public class MovimientoInventario {
     private final LocalDate fechaMovimiento;
 
     public MovimientoInventario(int idMovimiento,
-                                int idEmpleado,
-                                int idTipoMovimiento,
-                                int idProducto,
-                                int cantidad,
-                                int stockAnterior,
-                                int stockNuevo,
-                                String motivo,
-                                LocalDate fechaMovimiento) {
+            int idEmpleado,
+            int idTipoMovimiento,
+            int idProducto,
+            int cantidad,
+            int stockAnterior,
+            int stockNuevo,
+            String motivo,
+            LocalDate fechaMovimiento) {
 
         if (idEmpleado <= 0) {
             throw new IllegalArgumentException("El id del empleado debe ser válido");
@@ -45,7 +45,7 @@ public class MovimientoInventario {
         }
 
         if (stockNuevo < 0) {
-            throw new IllegalArgumentException("El stock nuevo no puede ser negativo");
+            throw new IllegalArgumentException("El stock no puede ser negativo");
         }
 
         if (motivo == null || motivo.isBlank()) {
@@ -67,13 +67,39 @@ public class MovimientoInventario {
         this.fechaMovimiento = fechaMovimiento;
     }
 
-    public int getIdMovimiento() { return idMovimiento; }
-    public int getIdEmpleado() { return idEmpleado; }
-    public int getIdTipoMovimiento() { return idTipoMovimiento; }
-    public int getIdProducto() { return idProducto; }
-    public int getCantidad() { return cantidad; }
-    public int getStockAnterior() { return stockAnterior; }
-    public int getStockNuevo() { return stockNuevo; }
-    public String getMotivo() { return motivo; }
-    public LocalDate getFechaMovimiento() { return fechaMovimiento; }
+    public int getIdMovimiento() {
+        return idMovimiento;
+    }
+
+    public int getIdEmpleado() {
+        return idEmpleado;
+    }
+
+    public int getIdTipoMovimiento() {
+        return idTipoMovimiento;
+    }
+
+    public int getIdProducto() {
+        return idProducto;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public int getStockAnterior() {
+        return stockAnterior;
+    }
+
+    public int getStockNuevo() {
+        return stockNuevo;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public LocalDate getFechaMovimiento() {
+        return fechaMovimiento;
+    }
 }
