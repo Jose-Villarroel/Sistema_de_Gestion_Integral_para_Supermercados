@@ -1,0 +1,200 @@
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #F5F2EE;
+}
+
+.main-container {
+    -fx-background-color: #F5F2EE;
+}
+
+.header {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 14 24 14 24;
+    -fx-border-color: transparent transparent #E8E0D8 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
+}
+
+.header-title {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.metric-card,
+.small-card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E8E0D8;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);
+    -fx-padding: 16 20 16 20;
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 6;
+}
+
+.card-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6B6B6B;
+}
+
+.card-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.card-value-accent {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #C0392B;
+}
+
+.card-value-muted {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E67E22;
+}
+
+.small-card-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.form-panel {
+    -fx-background-color: #FAF8F5;
+    -fx-border-color: transparent #E8E0D8 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.table-panel {
+    -fx-background-color: #F5F2EE;
+}
+
+.field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3A3A3A;
+}
+
+.combo-box,
+.date-picker,
+.text-area {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6;
+    -fx-border-color: #CFCAC4;
+    -fx-border-radius: 6;
+    -fx-border-width: 1.2;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1A1A1A;
+}
+
+.combo-box:focused,
+.date-picker:focused,
+.text-area:focused {
+    -fx-border-color: #C0392B;
+    -fx-border-width: 1.8;
+    -fx-effect: dropshadow(gaussian, rgba(192,57,43,0.10), 6, 0, 0, 0);
+}
+
+.text-area .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6;
+}
+
+.btn-primary {
+    -fx-background-color: #C0392B;
+    -fx-background-radius: 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 18 9 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(192,57,43,0.28), 8, 0, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: #A93226;
+}
+
+.btn-secondary {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 6;
+    -fx-border-color: #CFCAC4;
+    -fx-border-radius: 6;
+    -fx-border-width: 1.2;
+    -fx-text-fill: #3A3A3A;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 18 9 18;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #FDEEEE;
+    -fx-text-fill: #C0392B;
+    -fx-border-color: #C0392B;
+}
+
+.btn-export {
+    -fx-background-color: #1A1A1A;
+    -fx-background-radius: 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+}
+
+.btn-export:hover {
+    -fx-background-color: #333333;
+}
+
+.message-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B6B6B;
+    -fx-padding: 8 0 0 0;
+}
+
+.message-ok {
+    -fx-text-fill: #27AE60;
+    -fx-font-weight: bold;
+}
+
+.message-error {
+    -fx-text-fill: #C0392B;
+    -fx-font-weight: bold;
+}
+
+.chart-placeholder {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10;
+    -fx-border-color: #E8E0D8;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 28;
+}
+
+.chart-icon {
+    -fx-font-size: 32px;
+}
+
+.chart-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1A1A;
+}
+
+.chart-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B6B6B;
+}

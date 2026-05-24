@@ -67,7 +67,7 @@ public class AdminController {
 
     @FXML
     public void mostrarReportes() {
-        cargarVista("/infrastructure/ui/gerente/dashboard.fxml");
+        cargarVista("/infrastructure/ui/gerente/reporte_ventas.fxml");
         marcarActivo(btnReportes);
     }
 

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
@@ -8,68 +9,115 @@
             fx:controller="controllers.admin.AdminController"
             stylesheets="@../base.css,@admin.css">
 
+    <!-- TOP BAR -->
     <top>
-        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="16">
-            <Label text="🛒 MasterMarket" styleClass="top-bar-brand"/>
+        <HBox styleClass="top-bar"
+              alignment="CENTER_LEFT"
+              spacing="16">
+
+            <Label text="🛒 MasterMarket"
+                   styleClass="top-bar-brand"/>
+
             <Pane HBox.hgrow="ALWAYS"/>
-            <Label text="Panel de Administrador" styleClass="top-bar-context"/>
+
+            <Label text="Panel de Administrador"
+                   styleClass="top-bar-context"/>
+
             <Button text="Cerrar Sesión"
                     onAction="#cerrarSesion"
                     styleClass="btn-cerrar-sesion"/>
         </HBox>
     </top>
 
+    <!-- SIDEBAR -->
     <left>
-        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
+
             <content>
-                <VBox styleClass="sidebar" spacing="2">
-                    <Button fx:id="btnEmpleados" text="👤  Empleados"
+                <VBox styleClass="sidebar"
+                      spacing="2">
+
+                    <Button fx:id="btnEmpleados"
+                            text="👤  Empleados"
                             onAction="#mostrarEmpleados"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
-                    <Button fx:id="btnProductos" text="📦  Catálogo"
+
+                    <Button fx:id="btnProductos"
+                            text="📦  Catálogo"
                             onAction="#mostrarProductos"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
-                    <Button fx:id="btnInventario" text="📊  Inventario"
+
+                    <Button fx:id="btnInventario"
+                            text="📊  Inventario"
                             onAction="#mostrarInventario"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
-                    <Button fx:id="btnClientes" text="👥  Clientes"
+
+                    <Button fx:id="btnClientes"
+                            text="👥  Clientes"
                             onAction="#mostrarClientes"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
-                    <Button fx:id="btnProveedores" text="🚚  Proveedores"
+
+                    <Button fx:id="btnProveedores"
+                            text="🚚  Proveedores"
                             onAction="#mostrarProveedores"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
-<<<<<<< Updated upstream
-=======
-                    <Button fx:id="btnOrdenes" text="🛒  Órdenes"
+
+                    <Button fx:id="btnOrdenes"
+                            text="🛒  Órdenes"
                             onAction="#mostrarOrdenes"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
->>>>>>> Stashed changes
-                    <Button fx:id="btnReportes" text="📋  Reportes"
+
+                    <Button fx:id="btnReportes"
+                            text="📋  Reportes"
                             onAction="#mostrarReportes"
                             maxWidth="Infinity"
                             styleClass="sidebar-btn"/>
+
                 </VBox>
             </content>
+
         </ScrollPane>
     </left>
 
+    <!-- CONTENIDO CENTRAL -->
     <center>
-        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
+
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
+
             <content>
-                <StackPane fx:id="contenidoCentral" styleClass="content-area">
-                    <VBox alignment="CENTER" spacing="16">
-                        <Label text="Panel de Administrador" styleClass="welcome-title"/>
-                        <Label text="Seleccione una opción del menú" styleClass="welcome-subtitle"/>
+
+                <StackPane fx:id="contenidoCentral"
+                           styleClass="content-area">
+
+                    <VBox alignment="CENTER"
+                          spacing="16">
+
+                        <Label text="Panel de Administrador"
+                               styleClass="welcome-title"/>
+
+                        <Label text="Seleccione una opción del menú"
+                               styleClass="welcome-subtitle"/>
+
                     </VBox>
+
                 </StackPane>
+
             </content>
+
         </ScrollPane>
+
     </center>
 
 </BorderPane>

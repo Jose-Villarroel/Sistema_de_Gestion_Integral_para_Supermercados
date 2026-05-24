@@ -6,6 +6,7 @@ import controllers.caja.CierreCajaController;
 import controllers.cajero.DevolucionController;
 import controllers.cajero.PosController;
 import controllers.gerente.DashboardController;
+import controllers.gerente.ReporteVentasController;
 import controllers.supervisor.InventarioController;
 import repositories.*;
 import services.autenticacion.AutenticarEmpleadoUseCase;
@@ -224,6 +225,10 @@ public final class AppDependencies {
 
         if (controllerType == DashboardController.class) {
             return new DashboardController(generarReporteVentasUseCase);
+        }
+
+        if (controllerType == ReporteVentasController.class) {
+            return new ReporteVentasController(generarReporteVentasUseCase);
         }
 
         throw new IllegalArgumentException(
