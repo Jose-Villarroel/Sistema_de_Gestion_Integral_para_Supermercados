@@ -33,14 +33,16 @@ public class AutenticarEmpleadoUseCase {
             throw new RuntimeException("Usuario desactivado");
         }
 
-        if (usuario.estaBloqueado()) {
+        if (usuario.getBloqueadoHasta() != null && java.time.LocalTime.now().isBefore(usuario.getBloqueadoHasta())) {
             throw new RuntimeException("Usuario bloqueado temporalmente");
         }
         System.out.println("Usuario encontrado: " + usuario.getUsername());
         System.out.println("Hash guardado en BD: " + usuario.getPasswordHash());
         System.out.println("Hash ingresado: " + String.valueOf(password.hashCode()));
         System.out.println("Estado usuario: " + usuario.isEstadoUsuario());
-        if (!usuario.passwordCoincide(password)) {
+        
+        String hashIngresado = String.valueOf(password.hashCode());
+        if (!usuario.getPasswordHash().equals(hashIngresado)) {
             throw new RuntimeException("Credenciales incorrectas");
         }
 

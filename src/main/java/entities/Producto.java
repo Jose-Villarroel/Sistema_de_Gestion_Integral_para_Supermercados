@@ -18,9 +18,9 @@ public class Producto {
 
     // Constructor completo (desde BD)
     public Producto(int id, int categoriaId, String nombre, String descripcion,
-                    String marca, double precioCompra, double precioVenta,
-                    int stockActual, int stockMinimo,
-                    boolean activo, LocalDate fechaRegistro) {
+            String marca, double precioCompra, double precioVenta,
+            int stockActual, int stockMinimo,
+            boolean activo, LocalDate fechaRegistro) {
 
         this.id = id;
         this.categoriaId = categoriaId;
@@ -37,8 +37,8 @@ public class Producto {
 
     // Constructor para nuevo producto
     public Producto(int categoriaId, String nombre, String descripcion,
-                    String marca, double precioCompra, double precioVenta,
-                    int stockActual, int stockMinimo, boolean activo, LocalDate fechaRegistro) {
+            String marca, double precioCompra, double precioVenta,
+            int stockActual, int stockMinimo, boolean activo, LocalDate fechaRegistro) {
 
         this(0, categoriaId, nombre, descripcion, marca, precioCompra,
                 precioVenta, stockActual, stockMinimo, activo, fechaRegistro);
@@ -47,7 +47,7 @@ public class Producto {
     // Validaciones
     private String validarNombre(String nombre) {
         if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre del producto no puede estar vacío");
+            throw new IllegalArgumentException("El nombre del producto es obligatorio");
         }
         return nombre.trim();
     }
@@ -79,17 +79,17 @@ public class Producto {
     }
 
     public void actualizarDatos(String nombre, String descripcion, String marca,
-                                double precioCompra, double precioVenta,
-                                int stockActual, int stockMinimo,
-                                int categoriaId, boolean activo) {
+            double precioCompra, double precioVenta,
+            int stockActual, int stockMinimo,
+            int categoriaId, boolean activo) {
 
-        this.nombre = nombre;
+        this.nombre = validarNombre(nombre);
         this.descripcion = descripcion;
         this.marca = marca;
-        this.precioCompra = precioCompra;
-        this.precioVenta = precioVenta;
-        this.stockActual = stockActual;
-        this.stockMinimo = stockMinimo;
+        this.precioCompra = validarPrecioCompra(precioCompra);
+        this.precioVenta = validarPrecioVenta(precioVenta, precioCompra);
+        this.stockActual = validarStock(stockActual);
+        this.stockMinimo = validarStock(stockMinimo);
         this.categoriaId = categoriaId;
         this.activo = activo;
     }
@@ -98,17 +98,49 @@ public class Producto {
         this.stockActual = validarStock(stockActual);
     }
 
-    public int getId() { return id; }
-    public int getCategoriaId() { return categoriaId; }
-    public String getNombre() { return nombre; }
-    public String getDescripcion() { return descripcion; }
-    public String getMarca() { return marca; }
-    public double getPrecioCompra() { return precioCompra; }
-    public double getPrecioVenta() { return precioVenta; }
-    public int getStockActual() { return stockActual; }
-    public int getStockMinimo() { return stockMinimo; }
-    public boolean isActivo() { return activo; }
-    public LocalDate getFechaRegistro() { return fechaRegistro; }
+    public int getId() {
+        return id;
+    }
+
+    public int getCategoriaId() {
+        return categoriaId;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public double getPrecioCompra() {
+        return precioCompra;
+    }
+
+    public double getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public int getStockActual() {
+        return stockActual;
+    }
+
+    public int getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
+    }
 
     @Override
     public String toString() {

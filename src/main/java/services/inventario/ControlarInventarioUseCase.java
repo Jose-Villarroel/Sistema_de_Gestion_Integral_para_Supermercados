@@ -26,24 +26,24 @@ public class ControlarInventarioUseCase {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser un número positivo");
-        }
-
         int stockAnterior = producto.getStockActual();
         int stockNuevo = stockAnterior + cantidad;
 
-        actualizarStock(producto, stockNuevo);
-
-        guardarMovimiento(
-                producto.getId(),
+        // Validar e instanciar movimiento de inventario primero (falla temprano si hay error)
+        MovimientoInventario movimiento = new MovimientoInventario(
+                0,
                 empleadoId,
                 tipoMovimientoId,
+                producto.getId(),
                 cantidad,
                 stockAnterior,
                 stockNuevo,
-                motivo
+                motivo,
+                LocalDate.now()
         );
+
+        actualizarStock(producto, stockNuevo);
+        movimientoRepository.guardar(movimiento);
 
         return stockNuevo;
     }
@@ -55,10 +55,6 @@ public class ControlarInventarioUseCase {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser un número positivo");
-        }
-
         int stockAnterior = producto.getStockActual();
 
         if (cantidad > stockAnterior) {
@@ -68,17 +64,21 @@ public class ControlarInventarioUseCase {
 
         int stockNuevo = stockAnterior - cantidad;
 
-        actualizarStock(producto, stockNuevo);
-
-        guardarMovimiento(
-                producto.getId(),
+        // Validar e instanciar movimiento primero
+        MovimientoInventario movimiento = new MovimientoInventario(
+                0,
                 empleadoId,
                 tipoMovimientoId,
+                producto.getId(),
                 cantidad,
                 stockAnterior,
                 stockNuevo,
-                motivo
+                motivo,
+                LocalDate.now()
         );
+
+        actualizarStock(producto, stockNuevo);
+        movimientoRepository.guardar(movimiento);
 
         return stockNuevo;
     }
@@ -90,10 +90,6 @@ public class ControlarInventarioUseCase {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Producto no encontrado. Debe registrarlo primero en el catálogo"));
 
-        if (nuevoStock < 0) {
-            throw new IllegalArgumentException("El stock no puede ser negativo");
-        }
-
         int stockAnterior = producto.getStockActual();
         int diferencia = Math.abs(nuevoStock - stockAnterior);
 
@@ -101,19 +97,25 @@ public class ControlarInventarioUseCase {
             throw new IllegalArgumentException("El stock ingresado es igual al stock actual");
         }
 
-        actualizarStock(producto, nuevoStock);
+        int stockNuevo = nuevoStock;
 
-        guardarMovimiento(
-                producto.getId(),
+        // Validar e instanciar movimiento primero
+        MovimientoInventario movimiento = new MovimientoInventario(
+                0,
                 empleadoId,
                 tipoMovimientoId,
+                producto.getId(),
                 diferencia,
                 stockAnterior,
-                nuevoStock,
-                motivo
+                stockNuevo,
+                motivo,
+                LocalDate.now()
         );
 
-        return nuevoStock;
+        actualizarStock(producto, stockNuevo);
+        movimientoRepository.guardar(movimiento);
+
+        return stockNuevo;
     }
 
     public List<Producto> obtenerAlertasStockBajo() {
@@ -127,28 +129,5 @@ public class ControlarInventarioUseCase {
     private void actualizarStock(Producto producto, int nuevoStock) {
         producto.setStockActual(nuevoStock);
         productoRepository.actualizar(producto);
-    }
-
-    private void guardarMovimiento(int productoId,
-                                   int empleadoId,
-                                   int tipoMovimientoId,
-                                   int cantidad,
-                                   int stockAnterior,
-                                   int stockNuevo,
-                                   String motivo) {
-
-        MovimientoInventario movimiento = new MovimientoInventario(
-                0,
-                empleadoId,
-                tipoMovimientoId,
-                productoId,
-                cantidad,
-                stockAnterior,
-                stockNuevo,
-                motivo,
-                LocalDate.now()
-        );
-
-        movimientoRepository.guardar(movimiento);
     }
 }
