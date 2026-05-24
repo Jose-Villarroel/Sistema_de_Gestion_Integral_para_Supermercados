@@ -5,6 +5,7 @@ import controllers.autenticacion.LoginController;
 import controllers.caja.CierreCajaController;
 import controllers.cajero.DevolucionController;
 import controllers.cajero.PosController;
+import controllers.gerente.ReporteVentasController;
 import controllers.supervisor.InventarioController;
 import repositories.*;
 import services.autenticacion.AutenticarEmpleadoUseCase;
@@ -15,6 +16,7 @@ import services.inventario.ControlarInventarioUseCase;
 import services.ordenes.*;
 import services.productos.*;
 import services.proveedores.*;
+import services.reportes.GenerarReporteVentasUseCase;
 import services.ventas.*;
 
 public final class AppDependencies {
@@ -38,6 +40,7 @@ public final class AppDependencies {
     private final H2EmpleadoRepository empleadoRepository;
     private final H2ProveedorRepository proveedorRepository;
     private final H2OrdenCompraRepository ordenCompraRepository;
+    private final ReporteVentasRepository reporteVentasRepository;
 
     private final AutenticarEmpleadoUseCase autenticarEmpleadoUseCase;
 
@@ -71,6 +74,8 @@ public final class AppDependencies {
     private final GestionarCierreCajaUseCase gestionarCierreCajaUseCase;
     private final ControlarInventarioUseCase controlarInventarioUseCase;
 
+    private final GenerarReporteVentasUseCase generarReporteVentasUseCase;
+
     private AppDependencies() {
         databaseConnection = new DatabaseConnection();
 
@@ -89,6 +94,7 @@ public final class AppDependencies {
         empleadoRepository = new H2EmpleadoRepository(databaseConnection);
         proveedorRepository = new H2ProveedorRepository(databaseConnection);
         ordenCompraRepository = new H2OrdenCompraRepository(databaseConnection);
+        reporteVentasRepository = new H2ReporteVentasRepository(databaseConnection);
 
         autenticarEmpleadoUseCase = new AutenticarEmpleadoUseCase(usuarioRepository);
 
@@ -141,7 +147,13 @@ public final class AppDependencies {
         );
 
         gestionarCierreCajaUseCase = new GestionarCierreCajaUseCase(cierreCajaRepository);
-        controlarInventarioUseCase = new ControlarInventarioUseCase(productoRepository, movimientoInventarioRepository);
+
+        controlarInventarioUseCase = new ControlarInventarioUseCase(
+                productoRepository,
+                movimientoInventarioRepository
+        );
+
+        generarReporteVentasUseCase = new GenerarReporteVentasUseCase(reporteVentasRepository);
     }
 
     public static AppDependencies getInstance() {
@@ -220,6 +232,10 @@ public final class AppDependencies {
                     productoRepository,
                     movimientoInventarioRepository
             );
+        }
+
+        if (controllerType == ReporteVentasController.class) {
+            return new ReporteVentasController(generarReporteVentasUseCase);
         }
 
         try {
