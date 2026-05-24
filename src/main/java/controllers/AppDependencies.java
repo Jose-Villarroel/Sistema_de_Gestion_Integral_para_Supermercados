@@ -5,6 +5,7 @@ import controllers.autenticacion.LoginController;
 import controllers.caja.CierreCajaController;
 import controllers.cajero.DevolucionController;
 import controllers.cajero.PosController;
+import controllers.gerente.DashboardController;
 import controllers.gerente.ReporteVentasController;
 import controllers.supervisor.InventarioController;
 import repositories.*;
@@ -73,7 +74,6 @@ public final class AppDependencies {
     private final ProcesarDevolucionUseCase procesarDevolucionUseCase;
     private final GestionarCierreCajaUseCase gestionarCierreCajaUseCase;
     private final ControlarInventarioUseCase controlarInventarioUseCase;
-
     private final GenerarReporteVentasUseCase generarReporteVentasUseCase;
 
     private AppDependencies() {
@@ -132,8 +132,7 @@ public final class AppDependencies {
                 detalleVentaRepository,
                 pagoVentaRepository,
                 movimientoInventarioRepository,
-                cajaRepository
-        );
+                cajaRepository);
 
         procesarDevolucionUseCase = new ProcesarDevolucionUseCase(
                 databaseConnection,
@@ -143,16 +142,10 @@ public final class AppDependencies {
                 movimientoInventarioRepository,
                 cajaRepository,
                 usuarioRepository,
-                cuentaFidelizacionRepository
-        );
+                cuentaFidelizacionRepository);
 
         gestionarCierreCajaUseCase = new GestionarCierreCajaUseCase(cierreCajaRepository);
-
-        controlarInventarioUseCase = new ControlarInventarioUseCase(
-                productoRepository,
-                movimientoInventarioRepository
-        );
-
+        controlarInventarioUseCase = new ControlarInventarioUseCase(productoRepository, movimientoInventarioRepository);
         generarReporteVentasUseCase = new GenerarReporteVentasUseCase(reporteVentasRepository);
     }
 
@@ -171,8 +164,7 @@ public final class AppDependencies {
                     registrarEmpleadoUseCase,
                     consultarEmpleadoUseCase,
                     modificarEmpleadoUseCase,
-                    desactivarEmpleadoUseCase
-            );
+                    desactivarEmpleadoUseCase);
         }
 
         if (controllerType == ProveedorController.class) {
@@ -180,8 +172,7 @@ public final class AppDependencies {
                     registrarProveedorUseCase,
                     consultarProveedorUseCase,
                     modificarProveedorUseCase,
-                    desactivarProveedorUseCase
-            );
+                    desactivarProveedorUseCase);
         }
 
         if (controllerType == OrdenCompraController.class) {
@@ -190,8 +181,7 @@ public final class AppDependencies {
                     consultarOrdenCompraUseCase,
                     cancelarOrdenCompraUseCase,
                     consultarProveedorUseCase,
-                    consultarProductoUseCase
-            );
+                    consultarProductoUseCase);
         }
 
         if (controllerType == ClienteController.class) {
@@ -201,8 +191,7 @@ public final class AppDependencies {
                     consultarClienteUseCase,
                     modificarClienteUseCase,
                     desactivarClienteUseCase,
-                    gestionarPuntosUseCase
-            );
+                    gestionarPuntosUseCase);
         }
 
         if (controllerType == ProductoController.class) {
@@ -210,8 +199,7 @@ public final class AppDependencies {
                     registrarProductoUseCase,
                     modificarProductoUseCase,
                     consultarProductoUseCase,
-                    listarProductosStockBajoUseCase
-            );
+                    listarProductosStockBajoUseCase);
         }
 
         if (controllerType == PosController.class) {
@@ -227,23 +215,23 @@ public final class AppDependencies {
         }
 
         if (controllerType == InventarioController.class) {
-            return new InventarioController(
-                    controlarInventarioUseCase,
-                    productoRepository,
-                    movimientoInventarioRepository
-            );
+            return new InventarioController(controlarInventarioUseCase, productoRepository,
+                    movimientoInventarioRepository);
+        }
+
+        if (controllerType == AdminController.class) {
+            return new AdminController(listarProductosStockBajoUseCase);
+        }
+
+        if (controllerType == DashboardController.class) {
+            return new DashboardController(generarReporteVentasUseCase);
         }
 
         if (controllerType == ReporteVentasController.class) {
             return new ReporteVentasController(generarReporteVentasUseCase);
         }
 
-        try {
-            return controllerType.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "No se pudo crear el controlador: " + controllerType.getName(), e
-            );
-        }
+        throw new IllegalArgumentException(
+                "Controlador no registrado en el contenedor de dependencias: " + controllerType.getName());
     }
 }
