@@ -684,16 +684,23 @@ class ProcesarDevolucionUseCaseTest {
                 @Test
                 @DisplayName("CP-024: Devolucion con EFECTIVO y saldo de caja suficiente se procesa correctamente")
                 void devolucionEfectivoCajaSuficiente_procesaCorrectamente() throws Exception {
-                        insertarDetalleVenta(5, 5, 2, 5200.0, 10400.0);
-                        insertarSaldoCaja(3, 5, 50000.0);
+                        int idVenta = insertarVentaConFecha(LocalDate.now(), "MANANA", 3);
+
+                        insertarDetalleVenta(idVenta, 5, 2, 5200.0, 10400.0);
+                        insertarSaldoCaja(3, idVenta, 50000.0);
 
                         var solicitud = new SolicitudDevolucion(
-                                        5, 3, "Reembolso en efectivo con caja",
-                                        MetodoReembolso.EFECTIVO,
-                                        null, null,
-                                        List.of(new ItemDevolucion(5, 1, "Cerrado", EstadoProductoDevolucion.CERRADO)));
+                                idVenta,
+                                3,
+                                "Reembolso en efectivo con caja",
+                                MetodoReembolso.EFECTIVO,
+                                null,
+                                null,
+                                List.of(new ItemDevolucion(5, 1, "Cerrado", EstadoProductoDevolucion.CERRADO))
+                        );
 
                         var resultado = useCase.procesarDevolucion(solicitud);
+
                         assertNotNull(resultado);
                         assertEquals(5200.0, resultado.totalDevuelto());
                 }

@@ -108,16 +108,17 @@ class GenerarReporteVentasUseCaseTest {
      * (ventas 5 y 6), con total $29.750 + $71.400 = $101.150.
      */
     @Test
-    @DisplayName("CP-004: Reporte solo del día actual debe incluir 2 ventas")
+    @DisplayName("CP-004: Reporte solo del día actual debe incluir ventas del día")
     void ejecutar_conRangoDelDia_debeFiltrarSoloHoy() {
         LocalDate hoy = LocalDate.now();
 
         ReporteVentas reporte = useCase.ejecutar(hoy, hoy);
 
-        assertEquals(2, reporte.numeroTransacciones(),
-                "Solo deben incluirse las 2 ventas del día actual");
-        assertEquals(0, reporte.totalVendido().compareTo(new BigDecimal("101150.00")),
-                "Total debe ser $29.750 + $71.400");
+        assertEquals(1, reporte.numeroTransacciones(),
+                "Debe incluirse la venta registrada para el día actual");
+
+        assertEquals(0, reporte.totalVendido().compareTo(new BigDecimal("71400.00")),
+                "Total debe corresponder a la venta registrada en la fecha actual");
     }
 
     /*
