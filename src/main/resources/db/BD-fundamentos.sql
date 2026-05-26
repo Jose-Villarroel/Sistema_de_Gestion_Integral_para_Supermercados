@@ -440,3 +440,24 @@ INSERT INTO Venta (id_venta, id_empleado, fecha_venta, turno, metodo_pago, subto
 (6, 3, CURRENT_DATE, 'TARDE', 'TARJETA', 60000.00, 0, 11400.00, 71400.00, TRUE);
 
 ALTER TABLE Venta ALTER COLUMN id_venta RESTART WITH 7;
+
+-- VENTAS DE PRUEBA (para reportes CU-012)
+UPDATE Venta
+SET fecha_venta='2026-05-20'
+WHERE id_venta=1;
+
+UPDATE Venta
+SET fecha_venta='2026-05-21'
+WHERE id_venta=2;
+
+UPDATE Venta
+SET fecha_venta='2026-05-22'
+WHERE id_venta=3;
+
+UPDATE Venta
+SET fecha_venta='2026-05-23'
+WHERE id_venta=4;
+
+UPDATE Venta
+SET fecha_venta='2026-05-24'
+WHERE id_venta=5;
