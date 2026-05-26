@@ -198,3 +198,43 @@
     -fx-font-size: 12px;
     -fx-text-fill: #6B6B6B;
 }
+.chart {
+    -fx-padding: 10px;
+}
+
+.axis {
+    -fx-tick-label-fill: #333333;
+    -fx-font-size: 11px;
+}
+
+.axis-label {
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
+}
+
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: #d0d0d0;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 2.5px;
+}
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #111111;
+    -fx-font-size: 12px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 50%;
+}
+
+.chart-pie-label {
+    -fx-fill: #111111;
+    -fx-font-size: 12px;
+}
