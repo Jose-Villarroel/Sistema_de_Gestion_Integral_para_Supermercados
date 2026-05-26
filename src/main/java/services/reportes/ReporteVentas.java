@@ -20,6 +20,7 @@ public record ReporteVentas(
         BigDecimal ticketPromedio,
         BigDecimal totalDescuentos,
         BigDecimal totalImpuestos,
-        Map<String, BigDecimal> ventasPorMetodoPago
+        Map<String, BigDecimal> ventasPorMetodoPago,
+        Map<LocalDate, BigDecimal> ventasPorDia
 ) {
 }

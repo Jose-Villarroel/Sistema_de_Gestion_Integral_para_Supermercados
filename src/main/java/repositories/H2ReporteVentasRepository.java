@@ -78,7 +78,33 @@ public class H2ReporteVentasRepository implements ReporteVentasRepository {
                     ventasPorMetodo.put(rs.getString("metodo_pago"), rs.getBigDecimal("total"));
                 }
             }
+// 4. Ventas por día
+            Map<LocalDate, BigDecimal> ventasPorDia = new LinkedHashMap<>();
 
+            String sqlPorDia = """
+    SELECT fecha_venta,
+           COALESCE(SUM(total_final), 0) AS total
+    FROM Venta
+    WHERE estado_venta = TRUE
+      AND fecha_venta BETWEEN ? AND ?
+    GROUP BY fecha_venta
+    ORDER BY fecha_venta
+""";
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlPorDia)) {
+
+                stmt.setDate(1, Date.valueOf(fechaDesde));
+                stmt.setDate(2, Date.valueOf(fechaHasta));
+
+                ResultSet rs = stmt.executeQuery();
+
+                while (rs.next()) {
+                    ventasPorDia.put(
+                            rs.getDate("fecha_venta").toLocalDate(),
+                            rs.getBigDecimal("total")
+                    );
+                }
+            }
             return new ReporteVentas(
                     fechaDesde,
                     fechaHasta,
@@ -87,7 +113,8 @@ public class H2ReporteVentasRepository implements ReporteVentasRepository {
                     ticketPromedio,
                     totalDescuentos,
                     totalImpuestos,
-                    ventasPorMetodo
+                    ventasPorMetodo,
+                    ventasPorDia
             );
 
         } catch (Exception e) {

@@ -1,22 +1,34 @@
 package controllers.gerente;
 
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
+import javafx.scene.image.WritableImage;
+import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.embed.swing.SwingFXUtils;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
-import javafx.stage.FileChooser;
-import java.io.File;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
 import services.reportes.GenerarReporteVentasUseCase;
 import services.reportes.ReporteVentas;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
@@ -40,6 +52,7 @@ public class ReporteVentasController {
     @FXML private TextArea txtDetalleMetodosPago;
 
     private final GenerarReporteVentasUseCase generarReporteVentasUseCase;
+    private ReporteVentas ultimoReporte;
 
     public ReporteVentasController(GenerarReporteVentasUseCase generarReporteVentasUseCase) {
         this.generarReporteVentasUseCase = generarReporteVentasUseCase;
@@ -68,6 +81,7 @@ public class ReporteVentasController {
             }
 
             ReporteVentas reporte = generarReporteVentasUseCase.ejecutar(desde, hasta);
+            this.ultimoReporte = reporte;
 
             lblTotalVendido.setText(formatearMoneda(reporte.totalVendido()));
             lblTransacciones.setText(String.valueOf(reporte.numeroTransacciones()));
@@ -89,14 +103,7 @@ public class ReporteVentasController {
 
     @FXML
     public void exportarPDF() {
-        String totalVendido   = lblTotalVendido.getText();
-        String transacciones  = lblTransacciones.getText();
-        String ticketPromedio = lblTicketPromedio.getText();
-        String descuentos     = lblDescuentos.getText();
-        String impuestos      = lblImpuestos.getText();
-        String detallePagos   = txtDetalleMetodosPago.getText();
-
-        if (totalVendido.equals("0.00") && transacciones.equals("0")) {
+        if (ultimoReporte == null) {
             mostrarError("Primero genere un reporte antes de exportar.");
             return;
         }
@@ -115,16 +122,14 @@ public class ReporteVentasController {
             PDPage page = new PDPage(PDRectangle.A4);
             doc.addPage(page);
 
-            PDType1Font fontBold    = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            PDType1Font fontBold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
             PDType1Font fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
 
             try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-
-                float margin     = 50;
-                float y          = page.getMediaBox().getHeight() - margin;
+                float margin = 50;
+                float y = page.getMediaBox().getHeight() - margin;
                 float lineHeight = 18;
 
-                // Título
                 cs.beginText();
                 cs.setFont(fontBold, 20);
                 cs.newLineAtOffset(margin, y);
@@ -132,7 +137,6 @@ public class ReporteVentasController {
                 cs.endText();
                 y -= lineHeight * 1.5f;
 
-                // Fecha de generación
                 cs.beginText();
                 cs.setFont(fontRegular, 10);
                 cs.newLineAtOffset(margin, y);
@@ -140,23 +144,18 @@ public class ReporteVentasController {
                 cs.endText();
                 y -= lineHeight;
 
-                // Rango de fechas
-                String desde = dpFechaDesde.getValue() != null ? dpFechaDesde.getValue().toString() : "-";
-                String hasta  = dpFechaHasta.getValue()  != null ? dpFechaHasta.getValue().toString()  : "-";
                 cs.beginText();
                 cs.setFont(fontRegular, 10);
                 cs.newLineAtOffset(margin, y);
-                cs.showText("Periodo: " + desde + " al " + hasta);
+                cs.showText("Periodo: " + ultimoReporte.fechaDesde() + " al " + ultimoReporte.fechaHasta());
                 cs.endText();
                 y -= lineHeight * 1.5f;
 
-                // Línea separadora
                 cs.moveTo(margin, y);
                 cs.lineTo(page.getMediaBox().getWidth() - margin, y);
                 cs.stroke();
                 y -= lineHeight;
 
-                // Título sección
                 cs.beginText();
                 cs.setFont(fontBold, 13);
                 cs.newLineAtOffset(margin, y);
@@ -164,13 +163,12 @@ public class ReporteVentasController {
                 cs.endText();
                 y -= lineHeight * 1.2f;
 
-                // Indicadores
                 String[][] datos = {
-                    {"Total vendido:",    totalVendido},
-                    {"Transacciones:",    transacciones},
-                    {"Ticket promedio:",  ticketPromedio},
-                    {"Total descuentos:", descuentos},
-                    {"Total impuestos:",  impuestos},
+                        {"Total vendido:", formatearMoneda(ultimoReporte.totalVendido())},
+                        {"Transacciones:", String.valueOf(ultimoReporte.numeroTransacciones())},
+                        {"Ticket promedio:", formatearMoneda(ultimoReporte.ticketPromedio())},
+                        {"Total descuentos:", formatearMoneda(ultimoReporte.totalDescuentos())},
+                        {"Total impuestos:", formatearMoneda(ultimoReporte.totalImpuestos())}
                 };
 
                 for (String[] fila : datos) {
@@ -191,33 +189,67 @@ public class ReporteVentasController {
 
                 y -= lineHeight * 0.5f;
 
-                // Línea separadora
                 cs.moveTo(margin, y);
                 cs.lineTo(page.getMediaBox().getWidth() - margin, y);
                 cs.stroke();
                 y -= lineHeight;
 
-                // Detalle métodos de pago
-                if (detallePagos != null && !detallePagos.isBlank()) {
-                    cs.beginText();
-                    cs.setFont(fontBold, 13);
-                    cs.newLineAtOffset(margin, y);
-                    cs.showText("Ventas por metodo de pago");
-                    cs.endText();
-                    y -= lineHeight * 1.2f;
+                cs.beginText();
+                cs.setFont(fontBold, 13);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Graficas del reporte");
+                cs.endText();
+                y -= lineHeight * 1.2f;
 
-                    for (String linea : detallePagos.split("\n")) {
-                        if (y < margin + 20) break;
-                        cs.beginText();
-                        cs.setFont(fontRegular, 11);
-                        cs.newLineAtOffset(margin, y);
-                        cs.showText(linea);
-                        cs.endText();
-                        y -= lineHeight;
-                    }
+                PDImageXObject imgTendencia = crearImagenTendenciaPDF(doc);
+                PDImageXObject imgMetodos = crearImagenMetodosPagoPDF(doc);
+
+                float chartWidth = 230;
+                float chartHeight = 170;
+
+                cs.drawImage(imgTendencia, margin, y - chartHeight, chartWidth, chartHeight);
+                cs.drawImage(imgMetodos, margin + chartWidth + 30, y - chartHeight, chartWidth, chartHeight);
+
+                y -= chartHeight + lineHeight;
+
+                cs.beginText();
+                cs.setFont(fontBold, 13);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Ventas por metodo de pago");
+                cs.endText();
+                y -= lineHeight * 1.2f;
+
+                for (Map.Entry<String, BigDecimal> entry : ultimoReporte.ventasPorMetodoPago().entrySet()) {
+                    if (y < margin + 40) break;
+
+                    cs.beginText();
+                    cs.setFont(fontRegular, 11);
+                    cs.newLineAtOffset(margin, y);
+                    cs.showText(entry.getKey() + " -> " + formatearMoneda(entry.getValue()));
+                    cs.endText();
+                    y -= lineHeight;
                 }
 
-                // Pie de página
+                y -= lineHeight * 0.5f;
+
+                cs.beginText();
+                cs.setFont(fontBold, 13);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Tendencia de ventas por dia");
+                cs.endText();
+                y -= lineHeight * 1.2f;
+
+                for (Map.Entry<LocalDate, BigDecimal> entry : ultimoReporte.ventasPorDia().entrySet()) {
+                    if (y < margin + 40) break;
+
+                    cs.beginText();
+                    cs.setFont(fontRegular, 11);
+                    cs.newLineAtOffset(margin, y);
+                    cs.showText(entry.getKey() + " -> " + formatearMoneda(entry.getValue()));
+                    cs.endText();
+                    y -= lineHeight;
+                }
+
                 cs.beginText();
                 cs.setFont(fontRegular, 9);
                 cs.newLineAtOffset(margin, margin);
@@ -258,6 +290,8 @@ public class ReporteVentasController {
         chartMetodosPago.getData().clear();
         chartTendenciaVentas.getData().clear();
 
+        ultimoReporte = null;
+
         lblMensaje.setText("Filtros restablecidos.");
         lblMensaje.getStyleClass().removeAll("message-error", "message-ok");
     }
@@ -277,8 +311,10 @@ public class ReporteVentasController {
                         .append(formatearMoneda(valor))
                         .append("\n");
 
+                String etiqueta = metodo + " - " + formatearMoneda(valor);
+
                 chartMetodosPago.getData().add(
-                        new PieChart.Data(metodo, valor.doubleValue())
+                        new PieChart.Data(etiqueta, valor.doubleValue())
                 );
             });
         }
@@ -288,17 +324,105 @@ public class ReporteVentasController {
 
     private void mostrarTendenciaVentas(ReporteVentas reporte) {
         chartTendenciaVentas.getData().clear();
+        chartTendenciaVentas.setLegendVisible(false);
+        chartTendenciaVentas.setCreateSymbols(true);
+
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName("Ventas por día");
+
+        if (reporte.ventasPorDia() == null || reporte.ventasPorDia().isEmpty()) {
+            return;
+        }
+
+        reporte.ventasPorDia().forEach((fecha, total) -> {
+            serie.getData().add(
+                    new XYChart.Data<>(
+                            fecha.getDayOfMonth() + "/" + fecha.getMonthValue(),
+                            total.doubleValue()
+                    )
+            );
+        });
+
+        chartTendenciaVentas.getData().add(serie);
+    }
+
+    private PDImageXObject crearImagenTendenciaPDF(PDDocument doc) throws Exception {
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Fecha");
+
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Valor ($)");
+
+        LineChart<String, Number> chartCopia = new LineChart<>(xAxis, yAxis);
+        chartCopia.setTitle("Tendencia de ventas");
+        chartCopia.setAnimated(false);
+        chartCopia.setCreateSymbols(true);
+        chartCopia.setLegendVisible(false);
+        chartCopia.setPrefSize(650, 420);
 
         XYChart.Series<String, Number> serie = new XYChart.Series<>();
         serie.setName("Ventas");
 
-        BigDecimal total = reporte.totalVendido();
+        if (ultimoReporte != null && ultimoReporte.ventasPorDia() != null) {
+            ultimoReporte.ventasPorDia().forEach((fecha, total) -> {
+                serie.getData().add(
+                        new XYChart.Data<>(
+                                fecha.getDayOfMonth() + "/" + fecha.getMonthValue(),
+                                total.doubleValue()
+                        )
+                );
+            });
+        }
 
-        serie.getData().add(new XYChart.Data<>("Inicio", total.multiply(new BigDecimal("0.40"))));
-        serie.getData().add(new XYChart.Data<>("Medio",  total.multiply(new BigDecimal("0.70"))));
-        serie.getData().add(new XYChart.Data<>("Final",  total));
+        chartCopia.getData().add(serie);
 
-        chartTendenciaVentas.getData().add(serie);
+        StackPane root = new StackPane(chartCopia);
+        root.setPrefSize(650, 420);
+
+        new Scene(root);
+
+        root.applyCss();
+        root.layout();
+
+        WritableImage image = root.snapshot(new SnapshotParameters(), null);
+        return convertirImagen(doc, image, "tendencia.png");
+    }
+
+    private PDImageXObject crearImagenMetodosPagoPDF(PDDocument doc) throws Exception {
+        PieChart pieCopia = new PieChart();
+        pieCopia.setTitle("Ventas por metodo de pago");
+        pieCopia.setLabelsVisible(true);
+        pieCopia.setLegendVisible(true);
+        pieCopia.setPrefSize(650, 420);
+
+        if (ultimoReporte != null && ultimoReporte.ventasPorMetodoPago() != null) {
+            ultimoReporte.ventasPorMetodoPago().forEach((metodo, valor) -> {
+                String etiqueta = metodo + " - " + formatearMoneda(valor);
+                pieCopia.getData().add(
+                        new PieChart.Data(etiqueta, valor.doubleValue())
+                );
+            });
+        }
+
+        StackPane root = new StackPane(pieCopia);
+        root.setPrefSize(650, 420);
+
+        new Scene(root);
+
+        root.applyCss();
+        root.layout();
+
+        WritableImage image = root.snapshot(new SnapshotParameters(), null);
+        return convertirImagen(doc, image, "metodos_pago.png");
+    }
+
+    private PDImageXObject convertirImagen(PDDocument doc, WritableImage image, String nombre) throws Exception {
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", baos);
+
+        return PDImageXObject.createFromByteArray(doc, baos.toByteArray(), nombre);
     }
 
     private String formatearMoneda(BigDecimal valor) {

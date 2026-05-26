@@ -115,9 +115,12 @@
 
                                     <LineChart fx:id="chartTendenciaVentas"
                                                prefHeight="360"
+                                               prefWidth="420"
                                                animated="false"
                                                createSymbols="true"
-                                               legendVisible="false">
+                                               legendVisible="false"
+                                               horizontalGridLinesVisible="true"
+                                               verticalGridLinesVisible="true">
 
                                         <xAxis>
                                             <CategoryAxis label="Periodo"/>
@@ -128,6 +131,7 @@
                                         </yAxis>
 
                                     </LineChart>
+
                                 </VBox>
 
                                 <VBox styleClass="chart-placeholder" spacing="10" HBox.hgrow="ALWAYS">
