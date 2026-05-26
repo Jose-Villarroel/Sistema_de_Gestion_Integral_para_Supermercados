@@ -1,5 +1,14 @@
 package controllers.gerente;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import javafx.stage.FileChooser;
+import java.io.File;
+
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
@@ -80,11 +89,157 @@ public class ReporteVentasController {
 
     @FXML
     public void exportarPDF() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Exportar PDF");
-        alert.setHeaderText("Funcionalidad pendiente");
-        alert.setContentText("La opción de exportar a PDF se implementará posteriormente.");
-        alert.showAndWait();
+        String totalVendido   = lblTotalVendido.getText();
+        String transacciones  = lblTransacciones.getText();
+        String ticketPromedio = lblTicketPromedio.getText();
+        String descuentos     = lblDescuentos.getText();
+        String impuestos      = lblImpuestos.getText();
+        String detallePagos   = txtDetalleMetodosPago.getText();
+
+        if (totalVendido.equals("0.00") && transacciones.equals("0")) {
+            mostrarError("Primero genere un reporte antes de exportar.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar reporte PDF");
+        fileChooser.setInitialFileName("Reporte_Ventas_MasterMarket.pdf");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Archivo PDF", "*.pdf")
+        );
+
+        File archivo = fileChooser.showSaveDialog(lblTotalVendido.getScene().getWindow());
+        if (archivo == null) return;
+
+        try (PDDocument doc = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            doc.addPage(page);
+
+            PDType1Font fontBold    = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            PDType1Font fontRegular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
+
+            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+
+                float margin     = 50;
+                float y          = page.getMediaBox().getHeight() - margin;
+                float lineHeight = 18;
+
+                // Título
+                cs.beginText();
+                cs.setFont(fontBold, 20);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("MasterMarket - Reporte de Ventas");
+                cs.endText();
+                y -= lineHeight * 1.5f;
+
+                // Fecha de generación
+                cs.beginText();
+                cs.setFont(fontRegular, 10);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Generado el: " + LocalDate.now());
+                cs.endText();
+                y -= lineHeight;
+
+                // Rango de fechas
+                String desde = dpFechaDesde.getValue() != null ? dpFechaDesde.getValue().toString() : "-";
+                String hasta  = dpFechaHasta.getValue()  != null ? dpFechaHasta.getValue().toString()  : "-";
+                cs.beginText();
+                cs.setFont(fontRegular, 10);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Periodo: " + desde + " al " + hasta);
+                cs.endText();
+                y -= lineHeight * 1.5f;
+
+                // Línea separadora
+                cs.moveTo(margin, y);
+                cs.lineTo(page.getMediaBox().getWidth() - margin, y);
+                cs.stroke();
+                y -= lineHeight;
+
+                // Título sección
+                cs.beginText();
+                cs.setFont(fontBold, 13);
+                cs.newLineAtOffset(margin, y);
+                cs.showText("Resumen del periodo");
+                cs.endText();
+                y -= lineHeight * 1.2f;
+
+                // Indicadores
+                String[][] datos = {
+                    {"Total vendido:",    totalVendido},
+                    {"Transacciones:",    transacciones},
+                    {"Ticket promedio:",  ticketPromedio},
+                    {"Total descuentos:", descuentos},
+                    {"Total impuestos:",  impuestos},
+                };
+
+                for (String[] fila : datos) {
+                    cs.beginText();
+                    cs.setFont(fontBold, 11);
+                    cs.newLineAtOffset(margin, y);
+                    cs.showText(fila[0]);
+                    cs.endText();
+
+                    cs.beginText();
+                    cs.setFont(fontRegular, 11);
+                    cs.newLineAtOffset(margin + 160, y);
+                    cs.showText(fila[1]);
+                    cs.endText();
+
+                    y -= lineHeight;
+                }
+
+                y -= lineHeight * 0.5f;
+
+                // Línea separadora
+                cs.moveTo(margin, y);
+                cs.lineTo(page.getMediaBox().getWidth() - margin, y);
+                cs.stroke();
+                y -= lineHeight;
+
+                // Detalle métodos de pago
+                if (detallePagos != null && !detallePagos.isBlank()) {
+                    cs.beginText();
+                    cs.setFont(fontBold, 13);
+                    cs.newLineAtOffset(margin, y);
+                    cs.showText("Ventas por metodo de pago");
+                    cs.endText();
+                    y -= lineHeight * 1.2f;
+
+                    for (String linea : detallePagos.split("\n")) {
+                        if (y < margin + 20) break;
+                        cs.beginText();
+                        cs.setFont(fontRegular, 11);
+                        cs.newLineAtOffset(margin, y);
+                        cs.showText(linea);
+                        cs.endText();
+                        y -= lineHeight;
+                    }
+                }
+
+                // Pie de página
+                cs.beginText();
+                cs.setFont(fontRegular, 9);
+                cs.newLineAtOffset(margin, margin);
+                cs.showText("MasterMarket - Sistema de Gestion Integral para Supermercados");
+                cs.endText();
+            }
+
+            doc.save(archivo);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("PDF exportado");
+            alert.setHeaderText(null);
+            alert.setContentText("Reporte exportado correctamente en:\n" + archivo.getAbsolutePath());
+            alert.showAndWait();
+
+            lblMensaje.setText("PDF exportado correctamente.");
+            lblMensaje.getStyleClass().removeAll("message-error");
+            lblMensaje.getStyleClass().add("message-ok");
+
+        } catch (Exception e) {
+            mostrarError("Error al exportar PDF: " + e.getMessage());
+        }
     }
 
     @FXML
@@ -140,16 +295,14 @@ public class ReporteVentasController {
         BigDecimal total = reporte.totalVendido();
 
         serie.getData().add(new XYChart.Data<>("Inicio", total.multiply(new BigDecimal("0.40"))));
-        serie.getData().add(new XYChart.Data<>("Medio", total.multiply(new BigDecimal("0.70"))));
-        serie.getData().add(new XYChart.Data<>("Final", total));
+        serie.getData().add(new XYChart.Data<>("Medio",  total.multiply(new BigDecimal("0.70"))));
+        serie.getData().add(new XYChart.Data<>("Final",  total));
 
         chartTendenciaVentas.getData().add(serie);
     }
 
     private String formatearMoneda(BigDecimal valor) {
-        if (valor == null) {
-            return "$0.00";
-        }
+        if (valor == null) return "$0.00";
         return "$" + String.format("%,.2f", valor);
     }
 
