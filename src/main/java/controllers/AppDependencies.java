@@ -1,5 +1,11 @@
 package controllers;
 
+import adapters.iot.SimulatedStockSensorAdapter;
+import adapters.iot.StockMonitorService;
+import adapters.iot.StockSensorPort;
+import adapters.ml.DemandPredictionPort;
+import adapters.ml.DemandPredictionService;
+import adapters.ml.DummyPredictionAdapter;
 import controllers.admin.*;
 import controllers.autenticacion.LoginController;
 import controllers.caja.CierreCajaController;
@@ -147,6 +153,16 @@ public final class AppDependencies {
         gestionarCierreCajaUseCase = new GestionarCierreCajaUseCase(cierreCajaRepository);
         controlarInventarioUseCase = new ControlarInventarioUseCase(productoRepository, movimientoInventarioRepository);
         generarReporteVentasUseCase = new GenerarReporteVentasUseCase(reporteVentasRepository);
+
+        // Preparado para integración futura IoT
+        StockSensorPort sensor = new SimulatedStockSensorAdapter();
+        StockMonitorService stockMonitorService = new StockMonitorService(sensor);
+
+        // Preparado para integración futura Machine Learning
+        DemandPredictionPort predictor = new DummyPredictionAdapter();
+        DemandPredictionService demandService = new DemandPredictionService(
+                predictor
+        );
     }
 
     public static AppDependencies getInstance() {
